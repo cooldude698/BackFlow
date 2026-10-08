@@ -56,7 +56,7 @@ test('TestnetPaymentAdapter: Local Simulation & Relayer Fallback', async () => {
     currency: 'USDC',
     payerAddress: '0x3001'
   });
-  assert.ok(session.sessionId.startsWith('sess_'));
+  assert.ok(session.sessionId.startsWith('session_'));
   assert.ok(session.checkoutUrl.includes('/pay/BF-001'));
 
   // Settlement execution in simulation fallback mode

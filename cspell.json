@@ -1,0 +1,30 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "Aman",
+    "BackFlow",
+    "checksummed",
+    "glassmorphic",
+    "hackathon",
+    "Karan",
+    "Monad",
+    "multisig",
+    "Priya",
+    "Rahul",
+    "rahul",
+    "reentrancy",
+    "sess",
+    "Supabase",
+    "viem",
+    "Viem",
+    "webauthn"
+  ],
+  "ignorePaths": [
+    "node_modules/**",
+    "contracts/lib/**",
+    "contracts/out/**",
+    "contracts/cache/**",
+    ".git/**"
+  ]
+}

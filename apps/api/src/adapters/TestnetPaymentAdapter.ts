@@ -49,7 +49,7 @@ export class TestnetPaymentAdapter implements IPaymentAdapter {
   }
 
   async createPaymentSession(input: PaymentIntentInput) {
-    const sessionId = `sess_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    const sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
     return {
       sessionId,
       checkoutUrl: `/pay/${input.agreementId}?session=${sessionId}&amount=${input.amount.toString()}`,

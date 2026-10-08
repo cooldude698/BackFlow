@@ -61,14 +61,14 @@ app.post('/agreements', (req, res) => {
 
   const target = BigInt(fundingTarget || 0);
   const revShare = BigInt(revenueShareBps || 1000);
-  const capMult = BigInt(capMultiplierBps || 20000);
+  const capMultiplier = BigInt(capMultiplierBps || 20000);
   const durSecs = BigInt(durationSeconds || 31536000);
 
   const validation = validateAgreementInput({
     earnerAddress,
     fundingTarget: target,
     revenueShareBps: revShare,
-    capMultiplierBps: capMult,
+    capMultiplierBps: capMultiplier,
     durationSeconds: durSecs
   });
 
@@ -84,8 +84,8 @@ app.post('/agreements', (req, res) => {
     fundingTarget: target,
     totalFunded: 0n,
     revenueShareBps: revShare,
-    capMultiplierBps: capMult,
-    totalMaximumReturn: (target * capMult) / 10000n,
+    capMultiplierBps: capMultiplier,
+    totalMaximumReturn: (target * capMultiplier) / 10000n,
     totalDistributed: 0n,
     durationSeconds: durSecs,
     status: AgreementStatus.FUNDING,
