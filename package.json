@@ -17,7 +17,8 @@
     "build:engine": "npm --workspace=@backflow/financial-engine run build",
     "build:all": "npx -w @backflow/types tsc && npx -w @backflow/validation tsc && npx -w @backflow/financial-engine tsc && npx -w @backflow/api tsc && npx -w @backflow/web next build",
     "start:api": "npm --workspace=@backflow/api run dev",
-    "dev:web": "npm --workspace=@backflow/web run dev"
+    "dev:web": "npm --workspace=@backflow/web run dev",
+    "dev": "npm run dev:web"
   },
   "devDependencies": {
     "tsx": "^4.19.0",

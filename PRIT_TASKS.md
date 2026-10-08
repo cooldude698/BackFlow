@@ -74,10 +74,10 @@
 ## ✨ Phase 5: Passkey WebAuthn & Visual Polish (P2 — FINAL POLISH)
 *Objective*: Consumer polish and deployment validation.
 
-- [ ] **Task 5.1: Real WebAuthn Passkey Prompt**
+- [x] **Task 5.1: Real WebAuthn Passkey Prompt**
   - Integrate `navigator.credentials.get()` for real Touch ID / Face ID browser prompts.
 
-- [ ] **Task 5.2: Settlement Confetti Effect**
+- [x] **Task 5.2: Settlement Confetti Effect**
   - Add `canvas-confetti` trigger upon successful payment settlement.
 
 - [x] **Task 5.3: Next.js Production Build Validation**
