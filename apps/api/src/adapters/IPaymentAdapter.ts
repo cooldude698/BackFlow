@@ -17,6 +17,7 @@ export interface SettlementExecutionResult {
     amount: bigint;
     type: 'EARNER' | 'BACKER';
   }[];
+  sponsoredByRelayer?: boolean;
 }
 
 export interface IPaymentAdapter {

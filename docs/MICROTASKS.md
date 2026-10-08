@@ -24,17 +24,17 @@
 
 ---
 
-## Phase 3: Database & Event Indexer (In Progress - Aman)
+## Phase 3: Database & Event Indexer (Completed - Aman)
 - [x] **TASK-301**: Author PostgreSQL migration `001_initial_schema.sql` with idempotency constraint.
 - [x] **TASK-302**: Implement `BlockchainListener` class with deduplication on `tx_hash:log_index`.
-- [ ] **TASK-303**: Connect live Viem `watchContractEvent` listener to Monad testnet RPC.
+- [x] **TASK-303**: Connect live Viem `watchContractEvent` listener to Monad testnet RPC.
 
 ---
 
-## Phase 4: Backend API & Payment Rails (In Progress - Aman)
+## Phase 4: Backend API & Payment Rails (Completed - Aman)
 - [x] **TASK-401**: Build Express REST server with `/agreements`, `/payments`, and `/simulate-settlement`.
 - [x] **TASK-402**: Implement `TestnetPaymentAdapter` for session generation.
-- [ ] **TASK-403**: Implement relayer transaction submission endpoint with gas sponsorship.
+- [x] **TASK-403**: Implement relayer transaction submission endpoint with gas sponsorship.
 
 ---
 

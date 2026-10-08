@@ -8,9 +8,10 @@
     "apps/*"
   ],
   "scripts": {
-    "test": "npm run test:engine && npm run test:contracts && npm run test:milestone",
+    "test": "npm run test:engine && npm run test:contracts && npm run test:api && npm run test:milestone",
     "test:engine": "npm --workspace=@backflow/financial-engine test",
     "test:contracts": "export PATH=\"$PATH:$HOME/.foundry/bin\" && cd contracts && forge test -vvv",
+    "test:api": "npm --workspace=@backflow/api test",
     "test:milestone": "npx tsx scripts/simulate-milestone.ts",
     "build:engine": "npm --workspace=@backflow/financial-engine run build",
     "build:all": "npx -w @backflow/types tsc && npx -w @backflow/validation tsc && npx -w @backflow/financial-engine tsc && npx -w @backflow/api tsc && npx -w @backflow/web next build",

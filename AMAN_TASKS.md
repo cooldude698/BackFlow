@@ -65,7 +65,7 @@
   - Path: `apps/api/src/server.ts`
   - Implement `GET /agreements`, `GET /agreements/:id`, `POST /agreements`, and `POST /agreements/:id/simulate-settlement`.
 
-- [ ] **Task 3.3: Real-Time Viem Event Consumer**
+- [x] **Task 3.3: Real-Time Viem Event Consumer**
   - Path: `apps/api/src/indexer/blockchainListener.ts`
   - Connect Viem `watchContractEvent` to Monad RPC.
   - On `PaymentSettled`, execute idempotent insert into `settlements` table.
@@ -79,7 +79,7 @@
   - Path: `apps/api/src/adapters/TestnetPaymentAdapter.ts`
   - Provide payment session generation (`/pay/[agreementId]?session=...`).
 
-- [ ] **Task 4.2: Relayer Transaction Sponsorship**
+- [x] **Task 4.2: Relayer Transaction Sponsorship**
   - Configure relayer signer using `RELAYER_PRIVATE_KEY` to wrap client payment calls.
 
 ---
@@ -91,5 +91,5 @@
   - Path: `scripts/simulate-milestone.ts`
   - Run: `npm run test:milestone`.
 
-- [ ] **Task 5.2: Invariant Fuzz Tests**
+- [x] **Task 5.2: Invariant Fuzz Tests**
   - Add Foundry invariant test handler verifying that contract balance is zero after 1,000 random payment combinations.

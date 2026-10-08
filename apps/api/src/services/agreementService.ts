@@ -1,10 +1,11 @@
 import { calculateSettlement, calculateCap } from '@backflow/financial-engine';
-import { Agreement, AgreementStatus, BackerPosition } from '@backflow/types';
+import { Agreement, AgreementStatus, BackerPosition, SettlementRecord } from '@backflow/types';
 
 // In-memory persistent store (mirrors PostgreSQL database)
 class AgreementStore {
   private agreements = new Map<string, Agreement>();
   private backers = new Map<string, BackerPosition[]>();
+  private settlements: SettlementRecord[] = [];
 
   constructor() {
     this.seedDemoRahul();
@@ -138,6 +139,22 @@ class AgreementStore {
     }
 
     return calculation;
+  }
+
+  recordSettlementLog(settlement: SettlementRecord): void {
+    const exists = this.settlements.some(
+      (s) => s.transactionHash === settlement.transactionHash && s.logIndex === settlement.logIndex
+    );
+    if (!exists) {
+      this.settlements.unshift(settlement);
+    }
+  }
+
+  getSettlements(agreementId?: string): SettlementRecord[] {
+    if (agreementId) {
+      return this.settlements.filter((s) => s.agreementId === agreementId);
+    }
+    return [...this.settlements];
   }
 }
 

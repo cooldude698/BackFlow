@@ -106,6 +106,21 @@ app.post('/agreements/:id/simulate-settlement', (req, res) => {
   }
 });
 
+// Start indexer on launch
+blockchainListener.startWatching();
+
+// List indexed settlements
+app.get('/settlements', (req, res) => {
+  const settlements = agreementService.getSettlements();
+  res.json(serialize(settlements));
+});
+
+// Get settlements for a specific agreement
+app.get('/agreements/:id/settlements', (req, res) => {
+  const settlements = agreementService.getSettlements(req.params.id);
+  res.json(serialize(settlements));
+});
+
 // Create payment session
 app.post('/payments/create-intent', async (req, res) => {
   try {
@@ -131,19 +146,61 @@ app.post('/payments/settle', async (req, res) => {
 
     const execution = await paymentAdapter.executeSettlement(agreementId, amount, payer);
 
-    // Simulate blockchain event reception
+    // Process on-chain event idempotently
     blockchainListener.processLog({
       transactionHash: execution.transactionHash,
       logIndex: 0,
       agreementId,
       eventName: 'PaymentSettled',
+      blockNumber: execution.blockNumber,
       args: {
         grossAmount: amount.toString(),
+        earnerShare: execution.earnerShare.toString(),
+        totalBackerShare: execution.backerShareTotal.toString(),
         payer
       }
     });
 
     res.json(serialize(execution));
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Gas-Sponsored Relayer Settlement Endpoint
+app.post('/payments/relay', async (req, res) => {
+  try {
+    const { agreementId, grossAmount, payerAddress } = req.body;
+    if (!agreementId || !grossAmount) {
+      return res.status(400).json({ error: 'Missing agreementId or grossAmount' });
+    }
+
+    const amount = BigInt(grossAmount);
+    const payer = payerAddress || '0xClient';
+
+    const execution = await paymentAdapter.executeSettlement(agreementId, amount, payer);
+
+    blockchainListener.processLog({
+      transactionHash: execution.transactionHash,
+      logIndex: 0,
+      agreementId,
+      eventName: 'PaymentSettled',
+      blockNumber: execution.blockNumber,
+      args: {
+        grossAmount: amount.toString(),
+        earnerShare: execution.earnerShare.toString(),
+        totalBackerShare: execution.backerShareTotal.toString(),
+        payer
+      }
+    });
+
+    res.json(
+      serialize({
+        ...execution,
+        relaySponsored: true,
+        relayerConfigured: paymentAdapter.hasRelayer()
+      })
+    );
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
