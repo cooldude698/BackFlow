@@ -1,0 +1,46 @@
+name: BackFlow CI Pipeline
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Monorepo Dependencies
+        run: npm ci
+
+      - name: Test Pure TypeScript Financial Engine
+        run: npm run test:engine
+
+      - name: Run Foundry Smart Contract Tests & Invariants
+        run: |
+          cd contracts
+          forge test -vvv
+
+      - name: Run End-to-End Milestone Simulation
+        run: npm run test:milestone
+
+      - name: Build Next.js Web Application
+        run: npx -w @backflow/web next build

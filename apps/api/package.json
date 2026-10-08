@@ -1,0 +1,27 @@
+{
+  "name": "@backflow/api",
+  "version": "1.0.0",
+  "description": "BackFlow Backend API & Blockchain Event Indexer",
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "@backflow/financial-engine": "*",
+    "@backflow/types": "*",
+    "@backflow/validation": "*",
+    "express": "^4.19.2",
+    "cors": "^2.8.5",
+    "viem": "^2.21.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/cors": "^2.8.17",
+    "@types/node": "^22.5.0",
+    "typescript": "^5.5.4",
+    "tsx": "^4.19.0"
+  }
+}

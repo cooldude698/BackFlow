@@ -1,0 +1,25 @@
+# Node & Package Managers
+node_modules/
+.pnp
+.pnp.js
+dist/
+build/
+
+# Foundry / Solidity
+contracts/out/
+contracts/cache/
+
+# Next.js
+.next/
+out/
+
+# Environment & Secrets
+.env
+.env.local
+.env.production
+*.pem
+
+# IDE & OS
+.DS_Store
+.vscode/
+.idea/
