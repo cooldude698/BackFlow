@@ -1,242 +1,176 @@
 'use client';
 
 import { useState } from 'react';
-import { Calculator, ArrowRight, ShieldCheck, CheckCircle2, AlertCircle, RefreshCw } from 'lucide-react';
+import Link from 'next/link';
+import {
+  SlidersHorizontal,
+  Zap,
+  ArrowRight,
+  RefreshCw,
+  CheckCircle2,
+  ChevronLeft
+} from 'lucide-react';
+import { relayPayment, dollarsToMicro } from '@/lib/api';
 
-export default function SimulatorPage() {
+export default function MobileSimulatorPage() {
   const [grossPayment, setGrossPayment] = useState<number>(1000);
-  const [revenueSharePercent, setRevenueSharePercent] = useState<number>(10);
-  const [capMultiplier, setCapMultiplier] = useState<number>(2.0);
+  const [broadcasting, setBroadcasting] = useState(false);
+  const [broadcastDone, setBroadcastDone] = useState(false);
 
-  // Rahul's 3 test backers
-  const [backerA_received, setBackerA_received] = useState<number>(0);
-  const [backerB_received, setBackerB_received] = useState<number>(0);
-  const [backerC_received, setBackerC_received] = useState<number>(0);
+  // Rahul 90/10 terms
+  const earnerPayout = grossPayment * 0.9;
+  const backerPayout = grossPayment * 0.1;
 
-  const backerA_funded = 400; // 20%
-  const backerB_funded = 600; // 30%
-  const backerC_funded = 1000; // 50%
-  const totalFunded = 2000;
+  // 3 backers pro-rata
+  const amanShare = backerPayout * 0.2;
+  const priyaShare = backerPayout * 0.3;
+  const karanShare = backerPayout * 0.5;
 
-  const backerA_cap = backerA_funded * capMultiplier; // $800
-  const backerB_cap = backerB_funded * capMultiplier; // $1,200
-  const backerC_cap = backerC_funded * capMultiplier; // $2,000
-
-  // Calculate settlement
-  const rawBackerPoolCut = (grossPayment * revenueSharePercent) / 100;
-
-  // Backer A
-  const remCapA = Math.max(0, backerA_cap - backerA_received);
-  const theoA = (rawBackerPoolCut * backerA_funded) / totalFunded;
-  const payoutA = Math.min(theoA, remCapA);
-
-  // Backer B
-  const remCapB = Math.max(0, backerB_cap - backerB_received);
-  const theoB = (rawBackerPoolCut * backerB_funded) / totalFunded;
-  const payoutB = Math.min(theoB, remCapB);
-
-  // Backer C
-  const remCapC = Math.max(0, backerC_cap - backerC_received);
-  const theoC = (rawBackerPoolCut * backerC_funded) / totalFunded;
-  const payoutC = Math.min(theoC, remCapC);
-
-  const totalBackerPayout = payoutA + payoutB + payoutC;
-  const earnerPayout = grossPayment - totalBackerPayout;
-
-  const handleApplySettlement = () => {
-    setBackerA_received((prev) => prev + payoutA);
-    setBackerB_received((prev) => prev + payoutB);
-    setBackerC_received((prev) => prev + payoutC);
-  };
-
-  const handleReset = () => {
-    setBackerA_received(0);
-    setBackerB_received(0);
-    setBackerC_received(0);
+  const handleBroadcast = async () => {
+    setBroadcasting(true);
+    setBroadcastDone(false);
+    try {
+      await relayPayment('BF-001', dollarsToMicro(grossPayment));
+      setBroadcastDone(true);
+    } catch (e: any) {
+      alert(`Simulation broadcast failed: ${e.message}`);
+    } finally {
+      setBroadcasting(false);
+    }
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 py-4">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
+    <div className="space-y-4">
+      {/* Top bar */}
+      <div className="flex items-center justify-between text-xs">
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-1 text-slate-400 hover:text-white transition-colors"
+        >
+          <ChevronLeft className="h-4 w-4" />
+          Back to Wallet
+        </Link>
+        <span className="text-[10px] font-mono text-periwinkle bg-periwinkle/10 px-2 py-0.5 rounded-full border border-periwinkle/20">
+          Math Simulator
+        </span>
+      </div>
+
+      {/* Simulator Card */}
+      <div className="app-card-highlight p-5 space-y-5">
         <div>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
-            <Calculator className="h-7 w-7 text-brand-400" />
-            Financial Settlement Simulator
-          </h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Simulate the exact integer basis-points math enforced by <code className="text-brand-300">SettlementEngine.sol</code>
+          <div className="text-[11px] font-mono text-periwinkle uppercase font-semibold">
+            Interactive Calculator
+          </div>
+          <h2 className="text-xl font-extrabold text-white">How Any Payment Splits</h2>
+          <p className="text-xs text-slate-400 mt-0.5">
+            Slide or pick an amount to see the exact 90/10 split in real time.
           </p>
         </div>
 
+        {/* Amount Slider & Presets */}
+        <div className="p-4 rounded-2xl bg-black/70 border border-white/10 space-y-3">
+          <div className="flex justify-between items-baseline">
+            <span className="text-[11px] text-slate-400 font-semibold uppercase">Client Payment</span>
+            <span className="text-2xl font-black text-white font-mono">
+              ${grossPayment.toLocaleString()} <span className="text-xs text-periwinkle">USDC</span>
+            </span>
+          </div>
+
+          <input
+            type="range"
+            min={100}
+            max={10000}
+            step={100}
+            value={grossPayment}
+            onChange={(e) => setGrossPayment(Number(e.target.value))}
+            className="w-full accent-periwinkle cursor-pointer"
+          />
+
+          <div className="flex justify-between gap-1.5 pt-1">
+            {[500, 1000, 2500, 5000].map((preset) => (
+              <button
+                key={preset}
+                onClick={() => setGrossPayment(preset)}
+                className={`flex-1 py-1 text-[11px] font-mono rounded-lg transition-colors ${
+                  grossPayment === preset
+                    ? 'bg-periwinkle text-black font-bold'
+                    : 'bg-white/5 text-slate-300 hover:bg-white/10'
+                }`}
+              >
+                ${preset}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Split Results */}
+        <div className="grid grid-cols-2 gap-2.5">
+          <div className="p-3.5 rounded-2xl bg-black/60 border border-white/5 space-y-1">
+            <div className="text-[10px] text-slate-400 uppercase font-semibold">Rahul Kept (90%)</div>
+            <div className="text-xl font-black text-periwinkle font-mono">
+              ${earnerPayout.toFixed(2)}
+            </div>
+            <div className="text-[10px] text-slate-400">Direct to Rahul&apos;s wallet</div>
+          </div>
+
+          <div className="p-3.5 rounded-2xl bg-black/60 border border-white/5 space-y-1">
+            <div className="text-[10px] text-slate-400 uppercase font-semibold">Backers (10%)</div>
+            <div className="text-xl font-black text-coral font-mono">
+              ${backerPayout.toFixed(2)}
+            </div>
+            <div className="text-[10px] text-slate-400">Split across syndicate</div>
+          </div>
+        </div>
+
+        {/* Backer Breakdown */}
+        <div className="p-3.5 rounded-2xl bg-black/50 border border-white/5 space-y-2 text-xs">
+          <div className="text-[11px] font-semibold text-slate-300">Syndicate Repayment:</div>
+          <div className="space-y-1.5 text-[11px] text-slate-400">
+            <div className="flex justify-between">
+              <span>• Aman (20% pool share):</span>
+              <span className="font-mono text-white font-semibold">${amanShare.toFixed(2)} USDC</span>
+            </div>
+            <div className="flex justify-between">
+              <span>• Priya (30% pool share):</span>
+              <span className="font-mono text-white font-semibold">${priyaShare.toFixed(2)} USDC</span>
+            </div>
+            <div className="flex justify-between">
+              <span>• Karan (50% pool share):</span>
+              <span className="font-mono text-white font-semibold">${karanShare.toFixed(2)} USDC</span>
+            </div>
+          </div>
+        </div>
+
+        {broadcastDone && (
+          <div className="p-3 rounded-xl bg-periwinkle/15 border border-periwinkle/30 flex items-center justify-between text-xs text-periwinkle">
+            <span className="flex items-center gap-1.5 font-bold">
+              <CheckCircle2 className="h-4 w-4" />
+              Settled on Monad!
+            </span>
+            <Link href="/dashboard" className="underline font-bold text-white hover:text-periwinkle">
+              View on Wallet
+            </Link>
+          </div>
+        )}
+
+        {/* Action Button */}
         <button
-          onClick={handleReset}
-          className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold"
+          onClick={handleBroadcast}
+          disabled={broadcasting}
+          className="w-full btn-periwinkle py-3.5 rounded-2xl text-xs font-black flex items-center justify-center gap-2 shadow-lg shadow-periwinkle/20 disabled:opacity-50"
         >
-          <RefreshCw className="h-3.5 w-3.5" />
-          Reset Caps
+          {broadcasting ? (
+            <>
+              <span className="h-3.5 w-3.5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+              <span>Splitting on Monad...</span>
+            </>
+          ) : (
+            <>
+              <Zap className="h-4 w-4" />
+              Test This Payment Live on Monad
+            </>
+          )}
         </button>
-      </div>
-
-      {/* Interactive Controls */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div className="glass-panel p-5 rounded-2xl space-y-2">
-          <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
-            Client Payment Amount
-          </label>
-          <div className="flex items-center gap-2">
-            <span className="text-xl font-bold text-slate-500">$</span>
-            <input
-              type="number"
-              value={grossPayment}
-              onChange={(e) => setGrossPayment(Math.max(0, Number(e.target.value)))}
-              className="w-full bg-navy-950 border border-white/10 rounded-xl px-3 py-2 text-xl font-black text-white focus:outline-none focus:border-brand-400"
-            />
-          </div>
-          <span className="text-[11px] text-slate-400">Try $1,000, $5,000, or $10,000</span>
-        </div>
-
-        <div className="glass-panel p-5 rounded-2xl space-y-2">
-          <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
-            Revenue Share Percentage
-          </label>
-          <div className="flex items-center gap-2">
-            <input
-              type="number"
-              value={revenueSharePercent}
-              onChange={(e) => setRevenueSharePercent(Math.min(100, Math.max(1, Number(e.target.value))))}
-              className="w-full bg-navy-950 border border-white/10 rounded-xl px-3 py-2 text-xl font-black text-brand-400 focus:outline-none focus:border-brand-400"
-            />
-            <span className="text-xl font-bold text-slate-500">%</span>
-          </div>
-          <span className="text-[11px] text-slate-400">10% = 1,000 Basis Points</span>
-        </div>
-
-        <div className="glass-panel p-5 rounded-2xl space-y-2">
-          <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
-            Return Cap Multiplier
-          </label>
-          <div className="flex items-center gap-2">
-            <input
-              type="number"
-              step="0.5"
-              value={capMultiplier}
-              onChange={(e) => setCapMultiplier(Math.max(1, Number(e.target.value)))}
-              className="w-full bg-navy-950 border border-white/10 rounded-xl px-3 py-2 text-xl font-black text-purple-400 focus:outline-none focus:border-brand-400"
-            />
-            <span className="text-xl font-bold text-slate-500">×</span>
-          </div>
-          <span className="text-[11px] text-slate-400">2.0× = 20,000 Basis Points</span>
-        </div>
-      </div>
-
-      {/* Live Output Card */}
-      <div className="glass-panel-glow rounded-3xl p-6 sm:p-8 space-y-6">
-        <div className="flex items-center justify-between border-b border-white/10 pb-4">
-          <h2 className="text-lg font-bold text-white">Instant Settlement Output</h2>
-          <div className="flex items-center gap-2 text-xs font-mono text-emerald-400">
-            <CheckCircle2 className="h-4 w-4" />
-            Invariant Verified: Gross ({grossPayment}) = Earner ({earnerPayout.toFixed(0)}) + Backers ({totalBackerPayout.toFixed(0)})
-          </div>
-        </div>
-
-        {/* Big Results Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 space-y-1">
-            <div className="text-xs text-slate-400 uppercase font-semibold">Rahul (Earner Share)</div>
-            <div className="text-3xl font-black text-white">${earnerPayout.toFixed(2)} USDC</div>
-            <div className="text-xs text-emerald-400">Directly routed to Earner wallet</div>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-brand-500/10 border border-brand-500/30 space-y-1">
-            <div className="text-xs text-brand-300 uppercase font-semibold">Total Backers Pool Share</div>
-            <div className="text-3xl font-black text-brand-400">${totalBackerPayout.toFixed(2)} USDC</div>
-            <div className="text-xs text-slate-300">Split pro-rata across 3 backers</div>
-          </div>
-        </div>
-
-        {/* Backers breakdown */}
-        <div className="space-y-4 pt-2">
-          <h3 className="text-sm font-bold text-white uppercase tracking-wider text-slate-400">
-            Individual Backer Allocations & Cap Tracking
-          </h3>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {/* Backer A */}
-            <div className="p-4 rounded-xl bg-navy-950 border border-white/5 space-y-2">
-              <div className="flex justify-between items-center text-xs">
-                <span className="font-bold text-white">Aman (20%)</span>
-                <span className="font-mono text-brand-400">+${payoutA.toFixed(2)}</span>
-              </div>
-              <div className="text-[11px] text-slate-400">
-                Cap Progress: ${(backerA_received + payoutA).toFixed(0)} / ${backerA_cap}
-              </div>
-              <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden">
-                <div
-                  className="bg-brand-500 h-2 rounded-full"
-                  style={{ width: `${Math.min(100, ((backerA_received + payoutA) / backerA_cap) * 100)}%` }}
-                ></div>
-              </div>
-              {backerA_received + payoutA >= backerA_cap && (
-                <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-300">
-                  CAP REACHED (0% Future)
-                </span>
-              )}
-            </div>
-
-            {/* Backer B */}
-            <div className="p-4 rounded-xl bg-navy-950 border border-white/5 space-y-2">
-              <div className="flex justify-between items-center text-xs">
-                <span className="font-bold text-white">Priya (30%)</span>
-                <span className="font-mono text-brand-400">+${payoutB.toFixed(2)}</span>
-              </div>
-              <div className="text-[11px] text-slate-400">
-                Cap Progress: ${(backerB_received + payoutB).toFixed(0)} / ${backerB_cap}
-              </div>
-              <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden">
-                <div
-                  className="bg-brand-500 h-2 rounded-full"
-                  style={{ width: `${Math.min(100, ((backerB_received + payoutB) / backerB_cap) * 100)}%` }}
-                ></div>
-              </div>
-              {backerB_received + payoutB >= backerB_cap && (
-                <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-300">
-                  CAP REACHED (0% Future)
-                </span>
-              )}
-            </div>
-
-            {/* Backer C */}
-            <div className="p-4 rounded-xl bg-navy-950 border border-white/5 space-y-2">
-              <div className="flex justify-between items-center text-xs">
-                <span className="font-bold text-white">Karan (50%)</span>
-                <span className="font-mono text-brand-400">+${payoutC.toFixed(2)}</span>
-              </div>
-              <div className="text-[11px] text-slate-400">
-                Cap Progress: ${(backerC_received + payoutC).toFixed(0)} / ${backerC_cap}
-              </div>
-              <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden">
-                <div
-                  className="bg-brand-500 h-2 rounded-full"
-                  style={{ width: `${Math.min(100, ((backerC_received + payoutC) / backerC_cap) * 100)}%` }}
-                ></div>
-              </div>
-              {backerC_received + payoutC >= backerC_cap && (
-                <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-300">
-                  CAP REACHED (0% Future)
-                </span>
-              )}
-            </div>
-          </div>
-
-          <div className="pt-2">
-            <button
-              onClick={handleApplySettlement}
-              className="w-full glow-btn py-3 rounded-xl text-xs font-bold uppercase tracking-wider"
-            >
-              Simulate & Commit Settlement to State
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

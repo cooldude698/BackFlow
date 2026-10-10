@@ -3,58 +3,80 @@
 @tailwind utilities;
 
 :root {
-  --background: #05070e;
-  --foreground: #f1f5f9;
+  --background: #000000;
+  --foreground: #f8fafc;
 }
 
-body {
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+html, body {
   color: var(--foreground);
-  background-color: var(--background);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #000000;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", sans-serif;
   overflow-x: hidden;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-/* Glassmorphism card styles */
-.glass-panel {
-  background: rgba(13, 20, 36, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* Mobile-app card surfaces */
+.app-card {
+  background: #0c0c11;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 1.5rem;
+  transition: transform 0.15s ease, border-color 0.15s ease;
 }
 
-.glass-panel-glow {
-  background: rgba(13, 20, 36, 0.85);
+.app-card-highlight {
+  background: linear-gradient(180deg, #12121c 0%, #0c0c11 100%);
+  border: 1px solid rgba(139, 157, 248, 0.25);
+  border-radius: 1.5rem;
+}
+
+/* Primary buttons */
+.btn-periwinkle {
+  background: linear-gradient(135deg, #8B9DF8 0%, #A5B4FC 100%);
+  color: #000000;
+  font-weight: 700;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-periwinkle:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+
+.btn-coral {
+  background: linear-gradient(135deg, #FF6B6B 0%, #FA5252 100%);
+  color: #ffffff;
+  font-weight: 700;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-coral:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+
+/* Glass & blur tokens */
+.bottom-nav-blur {
+  background: rgba(8, 8, 12, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(20, 184, 166, 0.3);
-  box-shadow: 0 0 35px -5px rgba(20, 184, 166, 0.15);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.glow-btn {
-  background: linear-gradient(135deg, #00F5A0 0%, #00D9F5 100%);
-  color: #030816;
-  font-weight: 600;
-  box-shadow: 0 0 25px rgba(0, 245, 160, 0.35);
-  transition: all 0.25s ease;
-}
-
-.glow-btn:hover {
-  box-shadow: 0 0 35px rgba(0, 245, 160, 0.6);
-  transform: translateY(-1px);
-}
-
-/* Custom scrollbars */
+/* Subtle clean scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: #05070e;
+  background: #000000;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #1e1e24;
+  border-radius: 4px;
 }

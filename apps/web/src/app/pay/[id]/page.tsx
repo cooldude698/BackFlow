@@ -1,75 +1,77 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
+import { useParams, useSearchParams } from 'next/navigation';
 import {
-  ShieldCheck,
+  Lock,
   CheckCircle2,
   ArrowRight,
+  ShieldCheck,
+  AlertCircle,
   Sparkles,
-  Lock,
-  ExternalLink,
-  ChevronRight,
-  Info
+  ChevronLeft
 } from 'lucide-react';
-
 import confetti from 'canvas-confetti';
+import {
+  getAgreement,
+  simulateSettlement,
+  relayPayment,
+  dollarsToMicro,
+  microToDollars,
+  AgreementDTO,
+  SettlementSimulationDTO,
+  SettlementExecutionDTO
+} from '@/lib/api';
 
-export default function PaymentPage() {
+function MobilePaymentContent() {
+  const params = useParams();
+  const searchParams = useSearchParams();
+
+  const agreementId = (params?.id as string) || 'BF-001';
+  const paramAmount = searchParams?.get('amount') ? Number(searchParams.get('amount')) : 1000;
+  const paramDesc = searchParams?.get('desc') || 'Freelance Development Milestone';
+
+  const [amount, setAmount] = useState<number>(paramAmount > 0 ? paramAmount : 1000);
+  const [agreement, setAgreement] = useState<AgreementDTO | null>(null);
+  const [simulation, setSimulation] = useState<SettlementSimulationDTO | null>(null);
+
   const [paying, setPaying] = useState(false);
   const [settled, setSettled] = useState(false);
-  const [txHash, setTxHash] = useState('');
-  const [authStatus, setAuthStatus] = useState<string>('');
+  const [result, setResult] = useState<SettlementExecutionDTO | null>(null);
+  const [authMsg, setAuthMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const invoice = {
-    id: 'INV-2026-089',
-    agreementId: 'BF-001',
-    earner: 'Rahul',
-    earnerRole: 'Full-Stack Developer',
-    description: 'Frontend & Smart Contract Integration Milestone',
-    amount: 1000,
-    currency: 'USDC',
-    revenueShareBps: 1000 // 10%
-  };
+  useEffect(() => {
+    getAgreement(agreementId).then(setAgreement).catch(() => {});
+  }, [agreementId]);
+
+  useEffect(() => {
+    if (amount > 0) {
+      simulateSettlement(agreementId, dollarsToMicro(amount))
+        .then(setSimulation)
+        .catch(() => {});
+    }
+  }, [agreementId, amount]);
 
   const triggerConfetti = () => {
-    // Brand-tailored confetti burst
     confetti({
-      particleCount: 80,
-      spread: 70,
+      particleCount: 70,
+      spread: 60,
       origin: { y: 0.6 },
-      colors: ['#00F5A0', '#00D9F5', '#14b8a6', '#8b5cf6', '#ffffff']
+      colors: ['#8B9DF8', '#A5B4FC', '#FF6B6B', '#ffffff']
     });
-
-    // Side cannons burst
-    setTimeout(() => {
-      confetti({
-        particleCount: 45,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0, y: 0.65 },
-        colors: ['#00F5A0', '#00D9F5', '#14b8a6']
-      });
-      confetti({
-        particleCount: 45,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1, y: 0.65 },
-        colors: ['#00F5A0', '#8b5cf6', '#ffffff']
-      });
-    }, 250);
   };
 
   const handlePay = async () => {
     setPaying(true);
-    setAuthStatus('Authenticating biometric passkey...');
+    setErrorMsg(null);
+    setAuthMsg('Authenticating Passkey / Biometrics...');
 
-    // Task 5.1: Real WebAuthn Passkey Prompt (Touch ID / Face ID)
     if (typeof window !== 'undefined' && window.PublicKeyCredential && navigator.credentials) {
       try {
         const challenge = new Uint8Array(32);
         window.crypto.getRandomValues(challenge);
-
         await navigator.credentials.get({
           publicKey: {
             challenge,
@@ -78,153 +80,193 @@ export default function PaymentPage() {
             rpId: window.location.hostname
           }
         });
-        setAuthStatus('Passkey verified! Submitting transaction to Monad...');
-      } catch (err: unknown) {
-        // Fallback gracefully so demo / test environments succeed smoothly even without enrolled local keys
-        console.warn('Passkey biometric prompt dismissed or not enrolled on domain, using demo authenticator:', err);
-        setAuthStatus('Biometrics acknowledged. Settling on Monad Testnet...');
+        setAuthMsg('Biometrics verified! Executing split...');
+      } catch {
+        setAuthMsg('Confirming atomic split on Monad...');
       }
     } else {
-      setAuthStatus('Submitting atomic settlement to Monad Testnet...');
+      setAuthMsg('Submitting atomic settlement...');
     }
 
-    // Simulate Monad testnet block confirmation with atomic SettlementEngine execution
-    setTimeout(() => {
-      const mockHash = '0x9e8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8a';
-      setTxHash(mockHash);
-      setPaying(false);
+    try {
+      const res = await relayPayment(agreementId, dollarsToMicro(amount));
+      setResult(res);
       setSettled(true);
-      setAuthStatus('');
-      // Task 5.2: Trigger Confetti Celebration
+      setPaying(false);
+      setAuthMsg('');
       triggerConfetti();
-    }, 1200);
+    } catch (e: any) {
+      setErrorMsg(e.message || 'Payment execution failed');
+      setPaying(false);
+      setAuthMsg('');
+    }
   };
 
+  const earnerPayout = simulation ? microToDollars(simulation.earnerPayout) : amount * 0.9;
+  const backerPayout = simulation ? microToDollars(simulation.actualTotalBackerPayout) : amount * 0.1;
+
   return (
-    <div className="max-w-2xl mx-auto py-8 space-y-8">
-      {/* Back link */}
-      <div className="flex items-center justify-between text-xs text-slate-400">
-        <Link href="/dashboard" className="hover:text-white transition-colors flex items-center gap-1">
-          ← Back to Earner Dashboard
+    <div className="space-y-4">
+      {/* Top back button */}
+      <div className="flex items-center justify-between text-xs">
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-1 text-slate-400 hover:text-white transition-colors"
+        >
+          <ChevronLeft className="h-4 w-4" />
+          Back to Wallet
         </Link>
-        <span className="flex items-center gap-1.5 font-mono text-emerald-400">
-          <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          Monad Testnet Verified
+        <span className="text-[10px] font-mono text-periwinkle bg-periwinkle/10 px-2 py-0.5 rounded-full border border-periwinkle/20">
+          Client Pay Rail
         </span>
       </div>
 
       {/* Main Payment Card */}
-      <div className="glass-panel-glow rounded-3xl p-8 sm:p-10 border border-teal-500/30 space-y-8 relative overflow-hidden">
-        {/* Header */}
-        <div className="flex items-start justify-between border-b border-white/10 pb-6">
-          <div className="space-y-1">
-            <span className="text-xs font-mono uppercase tracking-wider text-brand-400">
-              Verified Invoice #{invoice.id}
-            </span>
-            <h1 className="text-2xl font-black text-white">Payment to {invoice.earner}</h1>
-            <p className="text-xs text-slate-400">{invoice.description}</p>
+      <div className="app-card-highlight p-6 space-y-5">
+        <div className="space-y-1 text-center">
+          <div className="text-[11px] text-periwinkle font-bold uppercase tracking-wider font-mono">
+            Payment To Rahul
           </div>
-          <div className="h-12 w-12 rounded-2xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center font-mono text-2xl">
-            🌊
+          <h2 className="text-xl font-extrabold text-white">{paramDesc}</h2>
+          <div className="text-xs text-slate-400 font-mono">Agreement #{agreementId}</div>
+        </div>
+
+        {/* Amount Box */}
+        <div className="p-4 rounded-2xl bg-black/70 border border-white/10 text-center space-y-1">
+          <div className="text-[10px] text-slate-400 uppercase font-semibold">Total Amount Due</div>
+          <div className="text-4xl font-black text-white flex items-center justify-center gap-1">
+            <span className="text-2xl text-slate-500 font-bold">$</span>
+            <input
+              type="number"
+              disabled={paying || settled}
+              value={amount}
+              onChange={(e) => setAmount(Math.max(1, Number(e.target.value)))}
+              className="bg-transparent text-center font-black text-white w-36 focus:outline-none"
+            />
+            <span className="text-base text-periwinkle font-normal">USDC</span>
+          </div>
+
+          {!settled && (
+            <div className="flex justify-center gap-1.5 pt-2">
+              {[500, 1000, 2000].map((preset) => (
+                <button
+                  key={preset}
+                  onClick={() => setAmount(preset)}
+                  className={`text-[11px] font-mono px-2 py-0.5 rounded-lg transition-colors ${
+                    amount === preset
+                      ? 'bg-periwinkle text-black font-bold'
+                      : 'bg-white/5 text-slate-300 hover:bg-white/10'
+                  }`}
+                >
+                  ${preset}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Automatic Split Preview (Crystal Clear) */}
+        <div className="space-y-2">
+          <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1.5">
+            <Sparkles className="h-3 w-3 text-periwinkle" />
+            Automatic Split at Settlement
+          </div>
+
+          <div className="p-3.5 rounded-2xl bg-black/60 border border-white/5 space-y-2 text-xs">
+            <div className="flex justify-between items-center">
+              <span className="text-slate-300 font-medium">Rahul (Net Kept - 90%)</span>
+              <span className="font-mono font-bold text-periwinkle text-sm">
+                ${earnerPayout.toFixed(2)} USDC
+              </span>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <span className="text-slate-300 font-medium">Repaying Backers (10%)</span>
+              <span className="font-mono font-bold text-coral text-sm">
+                ${backerPayout.toFixed(2)} USDC
+              </span>
+            </div>
+
+            <div className="pt-2 border-t border-white/5 text-[10px] text-slate-400 flex items-center justify-between">
+              <span>• Aman $20 • Priya $30 • Karan $50</span>
+              <span className="text-periwinkle font-semibold">Pro-Rata</span>
+            </div>
           </div>
         </div>
 
-        {/* Amount Display */}
-        <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/5 flex items-baseline justify-between">
-          <div>
-            <div className="text-xs text-slate-400 uppercase tracking-wide font-medium">Total Amount Due</div>
-            <div className="text-4xl font-black text-white mt-1">
-              ${invoice.amount.toLocaleString()} <span className="text-lg text-slate-400 font-normal">USDC</span>
-            </div>
+        {errorMsg && (
+          <div className="p-3 rounded-xl bg-coral/15 border border-coral/30 text-xs text-coral flex items-center gap-2">
+            <AlertCircle className="h-4 w-4 flex-shrink-0" />
+            <span>{errorMsg}</span>
           </div>
-          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/20">
-            Agreement #{invoice.agreementId}
-          </span>
-        </div>
-
-        {/* Settlement Preview Breakdown */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between text-xs font-semibold text-slate-400 uppercase tracking-wide">
-            <span className="flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5 text-brand-400" />
-              Automated Smart Contract Settlement Preview
-            </span>
-            <span className="text-emerald-400 font-mono">100% Deterministic</span>
-          </div>
-
-          <div className="p-4 rounded-xl bg-navy-950/80 border border-white/5 space-y-3 text-xs">
-            <div className="flex items-center justify-between">
-              <span className="text-slate-300">Rahul (Earner - 90%)</span>
-              <span className="font-mono font-bold text-white">$900.00 USDC</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-slate-300">Backers Syndicate (10% Revenue Share)</span>
-              <span className="font-mono font-bold text-brand-400">$100.00 USDC</span>
-            </div>
-
-            <div className="pt-2 border-t border-white/5 space-y-1.5 text-[11px] text-slate-400 pl-3">
-              <div className="flex justify-between">
-                <span>• Aman (20% pro-rata share):</span>
-                <span className="font-mono text-slate-300">$20.00 USDC</span>
-              </div>
-              <div className="flex justify-between">
-                <span>• Priya (30% pro-rata share):</span>
-                <span className="font-mono text-slate-300">$30.00 USDC</span>
-              </div>
-              <div className="flex justify-between">
-                <span>• Karan (50% pro-rata share):</span>
-                <span className="font-mono text-slate-300">$50.00 USDC</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        )}
 
         {/* Action Button */}
         {!settled ? (
-          <div className="space-y-3">
+          <div className="space-y-2 pt-1">
             <button
               onClick={handlePay}
-              disabled={paying}
-              className="w-full glow-btn py-4 rounded-2xl flex items-center justify-center gap-2 text-base font-extrabold disabled:opacity-50"
+              disabled={paying || amount <= 0}
+              className="w-full btn-periwinkle py-4 rounded-2xl text-sm font-black flex items-center justify-center gap-2 shadow-lg shadow-periwinkle/20 disabled:opacity-50"
             >
               {paying ? (
                 <>
-                  <span className="h-5 w-5 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
-                  <span>{authStatus || 'Settling on Monad Testnet via Passkey...'}</span>
+                  <span className="h-4 w-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                  <span>{authMsg || 'Settling on Monad...'}</span>
                 </>
               ) : (
                 <>
                   <Lock className="h-4 w-4" />
-                  Pay $1,000 USDC (1-Click Passkey)
+                  Pay ${amount.toLocaleString()} USDC (1-Click Passkey)
                 </>
               )}
             </button>
-            <div className="flex items-center justify-center gap-2 text-[11px] text-slate-400 text-center">
-              <ShieldCheck className="h-3.5 w-3.5 text-brand-400" />
-              Direct execution via <code className="text-brand-300">SettlementEngine.sol</code> • Zero backend custody
+            <div className="text-[10px] text-slate-400 text-center flex items-center justify-center gap-1">
+              <ShieldCheck className="h-3 w-3 text-periwinkle" />
+              Direct Monad contract rail • Zero middleman custody
             </div>
           </div>
         ) : (
-          <div className="p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 space-y-4">
-            <div className="flex items-center gap-3 text-emerald-400 font-bold text-lg">
-              <CheckCircle2 className="h-6 w-6" />
-              Settlement Completed Successfully!
+          <div className="p-4 rounded-2xl bg-periwinkle/10 border border-periwinkle/30 space-y-3 animate-fade-in">
+            <div className="flex items-center gap-2 text-periwinkle font-bold text-sm">
+              <CheckCircle2 className="h-5 w-5" />
+              Settled & Split Successfully!
             </div>
             <p className="text-xs text-slate-300 leading-relaxed">
-              $1,000 USDC was atomically settled on Monad. Rahul received $900 and backers received $100 instantaneously.
+              <strong className="text-white">${amount.toLocaleString()} USDC</strong> was atomically split:
+              <br />
+              • <strong className="text-periwinkle">+${microToDollars(result?.earnerShare).toFixed(2)}</strong> sent to Rahul
+              <br />
+              • <strong className="text-coral">-${microToDollars(result?.backerShareTotal).toFixed(2)}</strong> sent to backers
             </p>
-            <div className="p-3 rounded-lg bg-black/40 font-mono text-[11px] text-slate-400 break-all border border-white/5">
-              Tx Hash: <span className="text-emerald-400">{txHash}</span>
+
+            <div className="p-2.5 rounded-lg bg-black/60 font-mono text-[10px] text-slate-400 break-all border border-white/5">
+              Tx: <span className="text-periwinkle">{result?.transactionHash}</span>
             </div>
+
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-2 text-xs font-semibold text-brand-300 hover:text-white"
+              className="btn-periwinkle w-full py-3 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 text-center mt-2"
             >
-              View Updated Balances on Dashboard <ArrowRight className="h-3.5 w-3.5" />
+              Back to Live Wallet <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
         )}
       </div>
     </div>
+  );
+}
+
+export default function MobilePaymentPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="py-20 text-center text-xs text-slate-400">
+          Loading Inflow Rail...
+        </div>
+      }
+    >
+      <MobilePaymentContent />
+    </Suspense>
   );
 }

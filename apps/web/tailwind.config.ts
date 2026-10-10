@@ -10,26 +10,41 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        brand: {
-          50: "#f0fdf9",
-          100: "#ccfbf1",
-          400: "#2dd4bf",
-          500: "#14b8a6",
-          600: "#0d9488",
-          700: "#0f766e",
-          900: "#134e4a",
-          glow: "#00F5A0"
+        black: "#000000",
+        periwinkle: {
+          50: "#f5f6ff",
+          100: "#ebedfe",
+          200: "#d7dcfe",
+          300: "#b5bffd",
+          400: "#9ba8fb",
+          500: "#8B9DF8",
+          600: "#7380eb",
+          700: "#5d67db",
+          DEFAULT: "#8B9DF8",
+          glow: "#A5B4FC"
         },
-        navy: {
-          800: "#0a0f1d",
-          850: "#080c18",
-          900: "#05070e",
-          950: "#020408"
+        coral: {
+          50: "#fff5f5",
+          100: "#ffe8e8",
+          200: "#ffd1d1",
+          300: "#ffa8a8",
+          400: "#ff8787",
+          500: "#FF6B6B",
+          600: "#fa5252",
+          DEFAULT: "#FF6B6B",
+          glow: "#FF8787"
+        },
+        surface: {
+          950: "#000000",
+          900: "#08080b",
+          850: "#101015",
+          800: "#181820",
+          border: "rgba(255, 255, 255, 0.08)"
         }
       },
       fontFamily: {
-        sans: ["var(--font-sans)", "Inter", "sans-serif"],
-        mono: ["var(--font-mono)", "JetBrains Mono", "monospace"]
+        sans: ["-apple-system", "BlinkMacSystemFont", "SF Pro Display", "Inter", "sans-serif"],
+        mono: ["SF Mono", "JetBrains Mono", "monospace"]
       }
     },
   },
