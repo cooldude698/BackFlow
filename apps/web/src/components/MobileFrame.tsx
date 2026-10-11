@@ -122,7 +122,7 @@ export default function MobileFrame({ children }: { children: ReactNode }) {
         {/* Scrollable content */}
         <div
           className={`flex-1 overflow-y-auto px-4 py-4 text-slate-900 ${
-            isLoginPage ? 'pb-8' : 'pb-32'
+            isLoginPage ? 'pb-8 flex flex-col' : 'pb-32'
           }`}
         >
           {children}

@@ -212,9 +212,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-full space-y-4 animate-fade-in-up">
-      {/* Top back navigation & step progress */}
-      <div className="space-y-2.5 px-0.5">
+    <div className="w-full flex-1 flex flex-col justify-between animate-fade-in-up">
+      {/* Top back navigation & step progress - Stays pinned at top */}
+      <div className="space-y-2.5 px-0.5 flex-shrink-0">
         <div className="flex items-center justify-between text-xs">
           {step > 1 ? (
             <button
@@ -241,8 +241,10 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* STEP 1: Name & Phone Number */}
-      {step === 1 && (
+      {/* Middle section: Card is centered in the remaining height */}
+      <div className="flex-1 flex flex-col justify-center my-auto py-3">
+        {/* STEP 1: Name & Phone Number */}
+        {step === 1 && (
         <div className="app-card-highlight p-6 space-y-5 animate-fade-in">
           <div className="space-y-1">
             <span className="label-caps text-indigo-600 font-bold">Account Setup</span>
@@ -633,6 +635,7 @@ export default function LoginPage() {
           </button>
         </div>
       )}
+      </div>
     </div>
   );
 }
