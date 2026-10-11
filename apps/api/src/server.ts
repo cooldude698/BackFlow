@@ -167,16 +167,110 @@ app.post('/payments/settle', async (req, res) => {
   }
 });
 
+// User profile state (in-memory persistent store)
+export interface UserProfile {
+  name: string;
+  phone: string;
+  isVerified: boolean;
+  payoutType: 'upi' | 'card' | 'bank' | 'web3';
+  payoutIdentifier: string;
+  payoutDetails?: {
+    upiId?: string;
+    cardNumberMasked?: string;
+    cardHolderName?: string;
+    cardExpiry?: string;
+    bankAccountNumber?: string;
+    ifscOrRouting?: string;
+    walletAddress?: string;
+  };
+}
+
+let currentUserProfile: UserProfile = {
+  name: 'Aman',
+  phone: '+91 98765 43210',
+  isVerified: true,
+  payoutType: 'upi',
+  payoutIdentifier: 'aman@upi',
+  payoutDetails: {
+    upiId: 'aman@upi'
+  }
+};
+
+// Send OTP endpoint
+app.post('/auth/send-otp', (req, res) => {
+  const { phone, name } = req.body;
+  if (!phone) {
+    return res.status(400).json({ error: 'Phone number is required' });
+  }
+  const mockOtp = '849201';
+  res.json({
+    success: true,
+    message: `Verification code sent to ${phone}`,
+    otp: mockOtp,
+    phone
+  });
+});
+
+// Verify OTP endpoint
+app.post('/auth/verify-otp', (req, res) => {
+  const { phone, otp, name } = req.body;
+  if (!otp) {
+    return res.status(400).json({ error: 'OTP is required' });
+  }
+  if (phone) currentUserProfile.phone = phone;
+  if (name) currentUserProfile.name = name;
+  currentUserProfile.isVerified = true;
+
+  const agreement = agreementService.getAgreement('BF-001');
+  if (agreement && name) {
+    agreement.earnerName = name;
+  }
+
+  res.json({
+    success: true,
+    user: currentUserProfile
+  });
+});
+
+// Get user profile
+app.get('/user/profile', (req, res) => {
+  res.json(currentUserProfile);
+});
+
+// Update / connect earner payout rail
+app.post('/user/payout-method', (req, res) => {
+  const { payoutType, payoutIdentifier, payoutDetails, name } = req.body;
+  if (!payoutIdentifier) {
+    return res.status(400).json({ error: 'Payout identifier (UPI ID or Card details) is required' });
+  }
+  currentUserProfile.payoutType = payoutType || 'upi';
+  currentUserProfile.payoutIdentifier = payoutIdentifier;
+  currentUserProfile.payoutDetails = payoutDetails || {};
+  if (name) {
+    currentUserProfile.name = name;
+    const agreement = agreementService.getAgreement('BF-001');
+    if (agreement) {
+      agreement.earnerName = name;
+    }
+  }
+  res.json({
+    success: true,
+    profile: currentUserProfile,
+    message: `Auto-Split rail connected to ${payoutIdentifier}`
+  });
+});
+
 // Gas-Sponsored Relayer Settlement Endpoint
 app.post('/payments/relay', async (req, res) => {
   try {
-    const { agreementId, grossAmount, payerAddress } = req.body;
+    const { agreementId, grossAmount, payerAddress, paymentMethod, payerName } = req.body;
     if (!agreementId || !grossAmount) {
       return res.status(400).json({ error: 'Missing agreementId or grossAmount' });
     }
 
     const amount = BigInt(grossAmount);
     const payer = payerAddress || '0xClient';
+    const method = paymentMethod || 'Monad USDC';
 
     const execution = await paymentAdapter.executeSettlement(agreementId, amount, payer);
 
@@ -190,13 +284,17 @@ app.post('/payments/relay', async (req, res) => {
         grossAmount: amount.toString(),
         earnerShare: execution.earnerShare.toString(),
         totalBackerShare: execution.backerShareTotal.toString(),
-        payer
+        payer,
+        paymentMethod: method,
+        payerName: payerName || 'Client'
       }
     });
 
     res.json(
       serialize({
         ...execution,
+        paymentMethod: method,
+        payerName: payerName || 'Client',
         relaySponsored: true,
         relayerConfigured: paymentAdapter.hasRelayer()
       })

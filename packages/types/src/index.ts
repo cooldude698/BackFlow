@@ -80,6 +80,8 @@ export interface SettlementRecord {
   grossAmount: bigint;
   earnerAmount: bigint;
   totalBackerAmount: bigint;
+  paymentMethod?: string;
+  payerName?: string;
   createdAt: Date;
 }
 

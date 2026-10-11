@@ -15,15 +15,20 @@ import {
   TrendingDown,
   ShieldCheck,
   ChevronRight,
-  QrCode
+  QrCode,
+  CreditCard,
+  Building,
+  UserCheck
 } from 'lucide-react';
 import {
   getAgreement,
   getSettlements,
   relayPayment,
   microToDollars,
+  getUserProfile,
   AgreementDTO,
-  SettlementRecordDTO
+  SettlementRecordDTO,
+  UserProfileDTO
 } from '@/lib/api';
 
 export default function EarnerDashboard() {
@@ -38,17 +43,20 @@ export default function EarnerDashboard() {
 
   // Live data from backend
   const [agreement, setAgreement] = useState<AgreementDTO | null>(null);
+  const [profile, setProfile] = useState<UserProfileDTO | null>(null);
   const [settlements, setSettlements] = useState<SettlementRecordDTO[]>([]);
 
   const loadData = useCallback(async (isManual = false) => {
     if (isManual) setRefreshing(true);
     try {
-      const [ag, stl] = await Promise.all([
+      const [ag, stl, prf] = await Promise.all([
         getAgreement('BF-001'),
-        getSettlements('BF-001')
+        getSettlements('BF-001'),
+        getUserProfile().catch(() => null)
       ]);
       setAgreement(ag);
       setSettlements(stl);
+      if (prf) setProfile(prf);
     } catch (e: any) {
       console.warn('Dashboard sync:', e.message);
     } finally {
@@ -66,7 +74,13 @@ export default function EarnerDashboard() {
   const handleQuickTestPay = async () => {
     setTriggering(true);
     try {
-      await relayPayment('BF-001', '1000000000'); // $1,000 USDC
+      await relayPayment(
+        'BF-001',
+        '1000000000',
+        '0xClientPayer999900000000000000000000000001',
+        'Global Card (Visa •••• 8821)',
+        'Acme Corp'
+      );
       await loadData(false);
     } catch (e: any) {
       alert(`Test payment error: ${e.message}`);
@@ -92,13 +106,16 @@ export default function EarnerDashboard() {
     return acc + microToDollars(curr.earnerAmount);
   }, 0);
 
+  const earnerName = profile?.name || agreement?.earnerName || 'Aman';
+  const payoutRailId = profile?.payoutIdentifier || 'aman@upi';
+
   return (
     <div className="space-y-4">
       {/* 1. Main Balance Hero Card (Pure Black & Periwinkle Glow) */}
       <div className="app-card-highlight p-5 relative overflow-hidden">
         <div className="flex items-center justify-between text-xs text-slate-400 pb-2">
           <span className="font-medium tracking-wide uppercase text-[10px] text-periwinkle font-mono">
-            Rahul • Freelancer Account
+            {earnerName} • Verified Earner
           </span>
           <button
             onClick={() => loadData(true)}
@@ -140,7 +157,37 @@ export default function EarnerDashboard() {
         </div>
       </div>
 
-      {/* 2. Primary Mobile Action Buttons (Two Clean Touch Targets) */}
+      {/* 2. Connected Payout Rail Status Card (UPI / Card) */}
+      <div className="app-card p-3.5 flex items-center justify-between bg-black/60 border border-white/10 text-xs">
+        <div className="flex items-center gap-2.5">
+          <div className="h-8 w-8 rounded-xl bg-periwinkle/15 flex items-center justify-center text-periwinkle">
+            {profile?.payoutType === 'card' ? (
+              <CreditCard className="h-4 w-4" />
+            ) : profile?.payoutType === 'bank' ? (
+              <Building className="h-4 w-4" />
+            ) : (
+              <QrCode className="h-4 w-4" />
+            )}
+          </div>
+          <div>
+            <div className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">
+              Automatic Payout Rail (90% Auto-Deposit)
+            </div>
+            <div className="font-mono font-bold text-white text-xs">
+              {payoutRailId}
+            </div>
+          </div>
+        </div>
+
+        <Link
+          href="/login"
+          className="text-[11px] font-semibold text-periwinkle hover:text-white px-2 py-1 rounded-lg bg-periwinkle/10 border border-periwinkle/20"
+        >
+          Change
+        </Link>
+      </div>
+
+      {/* 3. Primary Mobile Action Buttons (Two Clean Touch Targets) */}
       <div className="grid grid-cols-2 gap-2.5">
         <button
           onClick={() => setModalOpen(true)}
@@ -169,17 +216,17 @@ export default function EarnerDashboard() {
         </button>
       </div>
 
-      {/* 3. How It Works - Clean 1-Sentence Visual Ribbon */}
+      {/* 4. How It Works - Clean 1-Sentence Visual Ribbon */}
       <div className="app-card p-3.5 flex items-center gap-3 text-xs bg-[#0a0a0f]">
         <div className="h-7 w-7 rounded-xl bg-periwinkle/15 flex items-center justify-center text-periwinkle flex-shrink-0 font-bold">
           90/10
         </div>
         <div className="text-[11px] text-slate-300 leading-snug">
-          You keep <strong className="text-white">90%</strong> of client payments. <strong className="text-coral">10%</strong> automatically repays your backers until the 2× cap is hit.
+          You keep <strong className="text-white">90%</strong> of client payments deposited to <span className="text-periwinkle font-mono">{payoutRailId}</span>. <strong className="text-coral">10%</strong> automatically repays your backers.
         </div>
       </div>
 
-      {/* 4. Backers Circle (Clean Simple List) */}
+      {/* 5. Backers Circle (Clean Simple List) */}
       <div className="app-card p-4 space-y-3">
         <div className="flex items-center justify-between">
           <div className="text-xs font-bold text-white flex items-center gap-1.5 uppercase tracking-wide">
@@ -229,7 +276,7 @@ export default function EarnerDashboard() {
         </div>
       </div>
 
-      {/* 5. Recent Activity Ledger */}
+      {/* 6. Recent Activity Ledger */}
       <div className="app-card p-4 space-y-3">
         <div className="flex items-center justify-between">
           <div className="text-xs font-bold text-white uppercase tracking-wide">
@@ -252,7 +299,7 @@ export default function EarnerDashboard() {
           </div>
         ) : (
           <div className="space-y-2">
-            {settlements.slice(0, 5).map((s) => {
+            {settlements.slice(0, 6).map((s) => {
               const gross = microToDollars(s.grossAmount);
               const earner = microToDollars(s.earnerAmount);
               const backer = microToDollars(s.totalBackerAmount);
@@ -271,7 +318,7 @@ export default function EarnerDashboard() {
                       Client Paid ${gross.toFixed(0)} USDC
                     </div>
                     <div className="text-[10px] text-slate-400 font-mono">
-                      {time} • Tx {s.transactionHash.slice(0, 8)}...
+                      {time} • {s.paymentMethod || 'Monad Protocol'}
                     </div>
                   </div>
 
@@ -341,7 +388,7 @@ export default function EarnerDashboard() {
               {/* Instant Split Preview */}
               <div className="p-3 rounded-xl bg-black/80 border border-white/5 space-y-1.5 text-xs">
                 <div className="flex justify-between text-slate-300">
-                  <span>You Keep (90%):</span>
+                  <span>Direct to {payoutRailId} (90%):</span>
                   <span className="font-mono font-bold text-periwinkle">
                     ${(chargeAmount * 0.9).toFixed(2)} USDC
                   </span>

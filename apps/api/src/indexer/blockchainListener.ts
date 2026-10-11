@@ -92,6 +92,8 @@ export class BlockchainListener {
         grossAmount,
         earnerAmount: earnerShare > 0n ? earnerShare : (grossAmount * 9000n) / 10000n,
         totalBackerAmount: totalBackerShare > 0n ? totalBackerShare : (grossAmount * 1000n) / 10000n,
+        paymentMethod: event.args.paymentMethod || 'Monad USDC',
+        payerName: event.args.payerName || event.args.payer || 'Client',
         createdAt: new Date()
       };
 

@@ -1,11 +1,22 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Wifi, BatteryMedium, Signal, ShieldCheck } from 'lucide-react';
+import { Wifi, BatteryMedium, Signal, ShieldCheck, User } from 'lucide-react';
 import MobileBottomNav from './MobileBottomNav';
+import { getUserProfile, UserProfileDTO } from '@/lib/api';
 
 export default function MobileFrame({ children }: { children: ReactNode }) {
+  const [profile, setProfile] = useState<UserProfileDTO | null>(null);
+
+  useEffect(() => {
+    getUserProfile()
+      .then(setProfile)
+      .catch(() => {});
+  }, []);
+
+  const earnerName = profile?.name || 'Aman';
+
   return (
     <div className="min-h-screen bg-black flex flex-col items-center justify-start sm:justify-center sm:py-6 sm:px-4">
       {/* Phone container */}
@@ -47,13 +58,15 @@ export default function MobileFrame({ children }: { children: ReactNode }) {
             </div>
           </Link>
 
-          {/* Earner Status Badge */}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#121218] border border-white/10 text-[11px]">
-              <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
-              <span className="font-semibold text-slate-200">Rahul</span>
-            </div>
-          </div>
+          {/* Earner Status Badge (Links to Login/Payout settings) */}
+          <Link
+            href="/login"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#121218] hover:bg-[#181822] border border-white/10 text-[11px] transition-colors"
+            title="Account & Payout Rail Settings"
+          >
+            <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
+            <span className="font-semibold text-slate-200">{earnerName}</span>
+          </Link>
         </header>
 
         {/* Scrollable Main Mobile Content */}
