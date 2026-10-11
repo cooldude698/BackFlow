@@ -2,21 +2,21 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Wallet, QrCode, SlidersHorizontal, UserCheck } from 'lucide-react';
+import { Wallet, QrCode, SlidersHorizontal, User } from 'lucide-react';
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
 
-  const isHome = pathname === '/' || pathname === '/dashboard';
+  const isWallet = pathname === '/dashboard';
   const isPay = pathname.startsWith('/pay');
   const isSim = pathname.startsWith('/simulator');
-  const isAccount = pathname.startsWith('/login');
+  const isProfile = pathname.startsWith('/profile');
 
   const navItems = [
     {
       label: 'Wallet',
       href: '/dashboard',
-      active: isHome,
+      active: isWallet,
       icon: Wallet
     },
     {
@@ -26,16 +26,16 @@ export default function MobileBottomNav() {
       icon: QrCode
     },
     {
-      label: 'Payout Rail',
-      href: '/login',
-      active: isAccount,
-      icon: UserCheck
-    },
-    {
       label: 'Simulate',
       href: '/simulator',
       active: isSim,
       icon: SlidersHorizontal
+    },
+    {
+      label: 'Profile',
+      href: '/profile',
+      active: isProfile,
+      icon: User
     }
   ];
 

@@ -656,12 +656,12 @@ export default function LoginPage() {
             ) : connectedSuccess ? (
               <>
                 <Check className="h-4 w-4" />
-                <span>Connected! Opening Wallet...</span>
+                <span>Connected! Entering Portal...</span>
               </>
             ) : (
               <>
                 <ShieldCheck className="h-4 w-4" />
-                <span>Connect Payout Rail & Enter Wallet</span>
+                <span>Connect Payout Rail & Enter Portal</span>
               </>
             )}
           </button>

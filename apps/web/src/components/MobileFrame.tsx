@@ -2,18 +2,43 @@
 
 import { ReactNode, useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Wifi, BatteryMedium, Signal, ShieldCheck, User } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { Wifi, BatteryMedium, Signal } from 'lucide-react';
 import MobileBottomNav from './MobileBottomNav';
 import { getUserProfile, UserProfileDTO } from '@/lib/api';
 
 export default function MobileFrame({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const [profile, setProfile] = useState<UserProfileDTO | null>(null);
 
+  const isLoginPage = pathname === '/login' || pathname === '/';
+
   useEffect(() => {
+    // Only fetch profile if inside portal or checking
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('backflow_user');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (parsed.name) {
+            setProfile((prev) => ({
+              name: parsed.name,
+              phone: parsed.phone || '',
+              isVerified: true,
+              payoutType: parsed.payoutType || 'upi',
+              payoutIdentifier: parsed.payoutIdentifier || ''
+            }));
+          }
+        } catch {}
+      }
+    }
+
     getUserProfile()
-      .then(setProfile)
+      .then((p) => {
+        if (p) setProfile(p);
+      })
       .catch(() => {});
-  }, []);
+  }, [pathname]);
 
   const earnerName = profile?.name || 'Aman';
 
@@ -39,43 +64,73 @@ export default function MobileFrame({ children }: { children: ReactNode }) {
           </div>
         </div>
 
-        {/* Top App Header */}
-        <header className="px-5 pt-3 pb-3 flex items-center justify-between border-b border-white/[0.06] flex-shrink-0 z-20 bg-black/80 backdrop-blur-lg">
-          <Link href="/dashboard" className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-periwinkle to-periwinkle-glow flex items-center justify-center font-black text-black text-base shadow-md shadow-periwinkle/20">
-              🌊
-            </div>
-            <div>
-              <div className="text-sm font-extrabold text-white tracking-tight leading-none flex items-center gap-1.5">
-                BackFlow
-                <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-periwinkle/15 text-periwinkle border border-periwinkle/30 font-bold">
-                  App
-                </span>
+        {/* Top Header: Distinct for Login vs Portal */}
+        {isLoginPage ? (
+          <header className="px-5 pt-3.5 pb-3 flex items-center justify-between border-b border-white/[0.06] flex-shrink-0 z-20 bg-black/80 backdrop-blur-lg">
+            <div className="flex items-center gap-2.5">
+              <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-periwinkle to-periwinkle-glow flex items-center justify-center font-black text-black text-base shadow-md shadow-periwinkle/20">
+                🌊
               </div>
-              <div className="text-[10px] text-slate-400 font-medium mt-0.5">
-                Auto-Split Consumer Rail
+              <div>
+                <div className="text-sm font-extrabold text-white tracking-tight leading-none flex items-center gap-1.5">
+                  BackFlow
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-periwinkle/15 text-periwinkle border border-periwinkle/30 font-bold">
+                    Login
+                  </span>
+                </div>
+                <div className="text-[10px] text-slate-400 font-medium mt-0.5">
+                  Earner Verification & Rail Setup
+                </div>
               </div>
             </div>
-          </Link>
 
-          {/* Earner Status Badge (Links to Login/Payout settings) */}
-          <Link
-            href="/login"
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#121218] hover:bg-[#181822] border border-white/10 text-[11px] transition-colors"
-            title="Account & Payout Rail Settings"
-          >
-            <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
-            <span className="font-semibold text-slate-200">{earnerName}</span>
-          </Link>
-        </header>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Secure Step</span>
+            </div>
+          </header>
+        ) : (
+          <header className="px-5 pt-3 pb-3 flex items-center justify-between border-b border-white/[0.06] flex-shrink-0 z-20 bg-black/80 backdrop-blur-lg">
+            <Link href="/dashboard" className="flex items-center gap-2.5">
+              <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-periwinkle to-periwinkle-glow flex items-center justify-center font-black text-black text-base shadow-md shadow-periwinkle/20">
+                🌊
+              </div>
+              <div>
+                <div className="text-sm font-extrabold text-white tracking-tight leading-none flex items-center gap-1.5">
+                  BackFlow
+                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-periwinkle/15 text-periwinkle border border-periwinkle/30 font-bold">
+                    Portal
+                  </span>
+                </div>
+                <div className="text-[10px] text-slate-400 font-medium mt-0.5">
+                  Auto-Split Consumer Rail
+                </div>
+              </div>
+            </Link>
+
+            {/* Earner Status Badge (Links to 4th tab: Profile) */}
+            <Link
+              href="/profile"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#121218] hover:bg-[#181822] border border-white/10 text-[11px] transition-colors"
+              title="User Profile & Payout Details"
+            >
+              <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
+              <span className="font-semibold text-slate-200">{earnerName}</span>
+            </Link>
+          </header>
+        )}
 
         {/* Scrollable Main Mobile Content */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 pb-28 text-white space-y-4">
+        <div
+          className={`flex-1 overflow-y-auto px-4 py-4 text-white space-y-4 ${
+            isLoginPage ? 'pb-8' : 'pb-28'
+          }`}
+        >
           {children}
         </div>
 
-        {/* Fixed Mobile Bottom Navigation */}
-        <MobileBottomNav />
+        {/* Fixed Mobile Bottom Navigation - ONLY shown inside the portal, NEVER on login */}
+        {!isLoginPage && <MobileBottomNav />}
       </div>
     </div>
   );

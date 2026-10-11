@@ -199,7 +199,7 @@ export default function EarnerDashboard() {
 
         <div className="flex items-center gap-1.5">
           <Link
-            href="/login"
+            href="/profile"
             className="text-[11px] font-semibold text-periwinkle hover:text-white px-2 py-1 rounded-lg bg-periwinkle/10 border border-periwinkle/20 transition-colors"
           >
             Change
