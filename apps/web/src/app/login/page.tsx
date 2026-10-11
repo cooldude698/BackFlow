@@ -57,9 +57,16 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [connectedSuccess, setConnectedSuccess] = useState(false);
+  const [hasExistingSession, setHasExistingSession] = useState(false);
 
   // Load existing profile if any
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('backflow_user');
+      if (stored) {
+        setHasExistingSession(true);
+      }
+    }
     getUserProfile()
       .then((p) => {
         if (p.name) setName(p.name);
@@ -217,15 +224,12 @@ export default function LoginPage() {
             Back
           </button>
         ) : (
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-1 text-slate-400 hover:text-white transition-colors"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Wallet
-          </Link>
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-[11px] text-slate-300 font-semibold font-mono">Earner Onboarding</span>
+          </div>
         )}
-        <span className="text-[10px] font-mono text-periwinkle bg-periwinkle/10 px-2 py-0.5 rounded-full border border-periwinkle/20">
+        <span className="text-[10px] font-mono text-periwinkle bg-periwinkle/10 px-2.5 py-0.5 rounded-full border border-periwinkle/20 font-bold">
           Step {step} of 3
         </span>
       </div>
@@ -261,6 +265,21 @@ export default function LoginPage() {
               We&apos;ll send an instant security code to verify your earner profile.
             </p>
           </div>
+
+          {hasExistingSession && (
+            <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10 text-xs text-slate-300">
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                <span>Signed in as <strong className="text-white">{name}</strong></span>
+              </div>
+              <Link
+                href="/dashboard"
+                className="text-[11px] font-bold text-periwinkle hover:underline flex items-center gap-1"
+              >
+                Go to Wallet →
+              </Link>
+            </div>
+          )}
 
           <form onSubmit={handleSendOtp} className="space-y-4">
             <div>

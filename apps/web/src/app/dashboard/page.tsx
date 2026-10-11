@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   Wallet,
   ArrowUpRight,
@@ -18,7 +19,8 @@ import {
   QrCode,
   CreditCard,
   Building,
-  UserCheck
+  UserCheck,
+  LogOut
 } from 'lucide-react';
 import {
   getAgreement,
@@ -32,6 +34,7 @@ import {
 } from '@/lib/api';
 
 export default function EarnerDashboard() {
+  const router = useRouter();
   const [copied, setCopied] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -65,10 +68,25 @@ export default function EarnerDashboard() {
   }, []);
 
   useEffect(() => {
+    // Landing page & route protection: redirect to login if unauthenticated
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('backflow_user');
+      if (!stored) {
+        router.push('/login');
+        return;
+      }
+    }
     loadData();
     const timer = setInterval(() => loadData(false), 3500);
     return () => clearInterval(timer);
-  }, [loadData]);
+  }, [loadData, router]);
+
+  const handleLogout = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('backflow_user');
+    }
+    router.push('/login');
+  };
 
   // 1-Click quick test payment
   const handleQuickTestPay = async () => {
@@ -179,12 +197,22 @@ export default function EarnerDashboard() {
           </div>
         </div>
 
-        <Link
-          href="/login"
-          className="text-[11px] font-semibold text-periwinkle hover:text-white px-2 py-1 rounded-lg bg-periwinkle/10 border border-periwinkle/20"
-        >
-          Change
-        </Link>
+        <div className="flex items-center gap-1.5">
+          <Link
+            href="/login"
+            className="text-[11px] font-semibold text-periwinkle hover:text-white px-2 py-1 rounded-lg bg-periwinkle/10 border border-periwinkle/20 transition-colors"
+          >
+            Change
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="text-[11px] font-semibold text-slate-400 hover:text-coral px-2 py-1 rounded-lg bg-white/5 hover:bg-coral/10 border border-white/10 hover:border-coral/20 flex items-center gap-1 transition-colors"
+            title="Log out and return to landing login page"
+          >
+            <LogOut className="h-3 w-3" />
+            Logout
+          </button>
+        </div>
       </div>
 
       {/* 3. Primary Mobile Action Buttons (Two Clean Touch Targets) */}
