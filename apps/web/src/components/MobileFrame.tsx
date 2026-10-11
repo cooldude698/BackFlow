@@ -6,10 +6,12 @@ import { usePathname } from 'next/navigation';
 import { Wifi, BatteryMedium, Signal } from 'lucide-react';
 import MobileBottomNav from './MobileBottomNav';
 import { getUserProfile, UserProfileDTO } from '@/lib/api';
+import { useLoginStep } from '../context/LoginStepContext';
 
 export default function MobileFrame({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isLoginPage = pathname === '/login';
+  const { step: loginStep } = useLoginStep();
 
   const [profile, setProfile] = useState<UserProfileDTO | null>(null);
 
@@ -77,12 +79,8 @@ export default function MobileFrame({ children }: { children: ReactNode }) {
               </div>
             </div>
 
-            <div
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] mono shadow-xs"
-              style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.08)' }}
-            >
-              <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: '#10b981' }} />
-              <span className="text-slate-600 font-medium">Secure Step</span>
+            <div className="badge-periwinkle font-mono text-[10px] px-2.5 py-1 shadow-2xs">
+              Step {loginStep} of 3
             </div>
           </header>
         ) : (

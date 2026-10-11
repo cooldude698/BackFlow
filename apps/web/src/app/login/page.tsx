@@ -21,12 +21,13 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { sendOtp, verifyOtp, updatePayoutMethod, getUserProfile } from '@/lib/api';
+import { useLoginStep } from '@/context/LoginStepContext';
 
 export default function LoginPage() {
   const router = useRouter();
 
-  // Wizard Step: 1 = Phone & Name, 2 = OTP, 3 = Connect Payout Rail
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  // Wizard Step synchronized with MobileFrame header
+  const { step, setStep } = useLoginStep();
 
   // Form states
   const [name, setName] = useState('Aman');
@@ -60,8 +61,9 @@ export default function LoginPage() {
   const [connectedSuccess, setConnectedSuccess] = useState(false);
   const [hasExistingSession, setHasExistingSession] = useState(false);
 
-  // Load existing profile if any
+  // Load existing profile if any & reset step to 1
   useEffect(() => {
+    setStep(1);
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('backflow_user');
       if (stored) {
@@ -221,25 +223,20 @@ export default function LoginPage() {
 
   return (
     <div className="w-full flex-1 flex flex-col justify-between animate-fade-in-up">
-      {/* Top back navigation & step progress - Stays pinned at top */}
-      <div className="space-y-2.5 px-0.5 flex-shrink-0">
-        <div className="flex items-center justify-between text-xs">
-          {step > 1 ? (
+      {/* Top back navigation & step progress bar - Stays pinned at top */}
+      <div className="space-y-2 px-0.5 flex-shrink-0">
+        {step > 1 && (
+          <div className="flex items-center justify-start text-xs pb-0.5">
             <button
+              type="button"
               onClick={() => setStep((s) => (s - 1) as 1 | 2)}
               className="flex items-center gap-1 text-slate-500 hover:text-slate-900 transition-colors font-medium"
             >
               <ChevronLeft className="h-4 w-4" />
               Back
             </button>
-          ) : (
-            <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[11px] text-slate-600 font-bold tracking-tight">Earner Onboarding</span>
-            </div>
-          )}
-          <span className="badge-periwinkle font-mono text-[10px]">Step {step} of 3</span>
-        </div>
+          </div>
+        )}
 
         {/* Wizard Progress Bar */}
         <div className="grid grid-cols-3 gap-1.5">

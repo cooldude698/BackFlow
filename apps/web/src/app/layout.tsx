@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import MobileFrame from '../components/MobileFrame';
+import { LoginStepProvider } from '../context/LoginStepContext';
 
 export const metadata: Metadata = {
   title: 'BackFlow App | Mobile Revenue Sharing Rail',
@@ -24,7 +25,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="bg-[#f1f3f9]">
       <body className="bg-[#f1f3f9] text-slate-900 antialiased selection:bg-indigo-500 selection:text-white">
-        <MobileFrame>{children}</MobileFrame>
+        <LoginStepProvider>
+          <MobileFrame>{children}</MobileFrame>
+        </LoginStepProvider>
       </body>
     </html>
   );
