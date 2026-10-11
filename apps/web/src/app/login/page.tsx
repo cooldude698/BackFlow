@@ -212,9 +212,22 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="space-y-4">
-      {/* Top back navigation */}
-      <div className="flex items-center justify-between text-xs">
+    <div className="w-full my-auto space-y-4 py-3 animate-fade-in">
+      {/* Centered Brand Mark */}
+      <div className="flex items-center justify-center gap-2 pb-0.5">
+        <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-periwinkle to-periwinkle-glow flex items-center justify-center text-base shadow-md shadow-periwinkle/25">
+          🌊
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="font-extrabold text-white text-base tracking-tight">BackFlow</span>
+          <span className="text-[10px] font-mono font-bold text-periwinkle bg-periwinkle/15 px-1.5 py-0.5 rounded border border-periwinkle/25">
+            Auth
+          </span>
+        </div>
+      </div>
+
+      {/* Top back navigation & step pill */}
+      <div className="flex items-center justify-between text-xs px-0.5">
         {step > 1 ? (
           <button
             onClick={() => setStep((s) => (s - 1) as 1 | 2)}
