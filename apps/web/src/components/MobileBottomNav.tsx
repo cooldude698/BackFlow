@@ -40,34 +40,44 @@ export default function MobileBottomNav() {
   ];
 
   return (
-    <nav className="fixed sm:absolute bottom-0 left-0 right-0 z-40 bottom-nav-blur border-t border-white/10 px-4 py-2 sm:rounded-b-[2.5rem]">
-      <div className="flex items-center justify-between max-w-md mx-auto">
+    <nav
+      className="fixed sm:absolute bottom-0 left-0 right-0 z-40 sm:rounded-b-[2.5rem]"
+      style={{
+        background: 'rgba(255,255,255,0.92)',
+        backdropFilter: 'blur(28px) saturate(180%)',
+        borderTop: '1px solid rgba(0,0,0,0.06)',
+        boxShadow: '0 -4px 20px -2px rgba(15,23,42,0.05)'
+      }}
+    >
+      <div className="flex items-center justify-around max-w-md mx-auto px-1 py-2">
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
             <Link
               key={item.label}
               href={item.href}
-              className={`flex flex-col items-center gap-1 transition-all py-1 px-2.5 rounded-xl ${
-                item.active
-                  ? 'text-periwinkle scale-105 font-bold'
-                  : 'text-slate-400 hover:text-white font-medium'
-              }`}
+              className="flex flex-col items-center gap-1 transition-all duration-200 py-1 px-3 rounded-2xl"
             >
               <div
-                className={`p-1.5 rounded-xl transition-colors ${
-                  item.active ? 'bg-periwinkle/15 text-periwinkle' : 'bg-transparent'
-                }`}
+                className="p-1.5 rounded-xl transition-all duration-200"
+                style={item.active
+                  ? { background: 'rgba(99,102,241,0.12)', color: '#6366f1' }
+                  : { color: 'rgba(100,116,139,0.7)' }}
               >
-                <Icon className="h-4.5 w-4.5" />
+                <Icon className="h-5 w-5" strokeWidth={item.active ? 2.3 : 1.8} />
               </div>
-              <span className="text-[10px] tracking-tight">{item.label}</span>
+              <span
+                className="text-[10px] font-semibold tracking-tight transition-all"
+                style={item.active ? { color: '#6366f1', fontWeight: 700 } : { color: '#64748b' }}
+              >
+                {item.label}
+              </span>
             </Link>
           );
         })}
       </div>
-      {/* Home indicator bar (iPhone gesture bar) */}
-      <div className="w-28 h-1 bg-white/20 rounded-full mx-auto mt-1.5"></div>
+      {/* iPhone home indicator */}
+      <div className="w-28 h-1 rounded-full mx-auto mb-2" style={{ background: 'rgba(0,0,0,0.18)' }} />
     </nav>
   );
 }

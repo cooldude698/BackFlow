@@ -13,7 +13,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: 'cover',
-  themeColor: '#000000',
+  themeColor: '#f4f5fa',
 };
 
 export default function RootLayout({
@@ -22,8 +22,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark bg-black">
-      <body className="bg-black text-slate-100 antialiased selection:bg-periwinkle selection:text-black">
+    <html lang="en" className="bg-[#f1f3f9]">
+      <body className="bg-[#f1f3f9] text-slate-900 antialiased selection:bg-indigo-500 selection:text-white">
         <MobileFrame>{children}</MobileFrame>
       </body>
     </html>

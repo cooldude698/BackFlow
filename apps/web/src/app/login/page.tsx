@@ -85,23 +85,24 @@ export default function LoginPage() {
         if (p.payoutIdentifier) {
           if (p.payoutType === 'upi') setUpiId(p.payoutIdentifier);
           if (p.payoutType === 'card') setCardNumber(p.payoutIdentifier);
+          if (p.payoutType === 'bank') setBankAccount(p.payoutIdentifier);
         }
       })
       .catch(() => {});
   }, []);
 
-  // OTP Countdown timer
+  // Timer countdown
   useEffect(() => {
     if (step === 2 && otpTimer > 0) {
-      const interval = setInterval(() => setOtpTimer((t) => t - 1), 1000);
-      return () => clearInterval(interval);
+      const timer = setTimeout(() => setOtpTimer((t) => t - 1), 1000);
+      return () => clearTimeout(timer);
     }
   }, [step, otpTimer]);
 
   // Step 1: Send OTP
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!phone || phone.length < 8) {
+    if (!phone || phone.length < 7) {
       setErrorMsg('Please enter a valid phone number');
       return;
     }
@@ -109,9 +110,8 @@ export default function LoginPage() {
     setErrorMsg(null);
     try {
       const fullPhone = `${countryCode} ${phone}`;
-      const res = await sendOtp(fullPhone, name);
+      const res = await sendOtp(fullPhone);
       setReceivedOtp(res.otp || '849201');
-      setOtp((res.otp || '849201').split(''));
       setStep(2);
       setOtpTimer(30);
     } catch (err: any) {
@@ -198,12 +198,12 @@ export default function LoginPage() {
         particleCount: 80,
         spread: 70,
         origin: { y: 0.6 },
-        colors: ['#8B9DF8', '#A5B4FC', '#FF6B6B', '#ffffff']
+        colors: ['#6366f1', '#818cf8', '#f43f5e', '#ffffff']
       });
 
       setTimeout(() => {
         router.push('/dashboard');
-      }, 1500);
+      }, 1200);
     } catch (err: any) {
       setErrorMsg(err.message || 'Failed to connect payout rail');
     } finally {
@@ -212,69 +212,53 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 animate-fade-in-up">
       {/* Top back navigation */}
       <div className="flex items-center justify-between text-xs">
         {step > 1 ? (
           <button
             onClick={() => setStep((s) => (s - 1) as 1 | 2)}
-            className="flex items-center gap-1 text-slate-400 hover:text-white transition-colors"
+            className="flex items-center gap-1 text-slate-500 hover:text-slate-900 transition-colors font-medium"
           >
             <ChevronLeft className="h-4 w-4" />
             Back
           </button>
         ) : (
           <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[11px] text-slate-300 font-semibold font-mono">Earner Onboarding</span>
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[11px] text-slate-600 font-semibold font-mono">Earner Onboarding</span>
           </div>
         )}
-        <span className="text-[10px] font-mono text-periwinkle bg-periwinkle/10 px-2.5 py-0.5 rounded-full border border-periwinkle/20 font-bold">
-          Step {step} of 3
-        </span>
+        <span className="badge-periwinkle">Step {step} of 3</span>
       </div>
 
       {/* Wizard Progress Bar */}
       <div className="grid grid-cols-3 gap-1.5 px-1">
-        <div
-          className={`h-1.5 rounded-full transition-all ${
-            step >= 1 ? 'bg-periwinkle' : 'bg-white/10'
-          }`}
-        />
-        <div
-          className={`h-1.5 rounded-full transition-all ${
-            step >= 2 ? 'bg-periwinkle' : 'bg-white/10'
-          }`}
-        />
-        <div
-          className={`h-1.5 rounded-full transition-all ${
-            step >= 3 ? 'bg-periwinkle' : 'bg-white/10'
-          }`}
-        />
+        <div className={`h-1.5 rounded-full transition-all ${step >= 1 ? 'bg-indigo-600' : 'bg-slate-200'}`} />
+        <div className={`h-1.5 rounded-full transition-all ${step >= 2 ? 'bg-indigo-600' : 'bg-slate-200'}`} />
+        <div className={`h-1.5 rounded-full transition-all ${step >= 3 ? 'bg-indigo-600' : 'bg-slate-200'}`} />
       </div>
 
       {/* STEP 1: Name & Phone Number */}
       {step === 1 && (
         <div className="app-card-highlight p-6 space-y-5 animate-fade-in">
           <div className="space-y-1">
-            <span className="text-[10px] font-mono uppercase text-periwinkle tracking-wider font-bold">
-              Account Setup
-            </span>
-            <h2 className="text-xl font-extrabold text-white">Enter Your Phone</h2>
-            <p className="text-xs text-slate-400">
+            <span className="label-caps text-indigo-600 font-bold">Account Setup</span>
+            <h2 className="text-xl font-extrabold text-slate-900">Enter Your Phone</h2>
+            <p className="text-xs text-slate-500">
               We&apos;ll send an instant security code to verify your earner profile.
             </p>
           </div>
 
           {hasExistingSession && (
-            <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10 text-xs text-slate-300">
+            <div className="flex items-center justify-between p-3 rounded-xl bg-indigo-50/80 border border-indigo-200 text-xs text-slate-700 shadow-2xs">
               <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                <span>Signed in as <strong className="text-white">{name}</strong></span>
+                <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                <span>Signed in as <strong className="text-slate-900">{name}</strong></span>
               </div>
               <Link
                 href="/dashboard"
-                className="text-[11px] font-bold text-periwinkle hover:underline flex items-center gap-1"
+                className="text-[11px] font-bold text-indigo-600 hover:underline flex items-center gap-1"
               >
                 Go to Wallet →
               </Link>
@@ -283,28 +267,24 @@ export default function LoginPage() {
 
           <form onSubmit={handleSendOtp} className="space-y-4">
             <div>
-              <label className="text-[11px] text-slate-400 uppercase font-semibold">
-                Your Full Name
-              </label>
+              <label className="label-caps block mb-1">Your Full Name</label>
               <input
                 type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Aman"
-                className="w-full mt-1.5 px-3.5 py-3 rounded-xl bg-black border border-white/10 text-white font-medium text-sm focus:outline-none focus:border-periwinkle"
+                className="w-full px-3.5 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-medium text-sm focus:outline-none focus:border-indigo-500"
               />
             </div>
 
             <div>
-              <label className="text-[11px] text-slate-400 uppercase font-semibold">
-                Mobile Number
-              </label>
-              <div className="flex gap-2 mt-1.5">
+              <label className="label-caps block mb-1">Mobile Number</label>
+              <div className="flex gap-2">
                 <select
                   value={countryCode}
                   onChange={(e) => setCountryCode(e.target.value)}
-                  className="bg-black border border-white/10 rounded-xl px-2.5 py-3 text-xs text-white font-mono focus:outline-none focus:border-periwinkle"
+                  className="bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-3 text-xs text-slate-900 font-mono focus:outline-none focus:border-indigo-500"
                 >
                   <option value="+91">🇮🇳 +91</option>
                   <option value="+1">🇺🇸 +1</option>
@@ -318,13 +298,13 @@ export default function LoginPage() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
                   placeholder="98765 43210"
-                  className="w-full px-3.5 py-3 rounded-xl bg-black border border-white/10 text-white font-mono font-medium text-sm focus:outline-none focus:border-periwinkle"
+                  className="w-full px-3.5 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono font-medium text-sm focus:outline-none focus:border-indigo-500"
                 />
               </div>
             </div>
 
             {errorMsg && (
-              <div className="p-3 rounded-xl bg-coral/15 border border-coral/30 text-xs text-coral flex items-center gap-2">
+              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center gap-2">
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
                 <span>{errorMsg}</span>
               </div>
@@ -333,11 +313,11 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full btn-periwinkle py-3.5 rounded-2xl text-xs font-black flex items-center justify-center gap-2 shadow-lg shadow-periwinkle/20 disabled:opacity-50"
+              className="w-full btn-periwinkle py-3.5 rounded-2xl text-xs font-black flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {loading ? (
                 <>
-                  <span className="h-4 w-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                  <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   <span>Sending Code...</span>
                 </>
               ) : (
@@ -349,8 +329,8 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="text-[10px] text-slate-400 text-center flex items-center justify-center gap-1.5 pt-1">
-            <Lock className="h-3 w-3 text-periwinkle" />
+          <div className="text-[10px] text-slate-400 text-center flex items-center justify-center gap-1.5 pt-1 font-medium">
+            <Lock className="h-3 w-3 text-indigo-600" />
             End-to-end encrypted • Zero password vulnerability
           </div>
         </div>
@@ -360,32 +340,30 @@ export default function LoginPage() {
       {step === 2 && (
         <div className="app-card-highlight p-6 space-y-5 animate-fade-in">
           <div className="space-y-1">
-            <span className="text-[10px] font-mono uppercase text-periwinkle tracking-wider font-bold">
-              Verification
-            </span>
-            <h2 className="text-xl font-extrabold text-white">Enter 6-Digit OTP</h2>
-            <p className="text-xs text-slate-400">
-              Code sent to <span className="font-mono text-white font-semibold">{countryCode} {phone}</span>
+            <span className="label-caps text-indigo-600 font-bold">Verification</span>
+            <h2 className="text-xl font-extrabold text-slate-900">Enter 6-Digit OTP</h2>
+            <p className="text-xs text-slate-500">
+              Code sent to <span className="font-mono text-slate-900 font-semibold">{countryCode} {phone}</span>
             </p>
           </div>
 
-          {/* Simulated SMS Notification Banner */}
-          <div className="p-3 rounded-xl bg-periwinkle/10 border border-periwinkle/30 space-y-1 text-xs">
-            <div className="flex items-center justify-between text-periwinkle font-semibold text-[11px]">
+          {/* SMS Notification Banner */}
+          <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-200 space-y-1 text-xs">
+            <div className="flex items-center justify-between text-indigo-700 font-semibold text-[11px]">
               <span className="flex items-center gap-1.5">
                 <Sparkles className="h-3.5 w-3.5" />
                 SMS Code Delivered:
               </span>
               <button
                 type="button"
-                onClick={() => setOtp(['8', '4', '9', '2', '0', '1'])}
-                className="underline hover:text-white font-bold"
+                onClick={() => setOtp((receivedOtp || '849201').split(''))}
+                className="underline hover:text-indigo-900 font-bold"
               >
                 Auto-fill
               </button>
             </div>
-            <div className="font-mono font-bold text-white text-sm tracking-wider">
-              849201
+            <div className="font-mono font-bold text-slate-900 text-sm tracking-wider">
+              {receivedOtp || '849201'}
             </div>
           </div>
 
@@ -414,13 +392,13 @@ export default function LoginPage() {
                     otpInputRefs.current[idx - 1]?.focus();
                   }
                 }}
-                className="w-11 h-13 text-center text-xl font-black rounded-xl bg-black border border-white/15 text-white focus:outline-none focus:border-periwinkle font-mono"
+                className="w-11 h-13 text-center text-xl font-black rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-500 font-mono shadow-2xs"
               />
             ))}
           </div>
 
           {errorMsg && (
-            <div className="p-3 rounded-xl bg-coral/15 border border-coral/30 text-xs text-coral flex items-center gap-2">
+            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center gap-2">
               <AlertCircle className="h-4 w-4 flex-shrink-0" />
               <span>{errorMsg}</span>
             </div>
@@ -430,11 +408,11 @@ export default function LoginPage() {
             <button
               onClick={handleVerifyOtp}
               disabled={loading || otp.join('').length !== 6}
-              className="w-full btn-periwinkle py-3.5 rounded-2xl text-xs font-black flex items-center justify-center gap-2 shadow-lg shadow-periwinkle/20 disabled:opacity-50"
+              className="w-full btn-periwinkle py-3.5 rounded-2xl text-xs font-black flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {loading ? (
                 <>
-                  <span className="h-4 w-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                  <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   <span>Verifying...</span>
                 </>
               ) : (
@@ -452,7 +430,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setOtpTimer(30)}
-                  className="text-periwinkle hover:underline font-semibold"
+                  className="text-indigo-600 hover:underline font-semibold"
                 >
                   Resend OTP
                 </button>
@@ -462,28 +440,26 @@ export default function LoginPage() {
         </div>
       )}
 
-      {/* STEP 3: Connect Payout Rail (Where YOU receive the 90% net revenue) */}
+      {/* STEP 3: Connect Payout Rail */}
       {step === 3 && (
         <div className="app-card-highlight p-6 space-y-5 animate-fade-in">
           <div className="space-y-1">
-            <span className="text-[10px] font-mono uppercase text-periwinkle tracking-wider font-bold">
-              Automatic Payout Rail
-            </span>
-            <h2 className="text-xl font-extrabold text-white">Where Should We Send Your 90%?</h2>
-            <p className="text-xs text-slate-400 leading-snug">
+            <span className="label-caps text-indigo-600 font-bold">Automatic Payout Rail</span>
+            <h2 className="text-xl font-extrabold text-slate-900">Where Should We Send Your 90%?</h2>
+            <p className="text-xs text-slate-500 leading-snug">
               Every time a client pays, your 90% automatically deposits here while 10% repays your backers.
             </p>
           </div>
 
           {/* Selector Tabs: UPI vs Card vs Bank */}
-          <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-black/60 border border-white/10 text-xs">
+          <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs">
             <button
               type="button"
               onClick={() => setPayoutType('upi')}
               className={`py-2 px-1 rounded-lg font-bold flex items-center justify-center gap-1 transition-all ${
                 payoutType === 'upi'
-                  ? 'bg-periwinkle text-black shadow-md'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <QrCode className="h-3.5 w-3.5" />
@@ -495,8 +471,8 @@ export default function LoginPage() {
               onClick={() => setPayoutType('card')}
               className={`py-2 px-1 rounded-lg font-bold flex items-center justify-center gap-1 transition-all ${
                 payoutType === 'card'
-                  ? 'bg-periwinkle text-black shadow-md'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <CreditCard className="h-3.5 w-3.5" />
@@ -508,8 +484,8 @@ export default function LoginPage() {
               onClick={() => setPayoutType('bank')}
               className={`py-2 px-1 rounded-lg font-bold flex items-center justify-center gap-1 transition-all ${
                 payoutType === 'bank'
-                  ? 'bg-periwinkle text-black shadow-md'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <Building className="h-3.5 w-3.5" />
@@ -521,15 +497,13 @@ export default function LoginPage() {
           {payoutType === 'upi' && (
             <div className="space-y-3 animate-fade-in">
               <div>
-                <label className="text-[11px] text-slate-400 uppercase font-semibold">
-                  Your UPI ID (VPA)
-                </label>
+                <label className="label-caps block mb-1">Your UPI ID (VPA)</label>
                 <input
                   type="text"
                   value={upiId}
                   onChange={(e) => setUpiId(e.target.value)}
                   placeholder="e.g. aman@okhdfcbank"
-                  className="w-full mt-1 px-3.5 py-3 rounded-xl bg-black border border-white/10 text-white font-mono text-sm focus:outline-none focus:border-periwinkle"
+                  className="w-full px-3.5 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-sm focus:outline-none focus:border-indigo-500"
                 />
               </div>
 
@@ -543,7 +517,7 @@ export default function LoginPage() {
                       const prefix = upiId.includes('@') ? upiId.split('@')[0] : upiId || 'aman';
                       setUpiId(`${prefix}${handle}`);
                     }}
-                    className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white/5 text-slate-300 hover:bg-white/10 border border-white/5"
+                    className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200"
                   >
                     {handle}
                   </button>
@@ -556,41 +530,35 @@ export default function LoginPage() {
           {payoutType === 'card' && (
             <div className="space-y-3 animate-fade-in">
               <div>
-                <label className="text-[11px] text-slate-400 uppercase font-semibold">
-                  Debit / Credit Card Number (Visa / Mastercard)
-                </label>
+                <label className="label-caps block mb-1">Debit / Credit Card Number (Visa / Mastercard)</label>
                 <input
                   type="text"
                   value={cardNumber}
                   onChange={(e) => setCardNumber(e.target.value)}
                   placeholder="4532 8912 3456 8821"
-                  className="w-full mt-1 px-3.5 py-3 rounded-xl bg-black border border-white/10 text-white font-mono text-sm focus:outline-none focus:border-periwinkle"
+                  className="w-full px-3.5 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-sm focus:outline-none focus:border-indigo-500"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="text-[10px] text-slate-400 uppercase font-semibold">
-                    Cardholder Name
-                  </label>
+                  <label className="label-caps block mb-1">Cardholder Name</label>
                   <input
                     type="text"
                     value={cardHolder}
                     onChange={(e) => setCardHolder(e.target.value)}
                     placeholder="Name on card"
-                    className="w-full mt-1 px-3 py-2 rounded-xl bg-black border border-white/10 text-white text-xs focus:outline-none focus:border-periwinkle"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:border-indigo-500"
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] text-slate-400 uppercase font-semibold">
-                    Expiry Date
-                  </label>
+                  <label className="label-caps block mb-1">Expiry Date</label>
                   <input
                     type="text"
                     value={cardExpiry}
                     onChange={(e) => setCardExpiry(e.target.value)}
                     placeholder="MM/YY"
-                    className="w-full mt-1 px-3 py-2 rounded-xl bg-black border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-periwinkle"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-xs focus:outline-none focus:border-indigo-500"
                   />
                 </div>
               </div>
@@ -601,43 +569,39 @@ export default function LoginPage() {
           {payoutType === 'bank' && (
             <div className="space-y-3 animate-fade-in">
               <div>
-                <label className="text-[11px] text-slate-400 uppercase font-semibold">
-                  Bank Account Number / IBAN
-                </label>
+                <label className="label-caps block mb-1">Bank Account Number / IBAN</label>
                 <input
                   type="text"
                   value={bankAccount}
                   onChange={(e) => setBankAccount(e.target.value)}
                   placeholder="e.g. 50100234891023"
-                  className="w-full mt-1 px-3.5 py-3 rounded-xl bg-black border border-white/10 text-white font-mono text-sm focus:outline-none focus:border-periwinkle"
+                  className="w-full px-3.5 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-sm focus:outline-none focus:border-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="text-[11px] text-slate-400 uppercase font-semibold">
-                  IFSC / Swift / Routing Code
-                </label>
+                <label className="label-caps block mb-1">IFSC / Swift / Routing Code</label>
                 <input
                   type="text"
                   value={bankIfsc}
                   onChange={(e) => setBankIfsc(e.target.value.toUpperCase())}
                   placeholder="e.g. HDFC0001234"
-                  className="w-full mt-1 px-3.5 py-2.5 rounded-xl bg-black border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-periwinkle"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-xs focus:outline-none focus:border-indigo-500"
                 />
               </div>
             </div>
           )}
 
           {/* Protocol Split Connection Ribbon */}
-          <div className="p-3.5 rounded-2xl bg-black/60 border border-white/5 flex items-start gap-2.5 text-xs">
-            <Zap className="h-4 w-4 text-periwinkle flex-shrink-0 mt-0.5" />
-            <div className="text-[11px] text-slate-300 leading-relaxed">
-              <strong className="text-white">BackFlow Protocol Connected:</strong> When any client pays, 90% will instantly deposit to this linked destination. 10% auto-repays your backers until the 2× cap is hit.
+          <div className="inset-card p-3.5 flex items-start gap-2.5 text-xs">
+            <Zap className="h-4 w-4 text-indigo-600 flex-shrink-0 mt-0.5" />
+            <div className="text-[11px] text-slate-600 leading-snug">
+              <strong className="text-slate-900 font-bold">BackFlow Protocol Connected:</strong> When any client pays, 90% will instantly deposit to this linked destination. 10% auto-repays your backers until the 2× cap is hit.
             </div>
           </div>
 
           {errorMsg && (
-            <div className="p-3 rounded-xl bg-coral/15 border border-coral/30 text-xs text-coral flex items-center gap-2">
+            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center gap-2">
               <AlertCircle className="h-4 w-4 flex-shrink-0" />
               <span>{errorMsg}</span>
             </div>
@@ -646,22 +610,22 @@ export default function LoginPage() {
           <button
             onClick={handleConnectPayout}
             disabled={loading || connectedSuccess}
-            className="w-full btn-periwinkle py-4 rounded-2xl text-xs font-black flex items-center justify-center gap-2 shadow-lg shadow-periwinkle/20 disabled:opacity-50"
+            className="w-full btn-periwinkle py-4 rounded-2xl text-xs font-black flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {loading ? (
               <>
-                <span className="h-4 w-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 <span>Connecting Rail...</span>
               </>
             ) : connectedSuccess ? (
               <>
                 <Check className="h-4 w-4" />
-                <span>Connected! Entering Portal...</span>
+                <span>Connected! Opening Wallet...</span>
               </>
             ) : (
               <>
                 <ShieldCheck className="h-4 w-4" />
-                <span>Connect Payout Rail & Enter Portal</span>
+                <span>Connect Payout Rail &amp; Enter Portal</span>
               </>
             )}
           </button>

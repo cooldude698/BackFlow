@@ -99,8 +99,8 @@ export default function UserProfilePage() {
         identifier = cardNumber;
         details = {
           cardNumberMasked: `${cardNumber.slice(0, 4)} •••• •••• ${cardNumber.slice(-4)}`,
-          cardHolderName: cardHolder || profile?.name || 'Aman',
-          cardExpiry: cardExpiry || '08/28'
+          cardHolderName: cardHolder,
+          cardExpiry
         };
       } else {
         if (!bankAccount) {
@@ -117,14 +117,13 @@ export default function UserProfilePage() {
         name: profile?.name || 'Aman'
       });
 
-      // Update localStorage
       if (typeof window !== 'undefined') {
+        const existing = localStorage.getItem('backflow_user');
+        const parsed = existing ? JSON.parse(existing) : {};
         const updated = {
-          name: profile?.name || 'Aman',
-          phone: profile?.phone || '+91 98765 43210',
+          ...parsed,
           payoutType,
-          payoutIdentifier: identifier,
-          isVerified: true
+          payoutIdentifier: identifier
         };
         localStorage.setItem('backflow_user', JSON.stringify(updated));
         setProfile(updated as any);
@@ -135,7 +134,7 @@ export default function UserProfilePage() {
         particleCount: 60,
         spread: 60,
         origin: { y: 0.6 },
-        colors: ['#8B9DF8', '#A5B4FC', '#FF6B6B']
+        colors: ['#6366f1', '#818cf8', '#f43f5e']
       });
 
       setTimeout(() => {
@@ -162,23 +161,23 @@ export default function UserProfilePage() {
   const railType = profile?.payoutType || 'upi';
 
   return (
-    <div className="space-y-4 animate-fade-in pb-4">
+    <div className="space-y-3.5 animate-fade-in-up pb-4">
       {/* 1. Profile Header Card */}
       <div className="app-card-highlight p-5 space-y-4">
         <div className="flex items-center gap-3.5">
-          <div className="h-14 w-14 rounded-2xl bg-gradient-to-tr from-periwinkle to-indigo-500 flex items-center justify-center text-black font-black text-2xl shadow-lg shadow-periwinkle/20">
+          <div className="h-14 w-14 rounded-2xl bg-gradient-to-tr from-indigo-500 to-indigo-600 flex items-center justify-center text-white font-black text-2xl shadow-md shadow-indigo-500/20">
             {userName.charAt(0).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-extrabold text-white truncate">{userName}</h1>
-              <span className="flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">
+              <h1 className="text-xl font-extrabold text-slate-900 truncate">{userName}</h1>
+              <span className="flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
                 <CheckCircle2 className="h-3 w-3" />
                 Verified
               </span>
             </div>
-            <div className="text-xs text-slate-400 font-mono mt-0.5">{userPhone}</div>
-            <div className="text-[11px] text-periwinkle font-semibold mt-1 flex items-center gap-1">
+            <div className="text-xs text-slate-500 font-mono mt-0.5">{userPhone}</div>
+            <div className="text-[11px] text-indigo-600 font-semibold mt-1 flex items-center gap-1">
               <span>BackFlow Verified Earner</span>
               <span>•</span>
               <span className="font-mono text-[10px] text-slate-400">ID: BF-001</span>
@@ -187,33 +186,33 @@ export default function UserProfilePage() {
         </div>
       </div>
 
-      {/* 2. Login Details Summary (What was filled during login) */}
-      <div className="app-card p-4 space-y-3 bg-black/60 border border-white/10 text-xs">
-        <div className="flex items-center justify-between pb-2 border-b border-white/5">
-          <div className="text-[11px] text-slate-400 uppercase font-bold tracking-wider flex items-center gap-1.5">
-            <User className="h-3.5 w-3.5 text-periwinkle" />
+      {/* 2. Login Details Summary */}
+      <div className="app-card p-4 space-y-3 text-xs">
+        <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+          <div className="label-caps text-slate-500 font-bold tracking-wider flex items-center gap-1.5">
+            <User className="h-3.5 w-3.5 text-indigo-600" />
             <span>Login Information</span>
           </div>
-          <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20 font-bold">
+          <span className="badge-emerald font-mono">
             OTP Authenticated
           </span>
         </div>
 
         <div className="space-y-2">
           <div className="flex items-center justify-between py-1">
-            <span className="text-slate-400">Full Name</span>
-            <span className="font-bold text-white">{userName}</span>
+            <span className="text-slate-500">Full Name</span>
+            <span className="font-bold text-slate-900">{userName}</span>
           </div>
 
           <div className="flex items-center justify-between py-1">
-            <span className="text-slate-400">Registered Phone</span>
-            <span className="font-mono font-semibold text-white">{userPhone}</span>
+            <span className="text-slate-500">Registered Phone</span>
+            <span className="font-mono font-semibold text-slate-900">{userPhone}</span>
           </div>
 
           <div className="flex items-center justify-between py-1">
-            <span className="text-slate-400">Security Rail</span>
-            <span className="text-slate-300 flex items-center gap-1 font-mono text-[11px]">
-              <Lock className="h-3 w-3 text-emerald-400" />
+            <span className="text-slate-500">Security Rail</span>
+            <span className="text-slate-700 flex items-center gap-1 font-mono text-[11px]">
+              <Lock className="h-3 w-3 text-emerald-600" />
               6-Digit SMS Verification
             </span>
           </div>
@@ -221,15 +220,15 @@ export default function UserProfilePage() {
       </div>
 
       {/* 3. Connected Automatic Payout Rail Card */}
-      <div className="app-card p-4 space-y-3 bg-black/60 border border-white/10 text-xs">
-        <div className="flex items-center justify-between pb-2 border-b border-white/5">
-          <div className="text-[11px] text-slate-400 uppercase font-bold tracking-wider flex items-center gap-1.5">
+      <div className="app-card p-4 space-y-3 text-xs">
+        <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+          <div className="label-caps text-slate-500 font-bold tracking-wider flex items-center gap-1.5">
             {railType === 'card' ? (
-              <CreditCard className="h-3.5 w-3.5 text-periwinkle" />
+              <CreditCard className="h-3.5 w-3.5 text-indigo-600" />
             ) : railType === 'bank' ? (
-              <Building className="h-3.5 w-3.5 text-periwinkle" />
+              <Building className="h-3.5 w-3.5 text-indigo-600" />
             ) : (
-              <QrCode className="h-3.5 w-3.5 text-periwinkle" />
+              <QrCode className="h-3.5 w-3.5 text-indigo-600" />
             )}
             <span>Automatic Payout Rail</span>
           </div>
@@ -237,7 +236,7 @@ export default function UserProfilePage() {
           {!editingRail && (
             <button
               onClick={() => setEditingRail(true)}
-              className="text-[11px] font-bold text-periwinkle hover:text-white px-2 py-0.5 rounded-lg bg-periwinkle/10 border border-periwinkle/20 flex items-center gap-1 transition-colors"
+              className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 px-2 py-0.5 rounded-lg bg-indigo-50 border border-indigo-200 flex items-center gap-1 transition-colors"
             >
               <Edit3 className="h-3 w-3" />
               Edit Rail
@@ -248,25 +247,25 @@ export default function UserProfilePage() {
         {!editingRail ? (
           <div className="space-y-2.5">
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">Payout Method</span>
-              <span className="uppercase font-mono font-bold text-periwinkle bg-periwinkle/10 px-2 py-0.5 rounded border border-periwinkle/20 text-[11px]">
+              <span className="text-slate-500">Payout Method</span>
+              <span className="uppercase font-mono font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200 text-[11px]">
                 {railType}
               </span>
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">Linked Destination</span>
-              <span className="font-mono font-extrabold text-white text-xs tracking-wide">
+              <span className="text-slate-500">Linked Destination</span>
+              <span className="font-mono font-extrabold text-slate-900 text-xs tracking-wide">
                 {railId}
               </span>
             </div>
 
-            <div className="p-3 rounded-xl bg-black border border-white/5 space-y-1 text-[11px] text-slate-300">
-              <div className="flex items-center gap-1.5 text-periwinkle font-bold">
+            <div className="inset-card p-3 space-y-1 text-[11px]">
+              <div className="flex items-center gap-1.5 text-indigo-600 font-bold">
                 <Zap className="h-3.5 w-3.5" />
                 <span>90% Net Deposit Guarantee</span>
               </div>
-              <p className="text-slate-400 leading-relaxed text-[10px]">
+              <p className="text-slate-600 leading-relaxed text-[10px]">
                 All client inflows on BackFlow automatically split: 90% immediately hits this payout rail, 10% repays your backers.
               </p>
             </div>
@@ -274,14 +273,14 @@ export default function UserProfilePage() {
         ) : (
           /* Edit Payout Form */
           <form onSubmit={handleUpdateRail} className="space-y-3 pt-1 animate-fade-in">
-            <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-black border border-white/10 text-xs">
+            <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs">
               <button
                 type="button"
                 onClick={() => setPayoutType('upi')}
                 className={`py-1.5 rounded-lg font-bold flex items-center justify-center gap-1 transition-all ${
                   payoutType === 'upi'
-                    ? 'bg-periwinkle text-black'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-indigo-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <QrCode className="h-3 w-3" />
@@ -292,8 +291,8 @@ export default function UserProfilePage() {
                 onClick={() => setPayoutType('card')}
                 className={`py-1.5 rounded-lg font-bold flex items-center justify-center gap-1 transition-all ${
                   payoutType === 'card'
-                    ? 'bg-periwinkle text-black'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-indigo-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <CreditCard className="h-3 w-3" />
@@ -304,8 +303,8 @@ export default function UserProfilePage() {
                 onClick={() => setPayoutType('bank')}
                 className={`py-1.5 rounded-lg font-bold flex items-center justify-center gap-1 transition-all ${
                   payoutType === 'bank'
-                    ? 'bg-periwinkle text-black'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-indigo-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <Building className="h-3 w-3" />
@@ -315,30 +314,26 @@ export default function UserProfilePage() {
 
             {payoutType === 'upi' && (
               <div>
-                <label className="text-[10px] text-slate-400 uppercase font-semibold">
-                  New UPI ID
-                </label>
+                <label className="label-caps block mb-1">New UPI ID</label>
                 <input
                   type="text"
                   value={upiId}
                   onChange={(e) => setUpiId(e.target.value)}
                   placeholder="name@upi"
-                  className="w-full mt-1 px-3 py-2 rounded-xl bg-black border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-periwinkle"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-xs focus:outline-none focus:border-indigo-500"
                 />
               </div>
             )}
 
             {payoutType === 'card' && (
               <div>
-                <label className="text-[10px] text-slate-400 uppercase font-semibold">
-                  Card Number (Visa / Mastercard)
-                </label>
+                <label className="label-caps block mb-1">Card Number (Visa / Mastercard)</label>
                 <input
                   type="text"
                   value={cardNumber}
                   onChange={(e) => setCardNumber(e.target.value)}
                   placeholder="4532 8912 3456 8821"
-                  className="w-full mt-1 px-3 py-2 rounded-xl bg-black border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-periwinkle"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-xs focus:outline-none focus:border-indigo-500"
                 />
               </div>
             )}
@@ -346,34 +341,30 @@ export default function UserProfilePage() {
             {payoutType === 'bank' && (
               <div className="space-y-2">
                 <div>
-                  <label className="text-[10px] text-slate-400 uppercase font-semibold">
-                    Account Number
-                  </label>
+                  <label className="label-caps block mb-1">Account Number</label>
                   <input
                     type="text"
                     value={bankAccount}
                     onChange={(e) => setBankAccount(e.target.value)}
                     placeholder="e.g. 50100234891023"
-                    className="w-full mt-1 px-3 py-2 rounded-xl bg-black border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-periwinkle"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-xs focus:outline-none focus:border-indigo-500"
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] text-slate-400 uppercase font-semibold">
-                    IFSC / Swift
-                  </label>
+                  <label className="label-caps block mb-1">IFSC / Swift</label>
                   <input
                     type="text"
                     value={bankIfsc}
                     onChange={(e) => setBankIfsc(e.target.value.toUpperCase())}
                     placeholder="e.g. HDFC0001234"
-                    className="w-full mt-1 px-3 py-2 rounded-xl bg-black border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-periwinkle"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-xs focus:outline-none focus:border-indigo-500"
                   />
                 </div>
               </div>
             )}
 
             {errorMsg && (
-              <div className="p-2.5 rounded-xl bg-coral/15 border border-coral/30 text-xs text-coral flex items-center gap-2">
+              <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center gap-2">
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
                 <span>{errorMsg}</span>
               </div>
@@ -383,7 +374,7 @@ export default function UserProfilePage() {
               <button
                 type="button"
                 onClick={() => setEditingRail(false)}
-                className="flex-1 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-400 font-bold text-xs hover:text-white"
+                className="flex-1 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-200"
               >
                 Cancel
               </button>
@@ -409,22 +400,22 @@ export default function UserProfilePage() {
       </div>
 
       {/* 4. Active Revenue Share Parameters */}
-      <div className="app-card p-4 space-y-2 bg-black/60 border border-white/10 text-xs">
-        <div className="text-[11px] text-slate-400 uppercase font-bold tracking-wider pb-1 border-b border-white/5">
+      <div className="app-card p-4 space-y-2 text-xs">
+        <div className="label-caps text-slate-500 font-bold tracking-wider pb-1 border-b border-slate-100">
           Protocol Terms
         </div>
         <div className="grid grid-cols-3 gap-2 pt-1 text-center font-mono">
-          <div className="p-2 rounded-xl bg-black/80 border border-white/5">
-            <div className="text-[10px] text-slate-400">You Keep</div>
-            <div className="text-sm font-extrabold text-periwinkle mt-0.5">90%</div>
+          <div className="inset-card p-2">
+            <div className="text-[10px] text-slate-500">You Keep</div>
+            <div className="text-sm font-extrabold text-indigo-600 mt-0.5">90%</div>
           </div>
-          <div className="p-2 rounded-xl bg-black/80 border border-white/5">
-            <div className="text-[10px] text-slate-400">Backers Cut</div>
+          <div className="inset-card p-2">
+            <div className="text-[10px] text-slate-500">Backers Cut</div>
             <div className="text-sm font-extrabold text-coral mt-0.5">10%</div>
           </div>
-          <div className="p-2 rounded-xl bg-black/80 border border-white/5">
-            <div className="text-[10px] text-slate-400">Max Cap</div>
-            <div className="text-sm font-extrabold text-white mt-0.5">2.0×</div>
+          <div className="inset-card p-2">
+            <div className="text-[10px] text-slate-500">Max Cap</div>
+            <div className="text-sm font-extrabold text-slate-900 mt-0.5">2.0×</div>
           </div>
         </div>
       </div>
@@ -433,7 +424,7 @@ export default function UserProfilePage() {
       <div className="pt-2">
         <button
           onClick={handleLogout}
-          className="w-full py-3.5 rounded-2xl bg-white/5 hover:bg-coral/15 border border-white/10 hover:border-coral/30 text-slate-300 hover:text-coral font-bold text-xs flex items-center justify-center gap-2 transition-all"
+          className="w-full py-3.5 rounded-2xl bg-slate-100 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 text-slate-700 hover:text-rose-600 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-2xs"
         >
           <LogOut className="h-4 w-4" />
           <span>Sign Out of Portal</span>
