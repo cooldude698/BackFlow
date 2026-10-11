@@ -174,11 +174,12 @@ function MobilePaymentContent() {
         {/* Invoice Header */}
         <div className="text-center space-y-1">
           <div className="flex items-center justify-center gap-2 mb-1.5">
-            <div
-              className="h-10 w-10 rounded-2xl flex items-center justify-center shadow-sm"
-              style={{ background: 'linear-gradient(135deg, #6366f1 0%, #818cf8 100%)', boxShadow: '0 4px 14px rgba(99,102,241,0.3)' }}
-            >
-              🌊
+            <div className="h-11 w-11 rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 bg-white flex items-center justify-center p-0.5">
+              <img
+                src="/logo.jpeg"
+                alt="BackFlow"
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
           <div className="label-caps text-indigo-600 font-bold" style={{ letterSpacing: '0.12em' }}>

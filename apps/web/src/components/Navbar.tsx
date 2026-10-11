@@ -18,8 +18,8 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-navy-900/80 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-brand-500 to-brand-glow flex items-center justify-center font-black text-black text-xl shadow-lg shadow-brand-500/20">
-            🌊
+          <div className="h-9 w-9 rounded-xl overflow-hidden shadow-sm bg-white border border-slate-200/60 flex items-center justify-center p-0.5">
+            <img src="/logo.jpeg" alt="BackFlow" className="w-full h-full object-contain" />
           </div>
           <div className="flex flex-col">
             <span className="font-extrabold text-lg tracking-tight text-white flex items-center gap-1.5">

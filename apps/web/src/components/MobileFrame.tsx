@@ -62,11 +62,12 @@ export default function MobileFrame({ children }: { children: ReactNode }) {
             style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(24px)', borderColor: 'rgba(0,0,0,0.06)' }}
           >
             <div className="flex items-center gap-2.5">
-              <div
-                className="h-8 w-8 rounded-xl flex items-center justify-center font-black text-base shadow-sm"
-                style={{ background: 'linear-gradient(135deg, #6366f1 0%, #818cf8 100%)', boxShadow: '0 3px 12px rgba(99,102,241,0.3)' }}
-              >
-                🌊
+              <div className="h-8 w-8 rounded-xl overflow-hidden shadow-xs border border-slate-200/80 bg-white flex items-center justify-center flex-shrink-0">
+                <img
+                  src="/logo.jpeg"
+                  alt="BackFlow"
+                  className="w-full h-full object-contain p-0.5"
+                />
               </div>
               <div>
                 <div className="text-[14px] font-extrabold text-slate-900 tracking-tight leading-none flex items-center gap-1.5">
@@ -89,11 +90,12 @@ export default function MobileFrame({ children }: { children: ReactNode }) {
             style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(24px)', borderColor: 'rgba(0,0,0,0.06)' }}
           >
             <Link href="/dashboard" className="flex items-center gap-2.5">
-              <div
-                className="h-8 w-8 rounded-xl flex items-center justify-center font-black text-base shadow-sm"
-                style={{ background: 'linear-gradient(135deg, #6366f1 0%, #818cf8 100%)', boxShadow: '0 3px 12px rgba(99,102,241,0.3)' }}
-              >
-                🌊
+              <div className="h-8 w-8 rounded-xl overflow-hidden shadow-xs border border-slate-200/80 bg-white flex items-center justify-center flex-shrink-0">
+                <img
+                  src="/logo.jpeg"
+                  alt="BackFlow"
+                  className="w-full h-full object-contain p-0.5"
+                />
               </div>
               <div>
                 <div className="text-[14px] font-extrabold text-slate-900 tracking-tight leading-none flex items-center gap-1.5">

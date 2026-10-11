@@ -6,6 +6,11 @@ import { LoginStepProvider } from '../context/LoginStepContext';
 export const metadata: Metadata = {
   title: 'BackFlow App | Mobile Revenue Sharing Rail',
   description: 'Raise upfront capital and automate pro-rata revenue sharing natively on phone.',
+  icons: {
+    icon: '/logo.jpeg',
+    shortcut: '/logo.jpeg',
+    apple: '/logo.jpeg',
+  },
 };
 
 export const viewport: Viewport = {
