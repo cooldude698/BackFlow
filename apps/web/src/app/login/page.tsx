@@ -212,31 +212,33 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-full my-auto space-y-4 animate-fade-in-up py-2">
-      {/* Top back navigation */}
-      <div className="flex items-center justify-between text-xs">
-        {step > 1 ? (
-          <button
-            onClick={() => setStep((s) => (s - 1) as 1 | 2)}
-            className="flex items-center gap-1 text-slate-500 hover:text-slate-900 transition-colors font-medium"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Back
-          </button>
-        ) : (
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[11px] text-slate-600 font-semibold font-mono">Earner Onboarding</span>
-          </div>
-        )}
-        <span className="badge-periwinkle">Step {step} of 3</span>
-      </div>
+    <div className="w-full space-y-4 animate-fade-in-up">
+      {/* Top back navigation & step progress */}
+      <div className="space-y-2.5 px-0.5">
+        <div className="flex items-center justify-between text-xs">
+          {step > 1 ? (
+            <button
+              onClick={() => setStep((s) => (s - 1) as 1 | 2)}
+              className="flex items-center gap-1 text-slate-500 hover:text-slate-900 transition-colors font-medium"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Back
+            </button>
+          ) : (
+            <div className="flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-[11px] text-slate-600 font-bold tracking-tight">Earner Onboarding</span>
+            </div>
+          )}
+          <span className="badge-periwinkle font-mono text-[10px]">Step {step} of 3</span>
+        </div>
 
-      {/* Wizard Progress Bar */}
-      <div className="grid grid-cols-3 gap-1.5 px-1">
-        <div className={`h-1.5 rounded-full transition-all ${step >= 1 ? 'bg-indigo-600' : 'bg-slate-200'}`} />
-        <div className={`h-1.5 rounded-full transition-all ${step >= 2 ? 'bg-indigo-600' : 'bg-slate-200'}`} />
-        <div className={`h-1.5 rounded-full transition-all ${step >= 3 ? 'bg-indigo-600' : 'bg-slate-200'}`} />
+        {/* Wizard Progress Bar */}
+        <div className="grid grid-cols-3 gap-1.5">
+          <div className={`h-1.5 rounded-full transition-all ${step >= 1 ? 'bg-indigo-600' : 'bg-slate-200'}`} />
+          <div className={`h-1.5 rounded-full transition-all ${step >= 2 ? 'bg-indigo-600' : 'bg-slate-200'}`} />
+          <div className={`h-1.5 rounded-full transition-all ${step >= 3 ? 'bg-indigo-600' : 'bg-slate-200'}`} />
+        </div>
       </div>
 
       {/* STEP 1: Name & Phone Number */}
