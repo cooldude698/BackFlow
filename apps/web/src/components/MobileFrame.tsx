@@ -64,8 +64,32 @@ export default function MobileFrame({ children }: { children: ReactNode }) {
           </div>
         </div>
 
-        {/* Top Header: Only inside portal */}
-        {!isLoginPage && (
+        {/* Top Header: Distinct for Login vs Portal */}
+        {isLoginPage ? (
+          <header className="px-5 pt-3.5 pb-3 flex items-center justify-between border-b border-white/[0.06] flex-shrink-0 z-20 bg-black/80 backdrop-blur-lg">
+            <div className="flex items-center gap-2.5">
+              <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-periwinkle to-periwinkle-glow flex items-center justify-center font-black text-black text-base shadow-md shadow-periwinkle/20">
+                🌊
+              </div>
+              <div>
+                <div className="text-sm font-extrabold text-white tracking-tight leading-none flex items-center gap-1.5">
+                  BackFlow
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-periwinkle/15 text-periwinkle border border-periwinkle/30 font-bold">
+                    Login
+                  </span>
+                </div>
+                <div className="text-[10px] text-slate-400 font-medium mt-0.5">
+                  Earner Verification & Rail Setup
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Secure Step</span>
+            </div>
+          </header>
+        ) : (
           <header className="px-5 pt-3 pb-3 flex items-center justify-between border-b border-white/[0.06] flex-shrink-0 z-20 bg-black/80 backdrop-blur-lg">
             <Link href="/dashboard" className="flex items-center gap-2.5">
               <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-periwinkle to-periwinkle-glow flex items-center justify-center font-black text-black text-base shadow-md shadow-periwinkle/20">
@@ -98,8 +122,8 @@ export default function MobileFrame({ children }: { children: ReactNode }) {
 
         {/* Scrollable Main Mobile Content */}
         <div
-          className={`flex-1 overflow-y-auto px-4 py-4 text-white ${
-            isLoginPage ? 'pb-6 flex flex-col justify-center' : 'pb-28 space-y-4'
+          className={`flex-1 overflow-y-auto px-4 py-4 text-white space-y-4 ${
+            isLoginPage ? 'pb-8' : 'pb-28'
           }`}
         >
           {children}
