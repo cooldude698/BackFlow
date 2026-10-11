@@ -212,7 +212,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="space-y-4 animate-fade-in-up">
+    <div className="w-full my-auto space-y-4 animate-fade-in-up py-2">
       {/* Top back navigation */}
       <div className="flex items-center justify-between text-xs">
         {step > 1 ? (
