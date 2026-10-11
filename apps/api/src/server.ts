@@ -170,6 +170,7 @@ app.post('/payments/settle', async (req, res) => {
 // User profile state (in-memory persistent store)
 export interface UserProfile {
   name: string;
+  email?: string;
   phone: string;
   isVerified: boolean;
   payoutType: 'upi' | 'card' | 'bank' | 'web3';
@@ -187,6 +188,7 @@ export interface UserProfile {
 
 let currentUserProfile: UserProfile = {
   name: 'Aman',
+  email: 'aman@example.com',
   phone: '+91 98765 43210',
   isVerified: true,
   payoutType: 'upi',
@@ -198,27 +200,30 @@ let currentUserProfile: UserProfile = {
 
 // Send OTP endpoint
 app.post('/auth/send-otp', (req, res) => {
-  const { phone, name } = req.body;
+  const { phone, name, email } = req.body;
   if (!phone) {
     return res.status(400).json({ error: 'Phone number is required' });
   }
+  if (email) currentUserProfile.email = email;
   const mockOtp = '849201';
   res.json({
     success: true,
     message: `Verification code sent to ${phone}`,
     otp: mockOtp,
-    phone
+    phone,
+    email: currentUserProfile.email
   });
 });
 
 // Verify OTP endpoint
 app.post('/auth/verify-otp', (req, res) => {
-  const { phone, otp, name } = req.body;
+  const { phone, otp, name, email } = req.body;
   if (!otp) {
     return res.status(400).json({ error: 'OTP is required' });
   }
   if (phone) currentUserProfile.phone = phone;
   if (name) currentUserProfile.name = name;
+  if (email) currentUserProfile.email = email;
   currentUserProfile.isVerified = true;
 
   const agreement = agreementService.getAgreement('BF-001');
@@ -239,7 +244,7 @@ app.get('/user/profile', (req, res) => {
 
 // Update / connect earner payout rail
 app.post('/user/payout-method', (req, res) => {
-  const { payoutType, payoutIdentifier, payoutDetails, name } = req.body;
+  const { payoutType, payoutIdentifier, payoutDetails, name, email } = req.body;
   if (!payoutIdentifier) {
     return res.status(400).json({ error: 'Payout identifier (UPI ID or Card details) is required' });
   }
@@ -252,6 +257,9 @@ app.post('/user/payout-method', (req, res) => {
     if (agreement) {
       agreement.earnerName = name;
     }
+  }
+  if (email) {
+    currentUserProfile.email = email;
   }
   res.json({
     success: true,

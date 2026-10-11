@@ -30,6 +30,7 @@ export default function LoginPage() {
 
   // Form states
   const [name, setName] = useState('Aman');
+  const [email, setEmail] = useState('aman@example.com');
   const [countryCode, setCountryCode] = useState('+91');
   const [phone, setPhone] = useState('9876543210');
 
@@ -65,11 +66,16 @@ export default function LoginPage() {
       const stored = localStorage.getItem('backflow_user');
       if (stored) {
         setHasExistingSession(true);
+        try {
+          const parsed = JSON.parse(stored);
+          if (parsed.email) setEmail(parsed.email);
+        } catch {}
       }
     }
     getUserProfile()
       .then((p) => {
         if (p.name) setName(p.name);
+        if (p.email) setEmail(p.email);
         if (p.phone) {
           const parts = p.phone.split(' ');
           if (parts.length > 1) {
@@ -110,7 +116,7 @@ export default function LoginPage() {
     setErrorMsg(null);
     try {
       const fullPhone = `${countryCode} ${phone}`;
-      const res = await sendOtp(fullPhone);
+      const res = await sendOtp(fullPhone, name, email);
       setReceivedOtp(res.otp || '849201');
       setStep(2);
       setOtpTimer(30);
@@ -132,7 +138,7 @@ export default function LoginPage() {
     setErrorMsg(null);
     try {
       const fullPhone = `${countryCode} ${phone}`;
-      await verifyOtp(fullPhone, enteredOtp, name);
+      await verifyOtp(fullPhone, enteredOtp, name, email);
       setStep(3);
     } catch (err: any) {
       setErrorMsg(err.message || 'Invalid OTP code');
@@ -177,7 +183,8 @@ export default function LoginPage() {
         payoutType,
         payoutIdentifier: identifier,
         payoutDetails: details,
-        name
+        name,
+        email
       });
 
       // Save to localStorage for client-side persistence
@@ -186,6 +193,7 @@ export default function LoginPage() {
           'backflow_user',
           JSON.stringify({
             name,
+            email,
             phone: `${countryCode} ${phone}`,
             payoutType,
             payoutIdentifier: identifier
@@ -278,6 +286,18 @@ export default function LoginPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Aman"
+                className="w-full px-3.5 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-medium text-sm focus:outline-none focus:border-indigo-500"
+              />
+            </div>
+
+            <div>
+              <label className="label-caps block mb-1">Email Address</label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="e.g. aman@example.com"
                 className="w-full px-3.5 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-medium text-sm focus:outline-none focus:border-indigo-500"
               />
             </div>

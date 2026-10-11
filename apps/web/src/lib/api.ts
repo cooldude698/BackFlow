@@ -83,6 +83,7 @@ export interface SettlementSimulationDTO {
 
 export interface UserProfileDTO {
   name: string;
+  email?: string;
   phone: string;
   isVerified: boolean;
   payoutType: 'upi' | 'card' | 'bank' | 'web3';
@@ -194,11 +195,11 @@ export async function relayPayment(
 /**
  * Send OTP to phone number
  */
-export async function sendOtp(phone: string, name?: string): Promise<{ success: boolean; message: string; otp: string }> {
+export async function sendOtp(phone: string, name?: string, email?: string): Promise<{ success: boolean; message: string; otp: string; email?: string }> {
   const res = await fetch(`${API_BASE_URL}/auth/send-otp`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ phone, name })
+    body: JSON.stringify({ phone, name, email })
   });
   if (!res.ok) {
     const error = await res.json().catch(() => ({}));
@@ -210,11 +211,11 @@ export async function sendOtp(phone: string, name?: string): Promise<{ success: 
 /**
  * Verify phone OTP
  */
-export async function verifyOtp(phone: string, otp: string, name?: string): Promise<{ success: boolean; user: UserProfileDTO }> {
+export async function verifyOtp(phone: string, otp: string, name?: string, email?: string): Promise<{ success: boolean; user: UserProfileDTO }> {
   const res = await fetch(`${API_BASE_URL}/auth/verify-otp`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ phone, otp, name })
+    body: JSON.stringify({ phone, otp, name, email })
   });
   if (!res.ok) {
     const error = await res.json().catch(() => ({}));
@@ -244,6 +245,7 @@ export async function updatePayoutMethod(data: {
   payoutIdentifier: string;
   payoutDetails?: any;
   name?: string;
+  email?: string;
 }): Promise<{ success: boolean; profile: UserProfileDTO; message: string }> {
   const res = await fetch(`${API_BASE_URL}/user/payout-method`, {
     method: 'POST',

@@ -156,6 +156,7 @@ export default function UserProfilePage() {
   };
 
   const userName = profile?.name || 'Aman';
+  const userEmail = profile?.email || 'aman@example.com';
   const userPhone = profile?.phone || '+91 98765 43210';
   const railId = profile?.payoutIdentifier || 'aman@upi';
   const railType = profile?.payoutType || 'upi';
@@ -202,6 +203,11 @@ export default function UserProfilePage() {
           <div className="flex items-center justify-between py-1">
             <span className="text-slate-500">Full Name</span>
             <span className="font-bold text-slate-900">{userName}</span>
+          </div>
+
+          <div className="flex items-center justify-between py-1">
+            <span className="text-slate-500">Email Address</span>
+            <span className="font-medium text-slate-900">{userEmail}</span>
           </div>
 
           <div className="flex items-center justify-between py-1">
