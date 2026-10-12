@@ -23,7 +23,7 @@ import {
   Camera,
   Smartphone
 } from 'lucide-react';
-import confetti from 'canvas-confetti';
+import { triggerConfetti } from '@/lib/confetti';
 import { sendOtp, verifyOtp, updatePayoutMethod, getUserProfile } from '@/lib/api';
 import { useLoginStep } from '@/context/LoginStepContext';
 
@@ -208,12 +208,7 @@ export default function LoginPage() {
       }
 
       setConnectedSuccess(true);
-      confetti({
-        particleCount: 80,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#FFC800', '#000000', '#FFFFFF']
-      });
+      triggerConfetti();
 
       setTimeout(() => {
         router.push('/dashboard');

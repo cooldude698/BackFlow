@@ -18,7 +18,7 @@ import {
   Lock,
   ArrowRight
 } from 'lucide-react';
-import confetti from 'canvas-confetti';
+import { triggerConfetti } from '@/lib/confetti';
 import { getUserProfile, updatePayoutMethod, UserProfileDTO } from '@/lib/api';
 
 export default function UserProfilePage() {
@@ -130,12 +130,7 @@ export default function UserProfilePage() {
       }
 
       setSaveSuccess(true);
-      confetti({
-        particleCount: 60,
-        spread: 60,
-        origin: { y: 0.6 },
-        colors: ['#FFC800', '#000000', '#FFFFFF']
-      });
+      triggerConfetti({ particleCount: 60, spread: 60 });
 
       setTimeout(() => {
         setSaveSuccess(false);

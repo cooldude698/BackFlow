@@ -15,7 +15,7 @@ import {
   QrCode,
   Globe
 } from 'lucide-react';
-import confetti from 'canvas-confetti';
+import { triggerConfetti } from '@/lib/confetti';
 import {
   getAgreement,
   simulateSettlement,
@@ -74,15 +74,6 @@ function MobilePaymentContent() {
         .catch(() => {});
     }
   }, [agreementId, amount]);
-
-  const triggerConfetti = () => {
-    confetti({
-      particleCount: 80,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#FFC800', '#000000', '#FFFFFF']
-    });
-  };
 
   const handlePay = async () => {
     setPaying(true);
