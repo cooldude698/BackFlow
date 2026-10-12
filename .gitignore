@@ -8,6 +8,7 @@ build/
 # Foundry / Solidity
 contracts/out/
 contracts/cache/
+contracts/broadcast/
 
 # Next.js
 .next/

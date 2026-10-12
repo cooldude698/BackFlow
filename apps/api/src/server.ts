@@ -14,8 +14,8 @@ app.use(express.json());
 
 const paymentAdapter = new TestnetPaymentAdapter(
   process.env.MONAD_RPC_URL || 'https://testnet-rpc.monad.xyz',
-  process.env.SETTLEMENT_ENGINE_ADDRESS || '0xSettlementEngineMock',
-  process.env.PAYMENT_TOKEN_ADDRESS || '0xMockUSDC'
+  process.env.SETTLEMENT_ENGINE_ADDRESS || '0x54e27243573E9da2A962136e9A9555513499c508',
+  process.env.PAYMENT_TOKEN_ADDRESS || '0xe378BDee81773a63F69f16012c1472A89e69898c'
 );
 
 // Helper for BigInt JSON serialization

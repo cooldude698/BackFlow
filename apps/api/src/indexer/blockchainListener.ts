@@ -120,7 +120,7 @@ export class BlockchainListener {
     engineAddress?: string,
     rpcUrl?: string
   ): boolean {
-    const address = (engineAddress || process.env.SETTLEMENT_ENGINE_ADDRESS) as `0x${string}`;
+    const address = (engineAddress || process.env.SETTLEMENT_ENGINE_ADDRESS || '0x54e27243573E9da2A962136e9A9555513499c508') as `0x${string}`;
     const rpc = rpcUrl || process.env.MONAD_RPC_URL || 'https://testnet-rpc.monad.xyz';
 
     if (!address || address === '0xSettlementEngineMock' || !address.startsWith('0x') || address.length !== 42) {
