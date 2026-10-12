@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import MobileFrame from '../components/MobileFrame';
 import { LoginStepProvider } from '../context/LoginStepContext';
+import { ThemeProvider } from '../context/ThemeContext';
 
 export const metadata: Metadata = {
   title: 'BackFlow App | Mobile Revenue Sharing Rail',
@@ -19,7 +20,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: 'cover',
-  themeColor: '#f4f5fa',
+  themeColor: '#FFC800',
 };
 
 export default function RootLayout({
@@ -28,11 +29,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="bg-[#f1f3f9]">
-      <body className="bg-[#f1f3f9] text-slate-900 antialiased selection:bg-indigo-500 selection:text-white">
-        <LoginStepProvider>
-          <MobileFrame>{children}</MobileFrame>
-        </LoginStepProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className="antialiased selection:bg-[#FFC800] selection:text-black transition-colors duration-200">
+        <ThemeProvider>
+          <LoginStepProvider>
+            <MobileFrame>{children}</MobileFrame>
+          </LoginStepProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

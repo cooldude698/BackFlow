@@ -16,13 +16,17 @@ import {
   Check,
   AlertCircle,
   Lock,
-  ArrowRight
+  ArrowRight,
+  Sun,
+  Moon
 } from 'lucide-react';
-import { triggerConfetti } from '@/lib/confetti';
 import { getUserProfile, updatePayoutMethod, UserProfileDTO } from '@/lib/api';
+import { triggerConfetti } from '@/lib/confetti';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function UserProfilePage() {
   const router = useRouter();
+  const { theme, toggleTheme } = useTheme();
 
   const [profile, setProfile] = useState<UserProfileDTO | null>(null);
   const [editingRail, setEditingRail] = useState(false);
@@ -40,22 +44,19 @@ export default function UserProfilePage() {
   const [bankIfsc, setBankIfsc] = useState('');
 
   useEffect(() => {
-    // If not authenticated, redirect to login page
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('backflow_user');
-      if (!stored) {
-        router.push('/login');
-        return;
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          setProfile(parsed);
+          if (parsed.payoutType) setPayoutType(parsed.payoutType);
+          if (parsed.payoutIdentifier) {
+            if (parsed.payoutType === 'upi') setUpiId(parsed.payoutIdentifier);
+            if (parsed.payoutType === 'card') setCardNumber(parsed.payoutIdentifier);
+          }
+        } catch {}
       }
-      try {
-        const parsed = JSON.parse(stored);
-        setProfile(parsed);
-        if (parsed.payoutType) setPayoutType(parsed.payoutType);
-        if (parsed.payoutIdentifier) {
-          if (parsed.payoutType === 'upi') setUpiId(parsed.payoutIdentifier);
-          if (parsed.payoutType === 'card') setCardNumber(parsed.payoutIdentifier);
-        }
-      } catch {}
     }
 
     getUserProfile()
@@ -168,7 +169,7 @@ export default function UserProfilePage() {
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <h1 className="font-display text-xl font-black uppercase text-black tracking-tight truncate">
+              <h1 className="font-display text-xl font-black uppercase text-black dark:text-white tracking-tight truncate">
                 {userName}
               </h1>
               <span className="badge-emerald text-[9px]">
@@ -176,7 +177,7 @@ export default function UserProfilePage() {
                 VERIFIED
               </span>
             </div>
-            <div className="text-xs font-mono font-bold text-black/70 mt-0.5">{userPhone}</div>
+            <div className="text-xs font-mono font-bold text-black/70 dark:text-white/70 mt-0.5">{userPhone}</div>
             <div className="label-caps mt-1 flex items-center gap-1.5" style={{ fontSize: '9px' }}>
               <span>BF-001</span>
               <span>•</span>
@@ -186,11 +187,42 @@ export default function UserProfilePage() {
         </div>
       </div>
 
-      {/* 2. Login Details Summary */}
-      <div className="app-card p-4 space-y-3 text-xs">
-        <div className="flex items-center justify-between pb-2 border-b-2 border-black">
+      {/* 2. Theme Preferences Card (Dark Mode Toggle) */}
+      <div className="app-card p-4 space-y-2.5 text-xs">
+        <div className="flex items-center justify-between pb-2 border-b-2 border-black dark:border-white/20">
           <div className="label-caps flex items-center gap-1.5" style={{ fontSize: '9.5px' }}>
-            <User className="h-3.5 w-3.5 text-black" strokeWidth={2.5} />
+            {theme === 'dark' ? <Moon className="h-3.5 w-3.5 text-[#FFC800]" /> : <Sun className="h-3.5 w-3.5 text-black" />}
+            <span>THEME SETTINGS</span>
+          </div>
+          <span className="badge-periwinkle text-[8.5px] uppercase">
+            {theme} MODE ACTIVE
+          </span>
+        </div>
+
+        <div className="flex items-center justify-between py-1">
+          <div>
+            <div className="font-bold text-black dark:text-white">Dark Mode</div>
+            <div className="text-[10.5px] text-black/60 dark:text-white/60">Toggle between neo-brutalist light and dark mode</div>
+          </div>
+
+          <button
+            onClick={toggleTheme}
+            className={`w-14 h-8 rounded-full border-2 border-black dark:border-[#FFC800] shadow-[2px_2px_0px_#000] flex items-center p-0.5 transition-colors ${
+              theme === 'dark' ? 'bg-[#FFC800] justify-end' : 'bg-white justify-start'
+            }`}
+          >
+            <div className="w-6 h-6 rounded-full bg-black dark:bg-[#18181B] border border-black flex items-center justify-center text-white">
+              {theme === 'dark' ? <Moon className="h-3 w-3 text-[#FFC800]" /> : <Sun className="h-3 w-3 text-white" />}
+            </div>
+          </button>
+        </div>
+      </div>
+
+      {/* 3. Login Details Summary */}
+      <div className="app-card p-4 space-y-3 text-xs">
+        <div className="flex items-center justify-between pb-2 border-b-2 border-black dark:border-white/20">
+          <div className="label-caps flex items-center gap-1.5" style={{ fontSize: '9.5px' }}>
+            <User className="h-3.5 w-3.5 text-black dark:text-white" strokeWidth={2.5} />
             <span>LOGIN INFORMATION</span>
           </div>
           <span className="badge-periwinkle text-[8.5px]">
@@ -199,41 +231,41 @@ export default function UserProfilePage() {
         </div>
 
         <div className="space-y-2">
-          <div className="flex items-center justify-between py-1 border-b border-black/10">
-            <span className="font-bold text-black/70">Full Name</span>
-            <span className="font-display font-black text-black">{userName}</span>
+          <div className="flex items-center justify-between py-1 border-b border-black/10 dark:border-white/10">
+            <span className="font-bold text-black/70 dark:text-white/70">Full Name</span>
+            <span className="font-display font-black text-black dark:text-white">{userName}</span>
           </div>
 
-          <div className="flex items-center justify-between py-1 border-b border-black/10">
-            <span className="font-bold text-black/70">Email Address</span>
-            <span className="font-mono font-bold text-black">{userEmail}</span>
+          <div className="flex items-center justify-between py-1 border-b border-black/10 dark:border-white/10">
+            <span className="font-bold text-black/70 dark:text-white/70">Email Address</span>
+            <span className="font-mono font-bold text-black dark:text-white">{userEmail}</span>
           </div>
 
-          <div className="flex items-center justify-between py-1 border-b border-black/10">
-            <span className="font-bold text-black/70">Registered Phone</span>
-            <span className="font-mono font-bold text-black">{userPhone}</span>
+          <div className="flex items-center justify-between py-1 border-b border-black/10 dark:border-white/10">
+            <span className="font-bold text-black/70 dark:text-white/70">Registered Phone</span>
+            <span className="font-mono font-bold text-black dark:text-white">{userPhone}</span>
           </div>
 
           <div className="flex items-center justify-between py-1">
-            <span className="font-bold text-black/70">Security Rail</span>
-            <span className="text-black flex items-center gap-1 font-mono font-bold text-[11px]">
-              <Lock className="h-3 w-3 text-emerald-700" strokeWidth={2.5} />
+            <span className="font-bold text-black/70 dark:text-white/70">Security Rail</span>
+            <span className="text-black dark:text-white flex items-center gap-1 font-mono font-bold text-[11px]">
+              <Lock className="h-3 w-3 text-emerald-600 dark:text-emerald-400" strokeWidth={2.5} />
               6-Digit SMS Verification
             </span>
           </div>
         </div>
       </div>
 
-      {/* 3. Connected Automatic Payout Rail Card */}
+      {/* 4. Connected Automatic Payout Rail Card */}
       <div className="app-card p-4 space-y-3 text-xs">
-        <div className="flex items-center justify-between pb-2 border-b-2 border-black">
+        <div className="flex items-center justify-between pb-2 border-b-2 border-black dark:border-white/20">
           <div className="label-caps flex items-center gap-1.5" style={{ fontSize: '9.5px' }}>
             {railType === 'card' ? (
-              <CreditCard className="h-3.5 w-3.5 text-black" strokeWidth={2.5} />
+              <CreditCard className="h-3.5 w-3.5 text-black dark:text-white" strokeWidth={2.5} />
             ) : railType === 'bank' ? (
-              <Building className="h-3.5 w-3.5 text-black" strokeWidth={2.5} />
+              <Building className="h-3.5 w-3.5 text-black dark:text-white" strokeWidth={2.5} />
             ) : (
-              <QrCode className="h-3.5 w-3.5 text-black" strokeWidth={2.5} />
+              <QrCode className="h-3.5 w-3.5 text-black dark:text-white" strokeWidth={2.5} />
             )}
             <span>AUTOMATIC PAYOUT RAIL</span>
           </div>
@@ -241,7 +273,7 @@ export default function UserProfilePage() {
           {!editingRail && (
             <button
               onClick={() => setEditingRail(true)}
-              className="text-[10px] font-display font-black uppercase text-black bg-white hover:bg-[#FFC800] border-1.5 border-black shadow-[1.5px_1.5px_0px_#000] px-2 py-0.5 rounded flex items-center gap-1 transition-colors"
+              className="text-[10px] font-display font-black uppercase text-black dark:text-white bg-white dark:bg-[#27272A] hover:bg-[#FFC800] dark:hover:bg-[#FFC800] dark:hover:text-black border-1.5 border-black dark:border-white/30 shadow-[1.5px_1.5px_0px_#000] px-2 py-0.5 rounded flex items-center gap-1 transition-colors"
             >
               <Edit3 className="h-3 w-3" strokeWidth={2.5} />
               Edit Rail
@@ -252,25 +284,25 @@ export default function UserProfilePage() {
         {!editingRail ? (
           <div className="space-y-2.5">
             <div className="flex items-center justify-between">
-              <span className="font-bold text-black/70">Payout Method</span>
+              <span className="font-bold text-black/70 dark:text-white/70">Payout Method</span>
               <span className="badge-periwinkle text-[9px] uppercase">
                 {railType}
               </span>
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="font-bold text-black/70">Linked Destination</span>
-              <span className="font-mono font-black text-black text-xs">
+              <span className="font-bold text-black/70 dark:text-white/70">Linked Destination</span>
+              <span className="font-mono font-black text-black dark:text-white text-xs">
                 {railId}
               </span>
             </div>
 
             <div className="inset-card p-3 space-y-1 text-xs">
-              <div className="flex items-center gap-1.5 text-black font-display font-black uppercase text-[10px]">
+              <div className="flex items-center gap-1.5 text-black dark:text-white font-display font-black uppercase text-[10px]">
                 <Zap className="h-3.5 w-3.5 text-[#FFC800]" fill="#FFC800" stroke="#000" />
                 <span>90% Net Deposit Guarantee</span>
               </div>
-              <p className="text-black/80 font-medium leading-relaxed text-[10.5px]">
+              <p className="text-black/80 dark:text-white/80 font-medium leading-relaxed text-[10.5px]">
                 All client inflows automatically split: 90% immediately deposits to this rail, 10% auto-repays your syndicate backers.
               </p>
             </div>
@@ -278,14 +310,14 @@ export default function UserProfilePage() {
         ) : (
           /* Edit Payout Form */
           <form onSubmit={handleUpdateRail} className="space-y-3 pt-1 animate-fade-in">
-            <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-[#FAF9F5] border-2 border-black text-xs">
+            <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-[#FAF9F5] dark:bg-[#121214] border-2 border-black dark:border-white/20 text-xs">
               <button
                 type="button"
                 onClick={() => setPayoutType('upi')}
                 className={`py-1.5 rounded-lg font-display font-black text-[11px] uppercase flex items-center justify-center gap-1 transition-all ${
                   payoutType === 'upi'
                     ? 'bg-[#FFC800] text-black border-1.5 border-black shadow-[1.5px_1.5px_0px_#000]'
-                    : 'text-black/70 hover:text-black'
+                    : 'text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white'
                 }`}
               >
                 <QrCode className="h-3 w-3" strokeWidth={2.5} />
@@ -297,7 +329,7 @@ export default function UserProfilePage() {
                 className={`py-1.5 rounded-lg font-display font-black text-[11px] uppercase flex items-center justify-center gap-1 transition-all ${
                   payoutType === 'card'
                     ? 'bg-[#FFC800] text-black border-1.5 border-black shadow-[1.5px_1.5px_0px_#000]'
-                    : 'text-black/70 hover:text-black'
+                    : 'text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white'
                 }`}
               >
                 <CreditCard className="h-3 w-3" strokeWidth={2.5} />
@@ -309,7 +341,7 @@ export default function UserProfilePage() {
                 className={`py-1.5 rounded-lg font-display font-black text-[11px] uppercase flex items-center justify-center gap-1 transition-all ${
                   payoutType === 'bank'
                     ? 'bg-[#FFC800] text-black border-1.5 border-black shadow-[1.5px_1.5px_0px_#000]'
-                    : 'text-black/70 hover:text-black'
+                    : 'text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white'
                 }`}
               >
                 <Building className="h-3 w-3" strokeWidth={2.5} />
@@ -325,7 +357,7 @@ export default function UserProfilePage() {
                   value={upiId}
                   onChange={(e) => setUpiId(e.target.value)}
                   placeholder="name@upi"
-                  className="w-full px-3 py-2 rounded-xl bg-[#FAF9F5] border-2 border-black text-black font-mono font-bold text-xs focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-[#FAF9F5] dark:bg-[#121214] border-2 border-black dark:border-white/20 text-black dark:text-white font-mono font-bold text-xs focus:outline-none"
                 />
               </div>
             )}
@@ -338,7 +370,7 @@ export default function UserProfilePage() {
                   value={cardNumber}
                   onChange={(e) => setCardNumber(e.target.value)}
                   placeholder="4532 8912 3456 8821"
-                  className="w-full px-3 py-2 rounded-xl bg-[#FAF9F5] border-2 border-black text-black font-mono font-bold text-xs focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-[#FAF9F5] dark:bg-[#121214] border-2 border-black dark:border-white/20 text-black dark:text-white font-mono font-bold text-xs focus:outline-none"
                 />
               </div>
             )}
@@ -352,7 +384,7 @@ export default function UserProfilePage() {
                     value={bankAccount}
                     onChange={(e) => setBankAccount(e.target.value)}
                     placeholder="e.g. 50100234891023"
-                    className="w-full px-3 py-2 rounded-xl bg-[#FAF9F5] border-2 border-black text-black font-mono font-bold text-xs focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl bg-[#FAF9F5] dark:bg-[#121214] border-2 border-black dark:border-white/20 text-black dark:text-white font-mono font-bold text-xs focus:outline-none"
                   />
                 </div>
                 <div>
@@ -362,7 +394,7 @@ export default function UserProfilePage() {
                     value={bankIfsc}
                     onChange={(e) => setBankIfsc(e.target.value.toUpperCase())}
                     placeholder="e.g. HDFC0001234"
-                    className="w-full px-3 py-2 rounded-xl bg-[#FAF9F5] border-2 border-black text-black font-mono font-bold text-xs focus:outline-none uppercase"
+                    className="w-full px-3 py-2 rounded-xl bg-[#FAF9F5] dark:bg-[#121214] border-2 border-black dark:border-white/20 text-black dark:text-white font-mono font-bold text-xs focus:outline-none uppercase"
                   />
                 </div>
               </div>
@@ -379,7 +411,7 @@ export default function UserProfilePage() {
               <button
                 type="button"
                 onClick={() => setEditingRail(false)}
-                className="flex-1 py-2 rounded-xl bg-white border-2 border-black text-black font-display font-black text-xs hover:bg-[#FAF9F5]"
+                className="flex-1 py-2 rounded-xl bg-white dark:bg-[#27272A] border-2 border-black dark:border-white/30 text-black dark:text-white font-display font-black text-xs hover:bg-[#FAF9F5]"
               >
                 Cancel
               </button>
@@ -404,32 +436,32 @@ export default function UserProfilePage() {
         )}
       </div>
 
-      {/* 4. Active Revenue Share Parameters */}
+      {/* 5. Active Revenue Share Parameters */}
       <div className="app-card p-4 space-y-2 text-xs">
-        <div className="label-caps pb-1 border-b-2 border-black" style={{ fontSize: '9.5px' }}>
+        <div className="label-caps pb-1 border-b-2 border-black dark:border-white/20" style={{ fontSize: '9.5px' }}>
           PROTOCOL TERMS
         </div>
         <div className="grid grid-cols-3 gap-2 pt-1 text-center font-mono">
           <div className="inset-card p-2">
-            <div className="text-[9.5px] font-bold text-black/60">You Keep</div>
-            <div className="text-base font-black text-black mt-0.5">90%</div>
+            <div className="text-[9.5px] font-bold text-black/60 dark:text-white/60">You Keep</div>
+            <div className="text-base font-black text-black dark:text-white mt-0.5">90%</div>
           </div>
           <div className="inset-card p-2">
-            <div className="text-[9.5px] font-bold text-black/60">Backers Cut</div>
-            <div className="text-base font-black text-red-600 mt-0.5">10%</div>
+            <div className="text-[9.5px] font-bold text-black/60 dark:text-white/60">Backers Cut</div>
+            <div className="text-base font-black text-red-600 dark:text-red-400 mt-0.5">10%</div>
           </div>
           <div className="inset-card p-2">
-            <div className="text-[9.5px] font-bold text-black/60">Max Cap</div>
-            <div className="text-base font-black text-black mt-0.5">2.0×</div>
+            <div className="text-[9.5px] font-bold text-black/60 dark:text-white/60">Max Cap</div>
+            <div className="text-base font-black text-black dark:text-white mt-0.5">2.0×</div>
           </div>
         </div>
       </div>
 
-      {/* 5. Sign Out Action Button */}
+      {/* 6. Sign Out Action Button */}
       <div className="pt-2">
         <button
           onClick={handleLogout}
-          className="w-full py-3.5 rounded-xl bg-white hover:bg-red-50 border-2 border-black shadow-[3px_3px_0px_#000] text-red-600 font-display font-black uppercase text-xs flex items-center justify-center gap-2 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+          className="w-full py-3.5 rounded-xl bg-white dark:bg-[#18181B] hover:bg-red-50 dark:hover:bg-red-950/40 border-2 border-black dark:border-white/30 shadow-[3px_3px_0px_#000] text-red-600 font-display font-black uppercase text-xs flex items-center justify-center gap-2 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
         >
           <LogOut className="h-4 w-4" strokeWidth={2.5} />
           <span>SIGN OUT OF PORTAL</span>

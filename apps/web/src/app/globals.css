@@ -13,6 +13,13 @@
   --brutal-white: #FFFFFF;
 }
 
+.dark {
+  --background: #09090C;
+  --foreground: #FFFFFF;
+  --brutal-black: #FFFFFF;
+  --brutal-white: #18181B;
+}
+
 * {
   -webkit-tap-highlight-color: transparent;
   box-sizing: border-box;
@@ -23,10 +30,13 @@ html, body {
   background-color: var(--background);
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   overflow-x: hidden;
-  user-select: none;
-  -webkit-user-select: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+html.dark, html.dark body {
+  color: #FFFFFF;
+  background-color: #09090C;
 }
 
 /* ============================================================
@@ -50,11 +60,19 @@ html, body {
   color: #000000;
 }
 
+.dark .label-caps {
+  color: #E4E4E7;
+}
+
 .amount-display {
   font-family: 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
   font-weight: 900;
   letter-spacing: -0.03em;
   color: #000000;
+}
+
+.dark .amount-display {
+  color: #FFFFFF;
 }
 
 /* ============================================================
@@ -66,7 +84,14 @@ html, body {
   border: 2px solid #000000;
   border-radius: 1.1rem;
   box-shadow: 3px 3px 0px #000000;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.dark .app-card {
+  background: #18181B;
+  border: 2px solid #3F3F46;
+  box-shadow: 3px 3px 0px #000000;
+  color: #FFFFFF;
 }
 
 .app-card-highlight {
@@ -75,6 +100,14 @@ html, body {
   border-radius: 1.25rem;
   box-shadow: 4px 4px 0px #000000;
   position: relative;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.dark .app-card-highlight {
+  background: #18181B;
+  border: 2.5px solid #FFC800;
+  box-shadow: 4px 4px 0px #000000;
+  color: #FFFFFF;
 }
 
 .glass-card {
@@ -84,11 +117,25 @@ html, body {
   box-shadow: 3px 3px 0px #000000;
 }
 
+.dark .glass-card {
+  background: #18181B;
+  border: 2px solid #3F3F46;
+  box-shadow: 3px 3px 0px #000000;
+}
+
 .inset-card {
   background: #faf9f5;
   border: 2px solid #000000;
   border-radius: 0.9rem;
   box-shadow: 2px 2px 0px #000000;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.dark .inset-card {
+  background: #121214;
+  border: 2px solid #27272A;
+  box-shadow: 2px 2px 0px #000000;
+  color: #FFFFFF;
 }
 
 /* ============================================================
@@ -107,6 +154,7 @@ html, body {
   letter-spacing: 0.02em;
   transition: all 0.12s ease;
   position: relative;
+  cursor: pointer;
 }
 
 .btn-periwinkle:hover, .btn-primary:hover {
@@ -131,12 +179,24 @@ html, body {
   font-family: 'Space Grotesk', sans-serif;
   letter-spacing: 0.02em;
   transition: all 0.12s ease;
+  cursor: pointer;
+}
+
+.dark .btn-ghost, .dark .btn-secondary {
+  background: #27272A;
+  color: #FFFFFF;
+  border: 2px solid #3F3F46;
+  box-shadow: 3px 3px 0px #000000;
 }
 
 .btn-ghost:hover, .btn-secondary:hover {
   background: #fffdf2;
   transform: translate(-1px, -1px);
   box-shadow: 4px 4px 0px #000000;
+}
+
+.dark .btn-ghost:hover, .dark .btn-secondary:hover {
+  background: #3F3F46;
 }
 
 .btn-ghost:active, .btn-secondary:active {
@@ -154,6 +214,7 @@ html, body {
   text-transform: uppercase;
   font-family: 'Space Grotesk', sans-serif;
   transition: all 0.12s ease;
+  cursor: pointer;
 }
 
 .btn-coral:active {
@@ -199,6 +260,12 @@ html, body {
   gap: 0.35rem;
 }
 
+.dark .badge-coral {
+  background: #27272A;
+  border: 1.5px solid #3F3F46;
+  color: #FFFFFF;
+}
+
 .badge-emerald {
   background: #10B981;
   border: 1.5px solid #000000;
@@ -228,6 +295,11 @@ html, body {
   height: 10px;
 }
 
+.dark .progress-track {
+  background: #27272A;
+  border: 2px solid #3F3F46;
+}
+
 .progress-fill-periwinkle {
   background: #FFC800;
   border-right: 2px solid #000000;
@@ -250,6 +322,10 @@ html, body {
   background-size: 7px 7px;
 }
 
+.dark .dot-grid {
+  background-image: radial-gradient(#FFFFFF 1.5px, transparent 1.5px);
+}
+
 .hazard-bar {
   background: repeating-linear-gradient(
     -45deg,
@@ -267,10 +343,18 @@ html, body {
   margin: 1rem 0;
 }
 
+.dark .divider {
+  background: #27272A;
+}
+
 .divider-dashed {
   height: 0px;
   border-top: 2px dashed #000000;
   margin: 0.75rem 0;
+}
+
+.dark .divider-dashed {
+  border-top: 2px dashed #3F3F46;
 }
 
 /* Custom Scrollbars */
@@ -280,7 +364,13 @@ html, body {
 ::-webkit-scrollbar-track {
   background: #FAF9F5;
 }
+.dark ::-webkit-scrollbar-track {
+  background: #18181B;
+}
 ::-webkit-scrollbar-thumb {
   background: #000000;
   border-radius: 3px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #3F3F46;
 }

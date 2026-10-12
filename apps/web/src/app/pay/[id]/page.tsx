@@ -15,7 +15,6 @@ import {
   QrCode,
   Globe
 } from 'lucide-react';
-import { triggerConfetti } from '@/lib/confetti';
 import {
   getAgreement,
   simulateSettlement,
@@ -28,6 +27,7 @@ import {
   SettlementExecutionDTO,
   UserProfileDTO
 } from '@/lib/api';
+import { triggerConfetti } from '@/lib/confetti';
 
 function MobilePaymentContent() {
   const params = useParams();
@@ -146,7 +146,7 @@ function MobilePaymentContent() {
       <div className="flex items-center justify-between text-xs">
         <Link
           href="/dashboard"
-          className="h-8 px-2.5 rounded-lg bg-white border-2 border-black shadow-[2px_2px_0px_#000] flex items-center gap-1 font-display font-black text-black text-[11px] uppercase hover:bg-[#FFC800] transition-colors"
+          className="h-8 px-2.5 rounded-lg bg-white dark:bg-[#27272A] border-2 border-black dark:border-white/30 shadow-[2px_2px_0px_#000] flex items-center gap-1 font-display font-black text-black dark:text-white text-[11px] uppercase hover:bg-[#FFC800] dark:hover:bg-[#FFC800] dark:hover:text-black transition-colors"
         >
           <ChevronLeft className="h-4 w-4" strokeWidth={3} />
           Back
@@ -163,7 +163,7 @@ function MobilePaymentContent() {
         {/* Invoice Header */}
         <div className="text-center space-y-1 pt-1">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <div className="h-12 w-12 rounded-xl overflow-hidden border-2 border-black shadow-[2px_2px_0px_#000] bg-white flex items-center justify-center p-0.5">
+            <div className="h-12 w-12 rounded-xl overflow-hidden border-2 border-black dark:border-[#FFC800] shadow-[2px_2px_0px_#000] bg-white flex items-center justify-center p-0.5">
               <img
                 src="/logo.jpeg"
                 alt="BackFlow"
@@ -174,11 +174,12 @@ function MobilePaymentContent() {
           <div className="label-caps" style={{ fontSize: '10px' }}>
             INFLOW PAYMENT TO {earnerDisplayName.toUpperCase()}
           </div>
-          <h2 className="font-display text-xl font-black uppercase tracking-tight text-black leading-tight">
+          <h2 className="font-display text-xl font-black uppercase tracking-tight text-black dark:text-white leading-tight">
             {paramDesc}
           </h2>
-          <div className="font-mono text-[10px] text-black/70 font-bold">
-            Agreement #{agreementId} · Rail: <span className="text-black bg-[#FFC800] px-1 py-0.2 rounded border border-black">{earnerPayoutDest}</span>
+          <div className="font-mono text-[10px] text-black/70 dark:text-white/70 font-bold">
+            Agreement #{agreementId} · Rail:{' '}
+            <span className="text-black bg-[#FFC800] px-1 py-0.2 rounded border border-black">{earnerPayoutDest}</span>
           </div>
         </div>
 
@@ -186,13 +187,13 @@ function MobilePaymentContent() {
         <div className="inset-card p-4 text-center space-y-2">
           <div className="label-caps mb-1" style={{ fontSize: '9.5px' }}>TOTAL INVOICE AMOUNT</div>
           <div className="flex items-center justify-center gap-1">
-            <span className="text-black font-mono font-black text-2xl">$</span>
+            <span className="text-black dark:text-white font-mono font-black text-2xl">$</span>
             <input
               type="number"
               disabled={paying || settled}
               value={amount}
               onChange={(e) => setAmount(Math.max(1, Number(e.target.value)))}
-              className="bg-transparent text-center font-display font-black text-black text-[2.5rem] w-40 focus:outline-none"
+              className="bg-transparent text-center font-display font-black text-black dark:text-white text-[2.5rem] w-40 focus:outline-none"
             />
             <span className="font-mono font-black text-xs text-black bg-[#FFC800] px-1.5 py-0.5 border border-black rounded">
               USDC
@@ -205,10 +206,10 @@ function MobilePaymentContent() {
                 <button
                   key={preset}
                   onClick={() => setAmount(preset)}
-                  className={`text-[11px] font-mono font-black px-2.5 py-1 rounded-lg border-2 border-black transition-all ${
+                  className={`text-[11px] font-mono font-black px-2.5 py-1 rounded-lg border-2 border-black dark:border-white/30 transition-all ${
                     amount === preset
                       ? 'bg-[#FFC800] text-black shadow-[2px_2px_0px_#000]'
-                      : 'bg-white text-black hover:bg-[#FAF9F5]'
+                      : 'bg-white dark:bg-[#27272A] text-black dark:text-white hover:bg-[#FAF9F5]'
                   }`}
                 >
                   ${preset}
@@ -223,14 +224,14 @@ function MobilePaymentContent() {
           <div className="space-y-3">
             <div className="label-caps" style={{ fontSize: '10px' }}>SELECT PAYMENT METHOD</div>
 
-            <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-[#FAF9F5] border-2 border-black text-xs">
+            <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-[#FAF9F5] dark:bg-[#121214] border-2 border-black dark:border-white/20 text-xs">
               <button
                 type="button"
                 onClick={() => setMethod('card')}
                 className={`py-2 px-1 rounded-lg font-display font-black text-[11px] uppercase flex items-center justify-center gap-1 transition-all ${
                   method === 'card'
                     ? 'bg-[#FFC800] text-black border-2 border-black shadow-[1.5px_1.5px_0px_#000]'
-                    : 'text-black/70 hover:text-black border-2 border-transparent'
+                    : 'text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white border-2 border-transparent'
                 }`}
               >
                 <CreditCard className="h-3.5 w-3.5" strokeWidth={2.5} />
@@ -243,7 +244,7 @@ function MobilePaymentContent() {
                 className={`py-2 px-1 rounded-lg font-display font-black text-[11px] uppercase flex items-center justify-center gap-1 transition-all ${
                   method === 'upi'
                     ? 'bg-[#FFC800] text-black border-2 border-black shadow-[1.5px_1.5px_0px_#000]'
-                    : 'text-black/70 hover:text-black border-2 border-transparent'
+                    : 'text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white border-2 border-transparent'
                 }`}
               >
                 <QrCode className="h-3.5 w-3.5" strokeWidth={2.5} />
@@ -256,7 +257,7 @@ function MobilePaymentContent() {
                 className={`py-2 px-1 rounded-lg font-display font-black text-[11px] uppercase flex items-center justify-center gap-1 transition-all ${
                   method === 'web3'
                     ? 'bg-[#FFC800] text-black border-2 border-black shadow-[1.5px_1.5px_0px_#000]'
-                    : 'text-black/70 hover:text-black border-2 border-transparent'
+                    : 'text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white border-2 border-transparent'
                 }`}
               >
                 <Globe className="h-3.5 w-3.5" strokeWidth={2.5} />
@@ -266,7 +267,7 @@ function MobilePaymentContent() {
 
             {/* METHOD 1: Card Form */}
             {method === 'card' && (
-              <div className="border-2 border-black rounded-xl p-3 bg-white shadow-[2px_2px_0px_#000] space-y-2.5 animate-fade-in text-xs">
+              <div className="border-2 border-black dark:border-white/20 rounded-xl p-3 bg-white dark:bg-[#18181B] shadow-[2px_2px_0px_#000] space-y-2.5 animate-fade-in text-xs">
                 <div className="flex items-center justify-between">
                   <span className="label-caps" style={{ fontSize: '9px' }}>GLOBAL CARDS</span>
                   <div className="flex gap-1 text-[9px] font-mono font-black text-black">
@@ -282,7 +283,7 @@ function MobilePaymentContent() {
                     value={cardNumber}
                     onChange={(e) => setCardNumber(e.target.value)}
                     placeholder="4532 8912 3456 8821"
-                    className="w-full px-2.5 py-2 rounded-lg bg-[#FAF9F5] border-1.5 border-black text-black font-mono font-bold text-xs focus:outline-none"
+                    className="w-full px-2.5 py-2 rounded-lg bg-[#FAF9F5] dark:bg-[#121214] border-1.5 border-black dark:border-white/20 text-black dark:text-white font-mono font-bold text-xs focus:outline-none"
                   />
                 </div>
 
@@ -294,7 +295,7 @@ function MobilePaymentContent() {
                       value={cardHolder}
                       onChange={(e) => setCardHolder(e.target.value)}
                       placeholder="John Client"
-                      className="w-full px-2.5 py-1.5 rounded-lg bg-[#FAF9F5] border-1.5 border-black text-black font-bold text-xs focus:outline-none"
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-[#FAF9F5] dark:bg-[#121214] border-1.5 border-black dark:border-white/20 text-black dark:text-white font-bold text-xs focus:outline-none"
                     />
                   </div>
 
@@ -306,7 +307,7 @@ function MobilePaymentContent() {
                         value={cardExpiry}
                         onChange={(e) => setCardExpiry(e.target.value)}
                         placeholder="MM/YY"
-                        className="w-full px-1.5 py-1.5 rounded-lg bg-[#FAF9F5] border-1.5 border-black text-black font-mono font-bold text-xs focus:outline-none"
+                        className="w-full px-1.5 py-1.5 rounded-lg bg-[#FAF9F5] dark:bg-[#121214] border-1.5 border-black dark:border-white/20 text-black dark:text-white font-mono font-bold text-xs focus:outline-none"
                       />
                     </div>
                     <div>
@@ -317,7 +318,7 @@ function MobilePaymentContent() {
                         value={cardCvv}
                         onChange={(e) => setCardCvv(e.target.value)}
                         placeholder="•••"
-                        className="w-full px-1.5 py-1.5 rounded-lg bg-[#FAF9F5] border-1.5 border-black text-black font-mono font-bold text-xs focus:outline-none"
+                        className="w-full px-1.5 py-1.5 rounded-lg bg-[#FAF9F5] dark:bg-[#121214] border-1.5 border-black dark:border-white/20 text-black dark:text-white font-mono font-bold text-xs focus:outline-none"
                       />
                     </div>
                   </div>
@@ -327,24 +328,24 @@ function MobilePaymentContent() {
 
             {/* METHOD 2: UPI / QR Form */}
             {method === 'upi' && (
-              <div className="border-2 border-black rounded-xl p-3 bg-white shadow-[2px_2px_0px_#000] space-y-2.5 animate-fade-in text-xs">
+              <div className="border-2 border-black dark:border-white/20 rounded-xl p-3 bg-white dark:bg-[#18181B] shadow-[2px_2px_0px_#000] space-y-2.5 animate-fade-in text-xs">
                 <div className="flex items-center justify-between">
                   <span className="label-caps" style={{ fontSize: '9px' }}>INSTANT UPI RAIL</span>
                   <button
                     type="button"
                     onClick={() => setShowQr(!showQr)}
-                    className="text-black font-display font-black text-[10px] uppercase underline hover:text-[#FFC800]"
+                    className="text-black dark:text-white font-display font-black text-[10px] uppercase underline hover:text-[#FFC800]"
                   >
                     {showQr ? 'Enter VPA' : 'Show QR'}
                   </button>
                 </div>
 
                 {showQr ? (
-                  <div className="p-3 bg-[#FAF9F5] border-2 border-black rounded-xl text-center space-y-2 max-w-[180px] mx-auto">
+                  <div className="p-3 bg-[#FAF9F5] dark:bg-[#121214] border-2 border-black rounded-xl text-center space-y-2 max-w-[180px] mx-auto">
                     <div className="h-32 w-32 bg-black mx-auto rounded-lg flex items-center justify-center text-white text-[11px] font-mono p-2 border-2 border-[#FFC800]">
                       [UPI QR SCAN]
                     </div>
-                    <div className="text-[9.5px] font-bold text-black">Scan with GPay / PhonePe / Paytm</div>
+                    <div className="text-[9.5px] font-bold text-black dark:text-white">Scan with GPay / PhonePe / Paytm</div>
                   </div>
                 ) : (
                   <div>
@@ -354,7 +355,7 @@ function MobilePaymentContent() {
                       value={clientUpi}
                       onChange={(e) => setClientUpi(e.target.value)}
                       placeholder="yourname@upi"
-                      className="w-full px-2.5 py-2 rounded-lg bg-[#FAF9F5] border-1.5 border-black text-black font-mono font-bold text-xs focus:outline-none"
+                      className="w-full px-2.5 py-2 rounded-lg bg-[#FAF9F5] dark:bg-[#121214] border-1.5 border-black dark:border-white/20 text-black dark:text-white font-mono font-bold text-xs focus:outline-none"
                     />
                   </div>
                 )}
@@ -363,9 +364,9 @@ function MobilePaymentContent() {
 
             {/* METHOD 3: Web3 Passkey */}
             {method === 'web3' && (
-              <div className="border-2 border-black rounded-xl p-3 bg-white shadow-[2px_2px_0px_#000] space-y-1.5 animate-fade-in text-xs">
+              <div className="border-2 border-black dark:border-white/20 rounded-xl p-3 bg-white dark:bg-[#18181B] shadow-[2px_2px_0px_#000] space-y-1.5 animate-fade-in text-xs">
                 <div className="label-caps" style={{ fontSize: '9px' }}>BIOMETRIC PASSKEY &amp; USDC</div>
-                <p className="text-[11px] text-black/80 font-medium leading-relaxed">
+                <p className="text-[11px] text-black/80 dark:text-white/80 font-medium leading-relaxed">
                   Sign directly with FaceID / TouchID passkey. Atomic 90/10 split executes in real time on Monad.
                 </p>
               </div>
@@ -381,17 +382,17 @@ function MobilePaymentContent() {
 
           <div className="inset-card p-3 space-y-2">
             <div className="flex justify-between items-center text-xs">
-              <span className="font-bold text-black">
+              <span className="font-bold text-black dark:text-white">
                 {earnerDisplayName} (90% to {earnerPayoutDest})
               </span>
-              <span className="font-mono font-black text-black">
+              <span className="font-mono font-black text-black dark:text-white">
                 ${earnerPayout.toFixed(2)} USDC
               </span>
             </div>
 
             <div className="flex justify-between items-center text-xs">
-              <span className="font-bold text-black/70">Backers Syndicate Repayment (10%)</span>
-              <span className="font-mono font-black text-red-600">
+              <span className="font-bold text-black/70 dark:text-white/70">Backers Syndicate Repayment (10%)</span>
+              <span className="font-mono font-black text-red-600 dark:text-red-400">
                 ${backerPayout.toFixed(2)} USDC
               </span>
             </div>
@@ -401,9 +402,9 @@ function MobilePaymentContent() {
               <div className="progress-fill-periwinkle h-full" style={{ width: '90%' }} />
             </div>
 
-            <div className="pt-1 flex items-center justify-between text-[9.5px] font-mono font-bold border-t border-black/10 text-black/60">
+            <div className="pt-1 flex items-center justify-between text-[9.5px] font-mono font-bold border-t border-black/10 dark:border-white/10 text-black/60 dark:text-white/60">
               <span>• Aman $20 • Priya $30 • Karan $50</span>
-              <span className="text-black font-black uppercase">PRO-RATA</span>
+              <span className="text-black dark:text-white font-black uppercase">PRO-RATA</span>
             </div>
           </div>
         </div>
@@ -422,7 +423,7 @@ function MobilePaymentContent() {
             <button
               onClick={handlePay}
               disabled={paying || amount <= 0}
-              className="w-full flex items-stretch rounded-xl border-2 border-black shadow-[3px_3px_0px_#000] overflow-hidden active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50 group"
+              className="w-full flex items-stretch rounded-xl border-2 border-black dark:border-white/40 shadow-[3px_3px_0px_#000] dark:shadow-[3px_3px_0px_#FFC800] overflow-hidden active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50 group"
             >
               <div className="flex-1 bg-[#FFC800] group-hover:bg-[#FFD21A] py-3.5 text-center font-display font-black text-sm uppercase tracking-wider text-black flex items-center justify-center gap-2 transition-colors">
                 {paying ? (
@@ -441,26 +442,26 @@ function MobilePaymentContent() {
               </div>
             </button>
 
-            <div className="text-[10px] text-black/60 text-center flex items-center justify-center gap-1 font-bold">
-              <ShieldCheck className="h-3.5 w-3.5 text-black" strokeWidth={2.5} />
+            <div className="text-[10px] text-black/60 dark:text-white/60 text-center flex items-center justify-center gap-1 font-bold">
+              <ShieldCheck className="h-3.5 w-3.5 text-black dark:text-white" strokeWidth={2.5} />
               Direct execution via SettlementEngine.sol · Zero middleman custody
             </div>
           </div>
         ) : (
-          <div className="rounded-2xl p-4 space-y-3 bg-[#FFFBEB] border-2 border-black shadow-[3px_3px_0px_#000] animate-scale-in">
-            <div className="flex items-center gap-2 font-display font-black text-sm uppercase text-black">
+          <div className="rounded-2xl p-4 space-y-3 bg-[#FFFBEB] dark:bg-[#1E1E22] border-2 border-black dark:border-[#FFC800] shadow-[3px_3px_0px_#000] animate-scale-in">
+            <div className="flex items-center gap-2 font-display font-black text-sm uppercase text-black dark:text-white">
               <CheckCircle2 className="h-5 w-5 text-emerald-600" strokeWidth={3} />
               PAYMENT &amp; INFLOW SPLIT COMPLETED!
             </div>
-            <p className="text-xs text-black leading-relaxed font-medium">
-              <strong className="font-mono font-black text-black">${amount.toLocaleString()} USDC</strong> successfully settled via{' '}
-              <strong className="font-mono font-bold text-black">{result?.paymentMethod || 'Global Payment Rail'}</strong>:
-              <br />• <strong className="font-mono font-black text-emerald-700">+${microToDollars(result?.earnerShare).toFixed(2)} USDC</strong> automatically routed to {earnerDisplayName}&apos;s {earnerPayoutDest}.
-              <br />• <strong className="font-mono font-black text-red-600">-${microToDollars(result?.backerShareTotal).toFixed(2)} USDC</strong> pro-rata deducted to backer syndicate.
+            <p className="text-xs text-black dark:text-white leading-relaxed font-medium">
+              <strong className="font-mono font-black text-black dark:text-white">${amount.toLocaleString()} USDC</strong> successfully settled via{' '}
+              <strong className="font-mono font-bold text-black dark:text-white">{result?.paymentMethod || 'Global Payment Rail'}</strong>:
+              <br />• <strong className="font-mono font-black text-emerald-600 dark:text-emerald-400">+${microToDollars(result?.earnerShare).toFixed(2)} USDC</strong> automatically routed to {earnerDisplayName}&apos;s {earnerPayoutDest}.
+              <br />• <strong className="font-mono font-black text-red-600 dark:text-red-400">-${microToDollars(result?.backerShareTotal).toFixed(2)} USDC</strong> pro-rata deducted to backer syndicate.
             </p>
 
-            <div className="rounded-lg p-2 font-mono text-[10px] text-black break-all bg-white border border-black shadow-[1px_1px_0px_#000]">
-              Tx: <span className="font-bold text-black">{result?.transactionHash}</span>
+            <div className="rounded-lg p-2 font-mono text-[10px] text-black dark:text-white break-all bg-white dark:bg-[#121214] border border-black dark:border-white/20 shadow-[1px_1px_0px_#000]">
+              Tx: <span className="font-bold text-black dark:text-[#FFC800]">{result?.transactionHash}</span>
             </div>
 
             <Link
@@ -479,7 +480,7 @@ function MobilePaymentContent() {
 export default function MobilePaymentPage() {
   return (
     <Suspense fallback={
-      <div className="py-20 text-center font-display font-black text-xs uppercase text-black">
+      <div className="py-20 text-center font-display font-black text-xs uppercase text-black dark:text-white">
         LOADING CHECKOUT RAIL…
       </div>
     }>
