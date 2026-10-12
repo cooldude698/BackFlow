@@ -42,36 +42,44 @@ export default function MobileSimulatorPage() {
   ];
 
   return (
-    <div className="space-y-3.5 animate-fade-in-up">
+    <div className="space-y-3.5 pb-4">
       {/* Top bar */}
       <div className="flex items-center justify-between text-xs">
-        <Link href="/dashboard" className="flex items-center gap-1 text-slate-500 hover:text-slate-900 transition-colors font-medium">
-          <ChevronLeft className="h-4 w-4" />
-          Back to Wallet
+        <Link
+          href="/dashboard"
+          className="h-8 px-2.5 rounded-lg bg-white border-2 border-black shadow-[2px_2px_0px_#000] flex items-center gap-1 font-display font-black text-black text-[11px] uppercase hover:bg-[#FFC800] transition-colors"
+        >
+          <ChevronLeft className="h-4 w-4" strokeWidth={3} />
+          Back
         </Link>
-        <span className="badge-periwinkle">Math Simulator</span>
+        <span className="badge-periwinkle">MATH SIMULATOR</span>
       </div>
 
       {/* Simulator Card */}
-      <div className="app-card-highlight p-5 space-y-5 relative overflow-hidden">
-        <div
-          className="absolute -top-10 -right-10 w-36 h-36 rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 65%)' }}
-        />
+      <div className="app-card-highlight p-5 space-y-4 relative overflow-hidden">
+        {/* Decorative corner dot grid & yellow square */}
+        <div className="absolute top-3 right-3 w-8 h-8 dot-grid opacity-60 pointer-events-none" />
+        <div className="w-3 h-3 bg-[#FFC800] border-1.5 border-black absolute left-3 top-3" />
 
-        <div>
-          <div className="label-caps mb-1 text-indigo-600 font-bold">Interactive Calculator</div>
-          <h2 className="text-[20px] font-extrabold text-slate-900 leading-tight">How Any Payment Splits</h2>
-          <p className="text-[11px] text-slate-500 mt-1">Slide or choose an amount — see the exact 90/10 split instantly.</p>
+        <div className="pt-1">
+          <div className="label-caps mb-0.5" style={{ fontSize: '10px' }}>INTERACTIVE CALCULATOR</div>
+          <h2 className="font-display text-xl font-black uppercase text-black leading-tight">
+            HOW ANY PAYMENT SPLITS
+          </h2>
+          <p className="text-xs text-black/70 font-medium mt-1">
+            Slide or pick any payment amount to preview the instantaneous 90/10 math.
+          </p>
         </div>
 
         {/* Amount control */}
-        <div className="bg-white rounded-2xl p-4 space-y-4 border border-slate-200/90 shadow-2xs">
+        <div className="inset-card p-4 space-y-3">
           <div className="flex justify-between items-baseline">
-            <span className="label-caps">Client Payment</span>
-            <span className="amount-display text-[1.8rem] text-slate-900">
+            <span className="label-caps" style={{ fontSize: '9.5px' }}>CLIENT PAYMENT</span>
+            <span className="font-display font-black text-2xl text-black">
               ${grossPayment.toLocaleString()}
-              <span className="text-xs font-bold ml-1.5 mono text-indigo-600">USDC</span>
+              <span className="text-xs font-mono font-black ml-1.5 text-black bg-[#FFC800] px-1 py-0.2 border border-black rounded">
+                USDC
+              </span>
             </span>
           </div>
 
@@ -82,7 +90,7 @@ export default function MobileSimulatorPage() {
             step={100}
             value={grossPayment}
             onChange={(e) => setGrossPayment(Number(e.target.value))}
-            className="w-full"
+            className="w-full accent-black cursor-pointer"
           />
 
           <div className="flex justify-between gap-1.5">
@@ -90,10 +98,10 @@ export default function MobileSimulatorPage() {
               <button
                 key={preset}
                 onClick={() => setGrossPayment(preset)}
-                className={`flex-1 py-1.5 text-[11px] mono rounded-xl transition-all font-semibold ${
+                className={`flex-1 py-1 text-xs font-mono font-black rounded-lg border-2 border-black transition-all ${
                   grossPayment === preset
-                    ? 'bg-indigo-600 text-white font-bold shadow-xs'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-[#FFC800] text-black shadow-[2px_2px_0px_#000]'
+                    : 'bg-white text-black hover:bg-[#FAF9F5]'
                 }`}
               >
                 ${preset}
@@ -104,44 +112,46 @@ export default function MobileSimulatorPage() {
 
         {/* Split results */}
         <div className="grid grid-cols-2 gap-2.5">
-          <div className="inset-card p-3.5 space-y-1.5">
-            <div className="label-caps">Rahul Kept</div>
-            <div className="amount-display text-[1.5rem] text-indigo-600">
+          <div className="inset-card p-3 space-y-1">
+            <div className="label-caps" style={{ fontSize: '9px' }}>YOU KEEP (90%)</div>
+            <div className="font-display font-black text-xl text-black">
               ${earnerPayout.toFixed(2)}
             </div>
-            <div className="text-[10px] text-slate-500">90% → earner wallet</div>
-            <div className="progress-track h-1 mt-2">
+            <div className="text-[10px] font-mono text-black/60 font-bold">Auto-deposit to rail</div>
+            <div className="progress-track h-2 mt-1.5">
               <div className="progress-fill-periwinkle h-full" style={{ width: '90%' }} />
             </div>
           </div>
 
-          <div className="inset-card p-3.5 space-y-1.5">
-            <div className="label-caps">Backers Pool</div>
-            <div className="amount-display text-[1.5rem] text-coral">
+          <div className="inset-card p-3 space-y-1">
+            <div className="label-caps" style={{ fontSize: '9px' }}>BACKERS (10%)</div>
+            <div className="font-display font-black text-xl text-red-600">
               ${backerPayout.toFixed(2)}
             </div>
-            <div className="text-[10px] text-slate-500">10% → syndicate</div>
-            <div className="progress-track h-1 mt-2">
-              <div className="progress-fill-coral h-full" style={{ width: '10%' }} />
+            <div className="text-[10px] font-mono text-black/60 font-bold">Pro-rata syndicate</div>
+            <div className="progress-track h-2 mt-1.5">
+              <div className="bg-red-500 border-r-2 border-black h-full" style={{ width: '10%' }} />
             </div>
           </div>
         </div>
 
         {/* Backer breakdown */}
-        <div className="bg-white rounded-2xl p-3.5 space-y-2.5 border border-slate-200/80 shadow-2xs">
-          <div className="label-caps mb-1">Syndicate Breakdown</div>
+        <div className="border-2 border-black rounded-xl p-3 bg-white shadow-[2px_2px_0px_#000] space-y-2">
+          <div className="label-caps mb-1" style={{ fontSize: '9px' }}>SYNDICATE BREAKDOWN</div>
           {backers.map((b) => (
-            <div key={b.name}>
-              <div className="flex justify-between items-center mb-1">
-                <div className="flex items-center gap-2">
-                  <div className="h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-black bg-indigo-100 text-indigo-700">
+            <div key={b.name} className="space-y-1">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-1.5">
+                  <div className="h-5 w-5 rounded-md bg-[#FFC800] border border-black flex items-center justify-center text-[9px] font-display font-black text-black">
                     {b.name[0]}
                   </div>
-                  <span className="text-[11px] text-slate-700 font-medium">{b.name} <span className="text-slate-400">({b.share}%)</span></span>
+                  <span className="text-xs font-black text-black">
+                    {b.name} <span className="text-black/50 font-normal">({b.share}%)</span>
+                  </span>
                 </div>
-                <span className="mono text-[11px] font-bold text-slate-900">${b.amount.toFixed(2)}</span>
+                <span className="font-mono text-xs font-black text-black">${b.amount.toFixed(2)}</span>
               </div>
-              <div className="progress-track h-0.5">
+              <div className="progress-track h-1.5">
                 <div className="progress-fill-periwinkle h-full" style={{ width: `${b.share}%` }} />
               </div>
             </div>
@@ -149,33 +159,42 @@ export default function MobileSimulatorPage() {
         </div>
 
         {broadcastDone && (
-          <div className="p-3.5 rounded-xl flex items-center justify-between text-[12px] animate-scale-in bg-indigo-50 border border-indigo-200 shadow-2xs">
-            <span className="flex items-center gap-1.5 font-bold text-indigo-700">
-              <CheckCircle2 className="h-4 w-4" />
-              Settled on Monad!
+          <div className="p-3 rounded-xl flex items-center justify-between text-xs bg-[#FFFBEB] border-2 border-black shadow-[2px_2px_0px_#000] animate-scale-in">
+            <span className="flex items-center gap-1.5 font-display font-black uppercase text-black">
+              <CheckCircle2 className="h-4 w-4 text-emerald-600" strokeWidth={3} />
+              SETTLED ON MONAD!
             </span>
-            <Link href="/dashboard" className="font-bold text-indigo-600 hover:underline text-[11px]">
+            <Link
+              href="/dashboard"
+              className="font-display font-black text-black uppercase underline hover:text-[#FFC800]"
+            >
               View Wallet →
             </Link>
           </div>
         )}
 
+        {/* Brutalist Split Button (Yellow + Black Arrow) */}
         <button
           onClick={handleBroadcast}
           disabled={broadcasting}
-          className="w-full btn-periwinkle py-4 rounded-2xl text-[13px] font-black flex items-center justify-center gap-2 disabled:opacity-50"
+          className="w-full flex items-stretch rounded-xl border-2 border-black shadow-[3px_3px_0px_#000] overflow-hidden active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50 group"
         >
-          {broadcasting ? (
-            <>
-              <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              <span>Splitting on Monad…</span>
-            </>
-          ) : (
-            <>
-              <Zap className="h-4 w-4" />
-              Test This Payment Live on Monad
-            </>
-          )}
+          <div className="flex-1 bg-[#FFC800] group-hover:bg-[#FFD21A] py-3.5 text-center font-display font-black text-xs uppercase tracking-wider text-black flex items-center justify-center gap-2 transition-colors">
+            {broadcasting ? (
+              <>
+                <span className="h-4 w-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                <span>SPLITTING ON MONAD…</span>
+              </>
+            ) : (
+              <>
+                <Zap className="h-4 w-4" strokeWidth={2.5} />
+                <span>TEST THIS PAYMENT LIVE ON MONAD</span>
+              </>
+            )}
+          </div>
+          <div className="w-12 bg-black flex items-center justify-center text-white group-hover:bg-neutral-800 transition-colors">
+            <ArrowRight className="h-5 w-5" strokeWidth={3} />
+          </div>
         </button>
       </div>
     </div>

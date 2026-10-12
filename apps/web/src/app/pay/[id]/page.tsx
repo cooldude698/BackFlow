@@ -80,7 +80,7 @@ function MobilePaymentContent() {
       particleCount: 80,
       spread: 70,
       origin: { y: 0.6 },
-      colors: ['#6366f1', '#818cf8', '#f43f5e', '#ffffff']
+      colors: ['#FFC800', '#000000', '#FFFFFF']
     });
   };
 
@@ -94,7 +94,7 @@ function MobilePaymentContent() {
     if (method === 'upi') {
       paymentMethodLabel = `UPI (${clientUpi})`;
       payerName = clientUpi.split('@')[0] || 'Client';
-      setAuthMsg('Initiating UPI 3D payment request...');
+      setAuthMsg('Initiating UPI payment rail...');
     } else if (method === 'card') {
       if (!cardNumber || cardNumber.length < 15) {
         setErrorMsg('Please enter a valid 16-digit card number');
@@ -150,31 +150,29 @@ function MobilePaymentContent() {
   const earnerPayoutDest = profile?.payoutIdentifier || 'Linked Payout Rail';
 
   return (
-    <div className="space-y-3.5 animate-fade-in-up">
+    <div className="space-y-3.5">
       {/* Top back button */}
       <div className="flex items-center justify-between text-xs">
         <Link
           href="/dashboard"
-          className="flex items-center gap-1 text-slate-500 hover:text-slate-900 transition-colors font-medium"
+          className="h-8 px-2.5 rounded-lg bg-white border-2 border-black shadow-[2px_2px_0px_#000] flex items-center gap-1 font-display font-black text-black text-[11px] uppercase hover:bg-[#FFC800] transition-colors"
         >
-          <ChevronLeft className="h-4 w-4" />
-          Back to Wallet
+          <ChevronLeft className="h-4 w-4" strokeWidth={3} />
+          Back
         </Link>
-        <span className="badge-periwinkle">Global Checkout Rail</span>
+        <span className="badge-periwinkle">CHECKOUT RAIL</span>
       </div>
 
       {/* Main Payment Container */}
-      <div className="app-card-highlight p-6 space-y-4 relative overflow-hidden">
-        {/* BG glow */}
-        <div
-          className="absolute -top-16 left-1/2 -translate-x-1/2 w-48 h-48 rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 65%)' }}
-        />
+      <div className="app-card-highlight p-5 space-y-4 relative overflow-hidden">
+        {/* Decorative corner dot grid & yellow square */}
+        <div className="absolute top-3 right-3 w-8 h-8 dot-grid opacity-60 pointer-events-none" />
+        <div className="w-3 h-3 bg-[#FFC800] border-1.5 border-black absolute left-3 top-3" />
 
         {/* Invoice Header */}
-        <div className="text-center space-y-1">
-          <div className="flex items-center justify-center gap-2 mb-1.5">
-            <div className="h-11 w-11 rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 bg-white flex items-center justify-center p-0.5">
+        <div className="text-center space-y-1 pt-1">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <div className="h-12 w-12 rounded-xl overflow-hidden border-2 border-black shadow-[2px_2px_0px_#000] bg-white flex items-center justify-center p-0.5">
               <img
                 src="/logo.jpeg"
                 alt="BackFlow"
@@ -182,28 +180,32 @@ function MobilePaymentContent() {
               />
             </div>
           </div>
-          <div className="label-caps text-indigo-600 font-bold" style={{ letterSpacing: '0.12em' }}>
-            Inflow Payment to {earnerDisplayName}
+          <div className="label-caps" style={{ fontSize: '10px' }}>
+            INFLOW PAYMENT TO {earnerDisplayName.toUpperCase()}
           </div>
-          <h2 className="text-[18px] font-extrabold text-slate-900 leading-tight">{paramDesc}</h2>
-          <div className="mono text-[10px] text-slate-500 font-medium">
-            Agreement #{agreementId} • Payout to: <span className="text-slate-900 font-semibold">{earnerPayoutDest}</span>
+          <h2 className="font-display text-xl font-black uppercase tracking-tight text-black leading-tight">
+            {paramDesc}
+          </h2>
+          <div className="font-mono text-[10px] text-black/70 font-bold">
+            Agreement #{agreementId} · Rail: <span className="text-black bg-[#FFC800] px-1 py-0.2 rounded border border-black">{earnerPayoutDest}</span>
           </div>
         </div>
 
         {/* Amount Box */}
-        <div className="bg-white rounded-2xl p-4 text-center space-y-2 border border-slate-200/90 shadow-2xs">
-          <div className="label-caps mb-1">Total Amount Due</div>
+        <div className="inset-card p-4 text-center space-y-2">
+          <div className="label-caps mb-1" style={{ fontSize: '9.5px' }}>TOTAL INVOICE AMOUNT</div>
           <div className="flex items-center justify-center gap-1">
-            <span className="text-slate-400 font-bold text-2xl">$</span>
+            <span className="text-black font-mono font-black text-2xl">$</span>
             <input
               type="number"
               disabled={paying || settled}
               value={amount}
               onChange={(e) => setAmount(Math.max(1, Number(e.target.value)))}
-              className="bg-transparent text-center font-black text-slate-900 text-[2.2rem] w-36 focus:outline-none amount-display"
+              className="bg-transparent text-center font-display font-black text-black text-[2.5rem] w-40 focus:outline-none"
             />
-            <span className="font-bold text-base mono text-indigo-600">USDC</span>
+            <span className="font-mono font-black text-xs text-black bg-[#FFC800] px-1.5 py-0.5 border border-black rounded">
+              USDC
+            </span>
           </div>
 
           {!settled && (
@@ -212,10 +214,10 @@ function MobilePaymentContent() {
                 <button
                   key={preset}
                   onClick={() => setAmount(preset)}
-                  className={`text-[11px] mono px-2.5 py-1 rounded-xl transition-all font-semibold ${
+                  className={`text-[11px] font-mono font-black px-2.5 py-1 rounded-lg border-2 border-black transition-all ${
                     amount === preset
-                      ? 'bg-indigo-600 text-white font-bold shadow-xs'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      ? 'bg-[#FFC800] text-black shadow-[2px_2px_0px_#000]'
+                      : 'bg-white text-black hover:bg-[#FAF9F5]'
                   }`}
                 >
                   ${preset}
@@ -228,104 +230,103 @@ function MobilePaymentContent() {
         {/* Global Payment Method Selector */}
         {!settled && (
           <div className="space-y-3">
-            <div className="label-caps text-slate-500 font-bold">Select Payment Method</div>
+            <div className="label-caps" style={{ fontSize: '10px' }}>SELECT PAYMENT METHOD</div>
 
-            <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs">
+            <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-[#FAF9F5] border-2 border-black text-xs">
               <button
                 type="button"
                 onClick={() => setMethod('card')}
-                className={`py-2 px-1 rounded-lg font-bold flex items-center justify-center gap-1 transition-all ${
+                className={`py-2 px-1 rounded-lg font-display font-black text-[11px] uppercase flex items-center justify-center gap-1 transition-all ${
                   method === 'card'
-                    ? 'bg-indigo-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-[#FFC800] text-black border-2 border-black shadow-[1.5px_1.5px_0px_#000]'
+                    : 'text-black/70 hover:text-black border-2 border-transparent'
                 }`}
               >
-                <CreditCard className="h-3.5 w-3.5" />
+                <CreditCard className="h-3.5 w-3.5" strokeWidth={2.5} />
                 <span>Card</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setMethod('upi')}
-                className={`py-2 px-1 rounded-lg font-bold flex items-center justify-center gap-1 transition-all ${
+                className={`py-2 px-1 rounded-lg font-display font-black text-[11px] uppercase flex items-center justify-center gap-1 transition-all ${
                   method === 'upi'
-                    ? 'bg-indigo-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-[#FFC800] text-black border-2 border-black shadow-[1.5px_1.5px_0px_#000]'
+                    : 'text-black/70 hover:text-black border-2 border-transparent'
                 }`}
               >
-                <QrCode className="h-3.5 w-3.5" />
+                <QrCode className="h-3.5 w-3.5" strokeWidth={2.5} />
                 <span>UPI / QR</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setMethod('web3')}
-                className={`py-2 px-1 rounded-lg font-bold flex items-center justify-center gap-1 transition-all ${
+                className={`py-2 px-1 rounded-lg font-display font-black text-[11px] uppercase flex items-center justify-center gap-1 transition-all ${
                   method === 'web3'
-                    ? 'bg-indigo-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-[#FFC800] text-black border-2 border-black shadow-[1.5px_1.5px_0px_#000]'
+                    : 'text-black/70 hover:text-black border-2 border-transparent'
                 }`}
               >
-                <Globe className="h-3.5 w-3.5" />
-                <span>USDC</span>
+                <Globe className="h-3.5 w-3.5" strokeWidth={2.5} />
+                <span>Passkey</span>
               </button>
             </div>
 
-            {/* METHOD 1: Debit / Credit Card Form */}
+            {/* METHOD 1: Card Form */}
             {method === 'card' && (
-              <div className="p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3 animate-fade-in text-xs">
-                <div className="flex items-center justify-between text-slate-500">
-                  <span className="font-semibold text-[11px] text-slate-800">Global Cards (Visa / Mastercard)</span>
-                  <div className="flex gap-1.5 text-[10px] font-mono text-indigo-600 font-bold">
-                    <span>VISA</span>
-                    <span>MC</span>
-                    <span>AMEX</span>
+              <div className="border-2 border-black rounded-xl p-3 bg-white shadow-[2px_2px_0px_#000] space-y-2.5 animate-fade-in text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="label-caps" style={{ fontSize: '9px' }}>GLOBAL CARDS</span>
+                  <div className="flex gap-1 text-[9px] font-mono font-black text-black">
+                    <span className="bg-[#FFC800] px-1 py-0.2 border border-black rounded">VISA</span>
+                    <span className="bg-[#FFC800] px-1 py-0.2 border border-black rounded">MC</span>
                   </div>
                 </div>
 
                 <div>
-                  <label className="label-caps block mb-1">Card Number</label>
+                  <span className="label-caps block mb-1" style={{ fontSize: '9px' }}>CARD NUMBER</span>
                   <input
                     type="text"
                     value={cardNumber}
                     onChange={(e) => setCardNumber(e.target.value)}
                     placeholder="4532 8912 3456 8821"
-                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-sm focus:outline-none focus:border-indigo-500"
+                    className="w-full px-2.5 py-2 rounded-lg bg-[#FAF9F5] border-1.5 border-black text-black font-mono font-bold text-xs focus:outline-none"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="label-caps block mb-1">Cardholder Name</label>
+                    <span className="label-caps block mb-1" style={{ fontSize: '9px' }}>HOLDER</span>
                     <input
                       type="text"
                       value={cardHolder}
                       onChange={(e) => setCardHolder(e.target.value)}
-                      placeholder="Name on card"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:border-indigo-500"
+                      placeholder="John Client"
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-[#FAF9F5] border-1.5 border-black text-black font-bold text-xs focus:outline-none"
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-1.5">
+                  <div className="grid grid-cols-2 gap-1">
                     <div>
-                      <label className="label-caps block mb-1">Expires</label>
+                      <span className="label-caps block mb-1" style={{ fontSize: '9px' }}>EXP</span>
                       <input
                         type="text"
                         value={cardExpiry}
                         onChange={(e) => setCardExpiry(e.target.value)}
                         placeholder="MM/YY"
-                        className="w-full px-2.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-xs focus:outline-none focus:border-indigo-500"
+                        className="w-full px-1.5 py-1.5 rounded-lg bg-[#FAF9F5] border-1.5 border-black text-black font-mono font-bold text-xs focus:outline-none"
                       />
                     </div>
                     <div>
-                      <label className="label-caps block mb-1">CVV</label>
+                      <span className="label-caps block mb-1" style={{ fontSize: '9px' }}>CVV</span>
                       <input
                         type="password"
                         maxLength={4}
                         value={cardCvv}
                         onChange={(e) => setCardCvv(e.target.value)}
                         placeholder="•••"
-                        className="w-full px-2.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-xs focus:outline-none focus:border-indigo-500"
+                        className="w-full px-1.5 py-1.5 rounded-lg bg-[#FAF9F5] border-1.5 border-black text-black font-mono font-bold text-xs focus:outline-none"
                       />
                     </div>
                   </div>
@@ -335,34 +336,34 @@ function MobilePaymentContent() {
 
             {/* METHOD 2: UPI / QR Form */}
             {method === 'upi' && (
-              <div className="p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3 animate-fade-in text-xs">
+              <div className="border-2 border-black rounded-xl p-3 bg-white shadow-[2px_2px_0px_#000] space-y-2.5 animate-fade-in text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-slate-800 text-[11px]">Instant UPI / Mobile Banking</span>
+                  <span className="label-caps" style={{ fontSize: '9px' }}>INSTANT UPI RAIL</span>
                   <button
                     type="button"
                     onClick={() => setShowQr(!showQr)}
-                    className="text-indigo-600 text-[11px] font-semibold underline"
+                    className="text-black font-display font-black text-[10px] uppercase underline hover:text-[#FFC800]"
                   >
-                    {showQr ? 'Hide QR' : 'Show Scan QR'}
+                    {showQr ? 'Enter VPA' : 'Show QR'}
                   </button>
                 </div>
 
                 {showQr ? (
-                  <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-center space-y-2 max-w-[200px] mx-auto shadow-2xs">
-                    <div className="h-36 w-36 bg-slate-900 mx-auto rounded-lg flex items-center justify-center text-white text-xs font-mono p-2 text-center">
-                      [UPI QR CODE]
+                  <div className="p-3 bg-[#FAF9F5] border-2 border-black rounded-xl text-center space-y-2 max-w-[180px] mx-auto">
+                    <div className="h-32 w-32 bg-black mx-auto rounded-lg flex items-center justify-center text-white text-[11px] font-mono p-2 border-2 border-[#FFC800]">
+                      [UPI QR SCAN]
                     </div>
-                    <div className="text-[10px] text-slate-500">Scan with any UPI App (GPay, PhonePe, Paytm)</div>
+                    <div className="text-[9.5px] font-bold text-black">Scan with GPay / PhonePe / Paytm</div>
                   </div>
                 ) : (
                   <div>
-                    <label className="label-caps block mb-1">Payer UPI ID (VPA)</label>
+                    <span className="label-caps block mb-1" style={{ fontSize: '9px' }}>PAYER UPI ID (VPA)</span>
                     <input
                       type="text"
                       value={clientUpi}
                       onChange={(e) => setClientUpi(e.target.value)}
                       placeholder="yourname@upi"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-xs focus:outline-none focus:border-indigo-500"
+                      className="w-full px-2.5 py-2 rounded-lg bg-[#FAF9F5] border-1.5 border-black text-black font-mono font-bold text-xs focus:outline-none"
                     />
                   </div>
                 )}
@@ -371,10 +372,10 @@ function MobilePaymentContent() {
 
             {/* METHOD 3: Web3 Passkey */}
             {method === 'web3' && (
-              <div className="p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2 animate-fade-in text-xs">
-                <div className="font-semibold text-slate-800 text-[11px]">Passkey & Web3 Settlement</div>
-                <p className="text-[11px] text-slate-500 leading-relaxed">
-                  Sign directly with your biometric FaceID / TouchID passkey. Atomic split executes on Monad.
+              <div className="border-2 border-black rounded-xl p-3 bg-white shadow-[2px_2px_0px_#000] space-y-1.5 animate-fade-in text-xs">
+                <div className="label-caps" style={{ fontSize: '9px' }}>BIOMETRIC PASSKEY &amp; USDC</div>
+                <p className="text-[11px] text-black/80 font-medium leading-relaxed">
+                  Sign directly with FaceID / TouchID passkey. Atomic 90/10 split executes in real time on Monad.
                 </p>
               </div>
             )}
@@ -382,45 +383,43 @@ function MobilePaymentContent() {
         )}
 
         {/* Split Preview */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-1.5 label-caps text-indigo-600 font-bold">
-            <Sparkles className="h-3 w-3" />
-            Automatic Split at Settlement
+        <div className="space-y-1.5">
+          <div className="label-caps" style={{ fontSize: '9.5px' }}>
+            AUTOMATIC SPLIT AT SETTLEMENT
           </div>
 
-          <div className="bg-white rounded-2xl p-3.5 space-y-2.5 border border-slate-200/80 shadow-2xs">
-            <div className="flex justify-between items-center">
-              <span className="text-[12px] text-slate-700 font-medium">
+          <div className="inset-card p-3 space-y-2">
+            <div className="flex justify-between items-center text-xs">
+              <span className="font-bold text-black">
                 {earnerDisplayName} (90% to {earnerPayoutDest})
               </span>
-              <span className="mono font-bold text-[14px] text-indigo-600">
+              <span className="font-mono font-black text-black">
                 ${earnerPayout.toFixed(2)} USDC
               </span>
             </div>
 
-            <div className="flex justify-between items-center">
-              <span className="text-[12px] text-slate-700 font-medium">Backers Syndicate Repayment (10%)</span>
-              <span className="mono font-bold text-[14px] text-coral">
+            <div className="flex justify-between items-center text-xs">
+              <span className="font-bold text-black/70">Backers Syndicate Repayment (10%)</span>
+              <span className="font-mono font-black text-red-600">
                 ${backerPayout.toFixed(2)} USDC
               </span>
             </div>
 
             {/* Split bar */}
-            <div className="flex h-1.5 rounded-full overflow-hidden gap-px">
-              <div style={{ width: '90%', background: '#6366f1' }} />
-              <div style={{ width: '10%', background: '#f43f5e' }} />
+            <div className="progress-track h-2">
+              <div className="progress-fill-periwinkle h-full" style={{ width: '90%' }} />
             </div>
 
-            <div className="pt-1 flex items-center justify-between text-[10px] border-t border-slate-100">
-              <span className="text-slate-400">• Aman $20 • Priya $30 • Karan $50</span>
-              <span className="font-semibold text-indigo-600">Pro-Rata</span>
+            <div className="pt-1 flex items-center justify-between text-[9.5px] font-mono font-bold border-t border-black/10 text-black/60">
+              <span>• Aman $20 • Priya $30 • Karan $50</span>
+              <span className="text-black font-black uppercase">PRO-RATA</span>
             </div>
           </div>
         </div>
 
         {errorMsg && (
-          <div className="p-3 rounded-xl flex items-center gap-2 text-[12px] bg-rose-50 border border-rose-200 text-rose-700">
-            <AlertCircle className="h-4 w-4 flex-shrink-0" />
+          <div className="p-2.5 rounded-xl flex items-center gap-2 text-xs bg-red-100 border-2 border-black shadow-[2px_2px_0px_#000] text-red-900 font-bold">
+            <AlertCircle className="h-4 w-4 flex-shrink-0 text-red-600" />
             <span>{errorMsg}</span>
           </div>
         )}
@@ -428,53 +427,56 @@ function MobilePaymentContent() {
         {/* CTA */}
         {!settled ? (
           <div className="space-y-2">
+            {/* Split Neo-Brutalist Action Button */}
             <button
               onClick={handlePay}
               disabled={paying || amount <= 0}
-              className="w-full btn-periwinkle py-4 rounded-2xl text-[14px] font-black flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full flex items-stretch rounded-xl border-2 border-black shadow-[3px_3px_0px_#000] overflow-hidden active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50 group"
             >
-              {paying ? (
-                <>
-                  <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>{authMsg || 'Processing Payment...'}</span>
-                </>
-              ) : (
-                <>
-                  <Lock className="h-4 w-4" />
+              <div className="flex-1 bg-[#FFC800] group-hover:bg-[#FFD21A] py-3.5 text-center font-display font-black text-sm uppercase tracking-wider text-black flex items-center justify-center gap-2 transition-colors">
+                {paying ? (
+                  <>
+                    <span className="h-4 w-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                    <span>{authMsg || 'PROCESSING PAYMENT...'}</span>
+                  </>
+                ) : (
                   <span>
-                    Pay ${amount.toLocaleString()} USDC (
-                    {method === 'card' ? 'Global Card' : method === 'upi' ? 'UPI' : 'Passkey'}
-                    )
+                    PAY ${amount.toLocaleString()} USDC ({method.toUpperCase()})
                   </span>
-                </>
-              )}
+                )}
+              </div>
+              <div className="w-12 bg-black flex items-center justify-center text-white group-hover:bg-neutral-800 transition-colors">
+                <ArrowRight className="h-5 w-5" strokeWidth={3} />
+              </div>
             </button>
-            <div className="text-[10px] text-slate-400 text-center flex items-center justify-center gap-1 font-medium">
-              <ShieldCheck className="h-3.5 w-3.5 text-indigo-600" />
+
+            <div className="text-[10px] text-black/60 text-center flex items-center justify-center gap-1 font-bold">
+              <ShieldCheck className="h-3.5 w-3.5 text-black" strokeWidth={2.5} />
               Direct execution via SettlementEngine.sol · Zero middleman custody
             </div>
           </div>
         ) : (
-          <div className="rounded-2xl p-4 space-y-3 animate-scale-in bg-indigo-50/80 border border-indigo-200 shadow-2xs">
-            <div className="flex items-center gap-2 font-bold text-[14px] text-indigo-700">
-              <CheckCircle2 className="h-5 w-5" />
-              Payment &amp; Inflow Split Completed!
+          <div className="rounded-2xl p-4 space-y-3 bg-[#FFFBEB] border-2 border-black shadow-[3px_3px_0px_#000] animate-scale-in">
+            <div className="flex items-center gap-2 font-display font-black text-sm uppercase text-black">
+              <CheckCircle2 className="h-5 w-5 text-emerald-600" strokeWidth={3} />
+              PAYMENT &amp; INFLOW SPLIT COMPLETED!
             </div>
-            <p className="text-[12px] text-slate-700 leading-relaxed">
-              <strong className="text-slate-900 font-bold">${amount.toLocaleString()} USDC</strong> successfully settled via{' '}
-              <strong className="text-indigo-600 font-mono font-bold">{result?.paymentMethod || 'Global Payment Rail'}</strong>:
-              <br />• <strong className="text-indigo-600 font-bold">+${microToDollars(result?.earnerShare).toFixed(2)} USDC</strong> automatically routed to {earnerDisplayName}&apos;s {earnerPayoutDest}.
-              <br />• <strong className="text-coral font-bold">-${microToDollars(result?.backerShareTotal).toFixed(2)} USDC</strong> pro-rata deducted to backer syndicate.
+            <p className="text-xs text-black leading-relaxed font-medium">
+              <strong className="font-mono font-black text-black">${amount.toLocaleString()} USDC</strong> successfully settled via{' '}
+              <strong className="font-mono font-bold text-black">{result?.paymentMethod || 'Global Payment Rail'}</strong>:
+              <br />• <strong className="font-mono font-black text-emerald-700">+${microToDollars(result?.earnerShare).toFixed(2)} USDC</strong> automatically routed to {earnerDisplayName}&apos;s {earnerPayoutDest}.
+              <br />• <strong className="font-mono font-black text-red-600">-${microToDollars(result?.backerShareTotal).toFixed(2)} USDC</strong> pro-rata deducted to backer syndicate.
             </p>
 
-            <div className="rounded-lg p-2.5 mono text-[10px] text-slate-600 break-all bg-white border border-slate-200 shadow-2xs">
-              Tx: <span className="text-indigo-600 font-semibold">{result?.transactionHash}</span>
+            <div className="rounded-lg p-2 font-mono text-[10px] text-black break-all bg-white border border-black shadow-[1px_1px_0px_#000]">
+              Tx: <span className="font-bold text-black">{result?.transactionHash}</span>
             </div>
 
-            <Link href="/dashboard"
-              className="btn-periwinkle w-full py-3 rounded-xl text-[12px] font-black flex items-center justify-center gap-1.5 mt-2"
+            <Link
+              href="/dashboard"
+              className="btn-periwinkle w-full py-3 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 mt-2"
             >
-              Back to Earner Wallet <ArrowRight className="h-3.5 w-3.5" />
+              BACK TO EARNER WALLET <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.5} />
             </Link>
           </div>
         )}
@@ -486,7 +488,9 @@ function MobilePaymentContent() {
 export default function MobilePaymentPage() {
   return (
     <Suspense fallback={
-      <div className="py-20 text-center text-[12px] text-slate-400">Loading Checkout Rail…</div>
+      <div className="py-20 text-center font-display font-black text-xs uppercase text-black">
+        LOADING CHECKOUT RAIL…
+      </div>
     }>
       <MobilePaymentContent />
     </Suspense>

@@ -134,7 +134,7 @@ export default function UserProfilePage() {
         particleCount: 60,
         spread: 60,
         origin: { y: 0.6 },
-        colors: ['#6366f1', '#818cf8', '#f43f5e']
+        colors: ['#FFC800', '#000000', '#FFFFFF']
       });
 
       setTimeout(() => {
@@ -162,26 +162,30 @@ export default function UserProfilePage() {
   const railType = profile?.payoutType || 'upi';
 
   return (
-    <div className="space-y-3.5 animate-fade-in-up pb-4">
+    <div className="space-y-3.5 pb-4">
       {/* 1. Profile Header Card */}
-      <div className="app-card-highlight p-5 space-y-4">
+      <div className="app-card-highlight p-5 space-y-3 relative overflow-hidden">
+        <div className="absolute top-3 right-3 w-8 h-8 dot-grid opacity-60 pointer-events-none" />
+
         <div className="flex items-center gap-3.5">
-          <div className="h-14 w-14 rounded-2xl bg-gradient-to-tr from-indigo-500 to-indigo-600 flex items-center justify-center text-white font-black text-2xl shadow-md shadow-indigo-500/20">
+          <div className="h-16 w-16 rounded-2xl bg-[#FFC800] border-[2.5px] border-black shadow-[3px_3px_0px_#000] flex items-center justify-center text-black font-display font-black text-2xl flex-shrink-0">
             {userName.charAt(0).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-extrabold text-slate-900 truncate">{userName}</h1>
-              <span className="flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
-                <CheckCircle2 className="h-3 w-3" />
-                Verified
+              <h1 className="font-display text-xl font-black uppercase text-black tracking-tight truncate">
+                {userName}
+              </h1>
+              <span className="badge-emerald text-[9px]">
+                <CheckCircle2 className="h-3 w-3" strokeWidth={3} />
+                VERIFIED
               </span>
             </div>
-            <div className="text-xs text-slate-500 font-mono mt-0.5">{userPhone}</div>
-            <div className="text-[11px] text-indigo-600 font-semibold mt-1 flex items-center gap-1">
-              <span>BackFlow Verified Earner</span>
+            <div className="text-xs font-mono font-bold text-black/70 mt-0.5">{userPhone}</div>
+            <div className="label-caps mt-1 flex items-center gap-1.5" style={{ fontSize: '9px' }}>
+              <span>BF-001</span>
               <span>•</span>
-              <span className="font-mono text-[10px] text-slate-400">ID: BF-001</span>
+              <span>MONAD TESTNET</span>
             </div>
           </div>
         </div>
@@ -189,36 +193,36 @@ export default function UserProfilePage() {
 
       {/* 2. Login Details Summary */}
       <div className="app-card p-4 space-y-3 text-xs">
-        <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-          <div className="label-caps text-slate-500 font-bold tracking-wider flex items-center gap-1.5">
-            <User className="h-3.5 w-3.5 text-indigo-600" />
-            <span>Login Information</span>
+        <div className="flex items-center justify-between pb-2 border-b-2 border-black">
+          <div className="label-caps flex items-center gap-1.5" style={{ fontSize: '9.5px' }}>
+            <User className="h-3.5 w-3.5 text-black" strokeWidth={2.5} />
+            <span>LOGIN INFORMATION</span>
           </div>
-          <span className="badge-emerald font-mono">
-            OTP Authenticated
+          <span className="badge-periwinkle text-[8.5px]">
+            OTP AUTHENTICATED
           </span>
         </div>
 
         <div className="space-y-2">
-          <div className="flex items-center justify-between py-1">
-            <span className="text-slate-500">Full Name</span>
-            <span className="font-bold text-slate-900">{userName}</span>
+          <div className="flex items-center justify-between py-1 border-b border-black/10">
+            <span className="font-bold text-black/70">Full Name</span>
+            <span className="font-display font-black text-black">{userName}</span>
+          </div>
+
+          <div className="flex items-center justify-between py-1 border-b border-black/10">
+            <span className="font-bold text-black/70">Email Address</span>
+            <span className="font-mono font-bold text-black">{userEmail}</span>
+          </div>
+
+          <div className="flex items-center justify-between py-1 border-b border-black/10">
+            <span className="font-bold text-black/70">Registered Phone</span>
+            <span className="font-mono font-bold text-black">{userPhone}</span>
           </div>
 
           <div className="flex items-center justify-between py-1">
-            <span className="text-slate-500">Email Address</span>
-            <span className="font-medium text-slate-900">{userEmail}</span>
-          </div>
-
-          <div className="flex items-center justify-between py-1">
-            <span className="text-slate-500">Registered Phone</span>
-            <span className="font-mono font-semibold text-slate-900">{userPhone}</span>
-          </div>
-
-          <div className="flex items-center justify-between py-1">
-            <span className="text-slate-500">Security Rail</span>
-            <span className="text-slate-700 flex items-center gap-1 font-mono text-[11px]">
-              <Lock className="h-3 w-3 text-emerald-600" />
+            <span className="font-bold text-black/70">Security Rail</span>
+            <span className="text-black flex items-center gap-1 font-mono font-bold text-[11px]">
+              <Lock className="h-3 w-3 text-emerald-700" strokeWidth={2.5} />
               6-Digit SMS Verification
             </span>
           </div>
@@ -227,24 +231,24 @@ export default function UserProfilePage() {
 
       {/* 3. Connected Automatic Payout Rail Card */}
       <div className="app-card p-4 space-y-3 text-xs">
-        <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-          <div className="label-caps text-slate-500 font-bold tracking-wider flex items-center gap-1.5">
+        <div className="flex items-center justify-between pb-2 border-b-2 border-black">
+          <div className="label-caps flex items-center gap-1.5" style={{ fontSize: '9.5px' }}>
             {railType === 'card' ? (
-              <CreditCard className="h-3.5 w-3.5 text-indigo-600" />
+              <CreditCard className="h-3.5 w-3.5 text-black" strokeWidth={2.5} />
             ) : railType === 'bank' ? (
-              <Building className="h-3.5 w-3.5 text-indigo-600" />
+              <Building className="h-3.5 w-3.5 text-black" strokeWidth={2.5} />
             ) : (
-              <QrCode className="h-3.5 w-3.5 text-indigo-600" />
+              <QrCode className="h-3.5 w-3.5 text-black" strokeWidth={2.5} />
             )}
-            <span>Automatic Payout Rail</span>
+            <span>AUTOMATIC PAYOUT RAIL</span>
           </div>
 
           {!editingRail && (
             <button
               onClick={() => setEditingRail(true)}
-              className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 px-2 py-0.5 rounded-lg bg-indigo-50 border border-indigo-200 flex items-center gap-1 transition-colors"
+              className="text-[10px] font-display font-black uppercase text-black bg-white hover:bg-[#FFC800] border-1.5 border-black shadow-[1.5px_1.5px_0px_#000] px-2 py-0.5 rounded flex items-center gap-1 transition-colors"
             >
-              <Edit3 className="h-3 w-3" />
+              <Edit3 className="h-3 w-3" strokeWidth={2.5} />
               Edit Rail
             </button>
           )}
@@ -253,93 +257,93 @@ export default function UserProfilePage() {
         {!editingRail ? (
           <div className="space-y-2.5">
             <div className="flex items-center justify-between">
-              <span className="text-slate-500">Payout Method</span>
-              <span className="uppercase font-mono font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200 text-[11px]">
+              <span className="font-bold text-black/70">Payout Method</span>
+              <span className="badge-periwinkle text-[9px] uppercase">
                 {railType}
               </span>
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-slate-500">Linked Destination</span>
-              <span className="font-mono font-extrabold text-slate-900 text-xs tracking-wide">
+              <span className="font-bold text-black/70">Linked Destination</span>
+              <span className="font-mono font-black text-black text-xs">
                 {railId}
               </span>
             </div>
 
-            <div className="inset-card p-3 space-y-1 text-[11px]">
-              <div className="flex items-center gap-1.5 text-indigo-600 font-bold">
-                <Zap className="h-3.5 w-3.5" />
+            <div className="inset-card p-3 space-y-1 text-xs">
+              <div className="flex items-center gap-1.5 text-black font-display font-black uppercase text-[10px]">
+                <Zap className="h-3.5 w-3.5 text-[#FFC800]" fill="#FFC800" stroke="#000" />
                 <span>90% Net Deposit Guarantee</span>
               </div>
-              <p className="text-slate-600 leading-relaxed text-[10px]">
-                All client inflows on BackFlow automatically split: 90% immediately hits this payout rail, 10% repays your backers.
+              <p className="text-black/80 font-medium leading-relaxed text-[10.5px]">
+                All client inflows automatically split: 90% immediately deposits to this rail, 10% auto-repays your syndicate backers.
               </p>
             </div>
           </div>
         ) : (
           /* Edit Payout Form */
           <form onSubmit={handleUpdateRail} className="space-y-3 pt-1 animate-fade-in">
-            <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs">
+            <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-[#FAF9F5] border-2 border-black text-xs">
               <button
                 type="button"
                 onClick={() => setPayoutType('upi')}
-                className={`py-1.5 rounded-lg font-bold flex items-center justify-center gap-1 transition-all ${
+                className={`py-1.5 rounded-lg font-display font-black text-[11px] uppercase flex items-center justify-center gap-1 transition-all ${
                   payoutType === 'upi'
-                    ? 'bg-indigo-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-[#FFC800] text-black border-1.5 border-black shadow-[1.5px_1.5px_0px_#000]'
+                    : 'text-black/70 hover:text-black'
                 }`}
               >
-                <QrCode className="h-3 w-3" />
+                <QrCode className="h-3 w-3" strokeWidth={2.5} />
                 UPI
               </button>
               <button
                 type="button"
                 onClick={() => setPayoutType('card')}
-                className={`py-1.5 rounded-lg font-bold flex items-center justify-center gap-1 transition-all ${
+                className={`py-1.5 rounded-lg font-display font-black text-[11px] uppercase flex items-center justify-center gap-1 transition-all ${
                   payoutType === 'card'
-                    ? 'bg-indigo-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-[#FFC800] text-black border-1.5 border-black shadow-[1.5px_1.5px_0px_#000]'
+                    : 'text-black/70 hover:text-black'
                 }`}
               >
-                <CreditCard className="h-3 w-3" />
+                <CreditCard className="h-3 w-3" strokeWidth={2.5} />
                 Card
               </button>
               <button
                 type="button"
                 onClick={() => setPayoutType('bank')}
-                className={`py-1.5 rounded-lg font-bold flex items-center justify-center gap-1 transition-all ${
+                className={`py-1.5 rounded-lg font-display font-black text-[11px] uppercase flex items-center justify-center gap-1 transition-all ${
                   payoutType === 'bank'
-                    ? 'bg-indigo-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-[#FFC800] text-black border-1.5 border-black shadow-[1.5px_1.5px_0px_#000]'
+                    : 'text-black/70 hover:text-black'
                 }`}
               >
-                <Building className="h-3 w-3" />
+                <Building className="h-3 w-3" strokeWidth={2.5} />
                 Bank
               </button>
             </div>
 
             {payoutType === 'upi' && (
               <div>
-                <label className="label-caps block mb-1">New UPI ID</label>
+                <span className="label-caps block mb-1" style={{ fontSize: '9px' }}>NEW UPI ID</span>
                 <input
                   type="text"
                   value={upiId}
                   onChange={(e) => setUpiId(e.target.value)}
                   placeholder="name@upi"
-                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-xs focus:outline-none focus:border-indigo-500"
+                  className="w-full px-3 py-2 rounded-xl bg-[#FAF9F5] border-2 border-black text-black font-mono font-bold text-xs focus:outline-none"
                 />
               </div>
             )}
 
             {payoutType === 'card' && (
               <div>
-                <label className="label-caps block mb-1">Card Number (Visa / Mastercard)</label>
+                <span className="label-caps block mb-1" style={{ fontSize: '9px' }}>CARD NUMBER</span>
                 <input
                   type="text"
                   value={cardNumber}
                   onChange={(e) => setCardNumber(e.target.value)}
                   placeholder="4532 8912 3456 8821"
-                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-xs focus:outline-none focus:border-indigo-500"
+                  className="w-full px-3 py-2 rounded-xl bg-[#FAF9F5] border-2 border-black text-black font-mono font-bold text-xs focus:outline-none"
                 />
               </div>
             )}
@@ -347,31 +351,31 @@ export default function UserProfilePage() {
             {payoutType === 'bank' && (
               <div className="space-y-2">
                 <div>
-                  <label className="label-caps block mb-1">Account Number</label>
+                  <span className="label-caps block mb-1" style={{ fontSize: '9px' }}>ACCOUNT NUMBER</span>
                   <input
                     type="text"
                     value={bankAccount}
                     onChange={(e) => setBankAccount(e.target.value)}
                     placeholder="e.g. 50100234891023"
-                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-xs focus:outline-none focus:border-indigo-500"
+                    className="w-full px-3 py-2 rounded-xl bg-[#FAF9F5] border-2 border-black text-black font-mono font-bold text-xs focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="label-caps block mb-1">IFSC / Swift</label>
+                  <span className="label-caps block mb-1" style={{ fontSize: '9px' }}>IFSC / SWIFT</span>
                   <input
                     type="text"
                     value={bankIfsc}
                     onChange={(e) => setBankIfsc(e.target.value.toUpperCase())}
                     placeholder="e.g. HDFC0001234"
-                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-xs focus:outline-none focus:border-indigo-500"
+                    className="w-full px-3 py-2 rounded-xl bg-[#FAF9F5] border-2 border-black text-black font-mono font-bold text-xs focus:outline-none uppercase"
                   />
                 </div>
               </div>
             )}
 
             {errorMsg && (
-              <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center gap-2">
-                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+              <div className="p-2.5 rounded-xl bg-red-100 border-2 border-black text-xs text-red-900 font-bold flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 flex-shrink-0 text-red-600" />
                 <span>{errorMsg}</span>
               </div>
             )}
@@ -380,7 +384,7 @@ export default function UserProfilePage() {
               <button
                 type="button"
                 onClick={() => setEditingRail(false)}
-                className="flex-1 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-200"
+                className="flex-1 py-2 rounded-xl bg-white border-2 border-black text-black font-display font-black text-xs hover:bg-[#FAF9F5]"
               >
                 Cancel
               </button>
@@ -393,7 +397,7 @@ export default function UserProfilePage() {
                   <span>Saving...</span>
                 ) : saveSuccess ? (
                   <>
-                    <Check className="h-3.5 w-3.5" />
+                    <Check className="h-3.5 w-3.5" strokeWidth={3} />
                     <span>Saved!</span>
                   </>
                 ) : (
@@ -407,21 +411,21 @@ export default function UserProfilePage() {
 
       {/* 4. Active Revenue Share Parameters */}
       <div className="app-card p-4 space-y-2 text-xs">
-        <div className="label-caps text-slate-500 font-bold tracking-wider pb-1 border-b border-slate-100">
-          Protocol Terms
+        <div className="label-caps pb-1 border-b-2 border-black" style={{ fontSize: '9.5px' }}>
+          PROTOCOL TERMS
         </div>
         <div className="grid grid-cols-3 gap-2 pt-1 text-center font-mono">
           <div className="inset-card p-2">
-            <div className="text-[10px] text-slate-500">You Keep</div>
-            <div className="text-sm font-extrabold text-indigo-600 mt-0.5">90%</div>
+            <div className="text-[9.5px] font-bold text-black/60">You Keep</div>
+            <div className="text-base font-black text-black mt-0.5">90%</div>
           </div>
           <div className="inset-card p-2">
-            <div className="text-[10px] text-slate-500">Backers Cut</div>
-            <div className="text-sm font-extrabold text-coral mt-0.5">10%</div>
+            <div className="text-[9.5px] font-bold text-black/60">Backers Cut</div>
+            <div className="text-base font-black text-red-600 mt-0.5">10%</div>
           </div>
           <div className="inset-card p-2">
-            <div className="text-[10px] text-slate-500">Max Cap</div>
-            <div className="text-sm font-extrabold text-slate-900 mt-0.5">2.0×</div>
+            <div className="text-[9.5px] font-bold text-black/60">Max Cap</div>
+            <div className="text-base font-black text-black mt-0.5">2.0×</div>
           </div>
         </div>
       </div>
@@ -430,10 +434,10 @@ export default function UserProfilePage() {
       <div className="pt-2">
         <button
           onClick={handleLogout}
-          className="w-full py-3.5 rounded-2xl bg-slate-100 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 text-slate-700 hover:text-rose-600 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-2xs"
+          className="w-full py-3.5 rounded-xl bg-white hover:bg-red-50 border-2 border-black shadow-[3px_3px_0px_#000] text-red-600 font-display font-black uppercase text-xs flex items-center justify-center gap-2 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
         >
-          <LogOut className="h-4 w-4" />
-          <span>Sign Out of Portal</span>
+          <LogOut className="h-4 w-4" strokeWidth={2.5} />
+          <span>SIGN OUT OF PORTAL</span>
         </button>
       </div>
     </div>

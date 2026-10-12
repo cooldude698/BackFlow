@@ -10,17 +10,30 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        brutal: {
+          yellow: "#FFC800",
+          "yellow-hover": "#FFD21A",
+          "yellow-light": "#FFFBEB",
+          black: "#000000",
+          white: "#FFFFFF",
+          canvas: "#F7F7F4",
+          surface: "#FFFFFF",
+          muted: "#666666",
+          border: "#000000",
+          danger: "#EF4444",
+          success: "#10B981"
+        },
         periwinkle: {
-          50: "#f5f6ff",
-          100: "#ebedfe",
-          200: "#d7dcfe",
-          300: "#b5bffd",
-          400: "#818cf8",
-          500: "#6366f1",
-          600: "#4f46e5",
-          700: "#4338ca",
-          DEFAULT: "#6366f1",
-          glow: "#818cf8"
+          50: "#fffdf0",
+          100: "#fff9cc",
+          200: "#fff199",
+          300: "#ffe766",
+          400: "#ffd933",
+          500: "#ffc800",
+          600: "#e6b400",
+          700: "#cc9f00",
+          DEFAULT: "#ffc800",
+          glow: "#ffd933"
         },
         coral: {
           50: "#fff1f2",
@@ -35,16 +48,27 @@ const config: Config = {
         },
         surface: {
           50: "#ffffff",
-          100: "#fafafc",
-          200: "#f4f5fa",
-          300: "#e9ebf2",
-          400: "#d8dce8",
-          border: "rgba(0, 0, 0, 0.08)"
+          100: "#faf9f5",
+          200: "#f5f5f0",
+          300: "#e5e5dc",
+          400: "#c7c7bc",
+          border: "#000000"
         }
       },
       fontFamily: {
-        sans: ["-apple-system", "BlinkMacSystemFont", "SF Pro Display", "Inter", "sans-serif"],
-        mono: ["SF Mono", "JetBrains Mono", "monospace"]
+        display: ["Space Grotesk", "Plus Jakarta Sans", "sans-serif"],
+        sans: ["Plus Jakarta Sans", "Inter", "sans-serif"],
+        mono: ["JetBrains Mono", "SF Mono", "monospace"]
+      },
+      boxShadow: {
+        brutal: "3px 3px 0px #000000",
+        "brutal-sm": "2px 2px 0px #000000",
+        "brutal-lg": "5px 5px 0px #000000",
+        "brutal-xl": "8px 8px 0px #000000",
+        "brutal-yellow": "3px 3px 0px #FFC800",
+        "2xs": "1.5px 1.5px 0px #000000",
+        xs: "2px 2px 0px #000000",
+        sm: "3px 3px 0px #000000"
       }
     },
   },

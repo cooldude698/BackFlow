@@ -17,7 +17,11 @@ import {
   Check,
   AlertCircle,
   Zap,
-  Lock
+  Lock,
+  User,
+  Mail,
+  Camera,
+  Smartphone
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { sendOtp, verifyOtp, updatePayoutMethod, getUserProfile } from '@/lib/api';
@@ -208,7 +212,7 @@ export default function LoginPage() {
         particleCount: 80,
         spread: 70,
         origin: { y: 0.6 },
-        colors: ['#6366f1', '#818cf8', '#f43f5e', '#ffffff']
+        colors: ['#FFC800', '#000000', '#FFFFFF']
       });
 
       setTimeout(() => {
@@ -222,436 +226,574 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-full flex-1 flex flex-col justify-between animate-fade-in-up">
-      {/* Top back navigation & step progress bar - Stays pinned at top */}
-      <div className="space-y-2 px-0.5 flex-shrink-0">
-        {step > 1 && (
-          <div className="flex items-center justify-start text-xs pb-0.5">
-            <button
-              type="button"
-              onClick={() => setStep((s) => (s - 1) as 1 | 2)}
-              className="flex items-center gap-1 text-slate-500 hover:text-slate-900 transition-colors font-medium"
-            >
-              <ChevronLeft className="h-4 w-4" />
-              Back
-            </button>
+    <div className="w-full flex-1 flex flex-col justify-between">
+      {/* Top Navigation & Step Indicator (Inspired by brutalist mobile screen header) */}
+      <div className="flex items-center justify-between pb-3 flex-shrink-0">
+        {step > 1 ? (
+          <button
+            type="button"
+            onClick={() => setStep((s) => (s - 1) as 1 | 2)}
+            className="h-8 w-8 rounded-lg bg-white border-2 border-black shadow-[2px_2px_0px_#000] flex items-center justify-center text-black hover:bg-[#FFC800] transition-colors active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+            title="Go back"
+          >
+            <ChevronLeft className="h-4 w-4" strokeWidth={3} />
+          </button>
+        ) : (
+          <div className="h-8 w-8 rounded-lg bg-white border-2 border-black shadow-[2px_2px_0px_#000] flex items-center justify-center font-display font-black text-xs text-black">
+            BF
           </div>
         )}
 
-        {/* Wizard Progress Bar */}
-        <div className="grid grid-cols-3 gap-1.5">
-          <div className={`h-1.5 rounded-full transition-all ${step >= 1 ? 'bg-indigo-600' : 'bg-slate-200'}`} />
-          <div className={`h-1.5 rounded-full transition-all ${step >= 2 ? 'bg-indigo-600' : 'bg-slate-200'}`} />
-          <div className={`h-1.5 rounded-full transition-all ${step >= 3 ? 'bg-indigo-600' : 'bg-slate-200'}`} />
+        {/* 3 Step Pill Indicator */}
+        <div className="flex items-center gap-1.5">
+          {[1, 2, 3].map((s) => (
+            <div
+              key={s}
+              className={`h-2 rounded-full transition-all border-1.5 border-black ${
+                step >= s
+                  ? 'w-6 bg-[#FFC800] shadow-[1px_1px_0px_#000]'
+                  : 'w-2 bg-white'
+              }`}
+            />
+          ))}
         </div>
+
+        {hasExistingSession && step === 1 ? (
+          <Link
+            href="/dashboard"
+            className="font-display font-black text-[11px] uppercase tracking-wider text-black underline underline-offset-4 hover:text-[#FFC800]"
+          >
+            SKIP
+          </Link>
+        ) : (
+          <span className="font-mono text-[10px] font-black uppercase text-black/60">
+            0{step}/03
+          </span>
+        )}
       </div>
 
-      {/* Middle section: Card is centered in the remaining height */}
-      <div className="flex-1 flex flex-col justify-center my-auto py-3">
-        {/* STEP 1: Name & Phone Number */}
+      {/* Main Form Content */}
+      <div className="flex-1 flex flex-col justify-center my-auto py-2">
+        {/* ========================================================
+            STEP 1: CREATE YOUR PROFILE (Matching Reference Screen 1)
+           ======================================================== */}
         {step === 1 && (
-        <div className="app-card-highlight p-6 space-y-5 animate-fade-in">
-          <div className="space-y-1">
-            <span className="label-caps text-indigo-600 font-bold">Account Setup</span>
-            <h2 className="text-xl font-extrabold text-slate-900">Enter Your Phone</h2>
-            <p className="text-xs text-slate-500">
-              We&apos;ll send an instant security code to verify your earner profile.
-            </p>
-          </div>
+          <div className="app-card-highlight p-5 space-y-4 animate-fade-in relative overflow-hidden">
+            {/* Decorative dot matrix corner */}
+            <div className="absolute top-3 right-3 w-8 h-8 dot-grid opacity-70 pointer-events-none" />
 
-          {hasExistingSession && (
-            <div className="flex items-center justify-between p-3 rounded-xl bg-indigo-50/80 border border-indigo-200 text-xs text-slate-700 shadow-2xs">
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                <span>Signed in as <strong className="text-slate-900">{name}</strong></span>
+            {/* Title Section */}
+            <div className="space-y-0.5">
+              <h1 className="font-display text-2xl font-black uppercase tracking-tight text-black leading-none">
+                CREATE YOUR PROFILE
+              </h1>
+              <p className="text-xs text-black/70 font-medium leading-snug pt-1">
+                Set up your verified earner profile to unlock 90/10 automated payment splits.
+              </p>
+            </div>
+
+            {/* Stylized Neo-Brutalist Avatar Box (Direct inspiration from reference illustration) */}
+            <div className="flex items-center justify-center py-2 relative">
+              {/* Floating dot matrix on left */}
+              <div className="w-10 h-10 dot-grid opacity-60 absolute left-6 top-2 pointer-events-none" />
+              {/* Floating yellow accent square */}
+              <div className="w-3 h-3 bg-[#FFC800] border-2 border-black absolute right-10 top-3" />
+
+              <div className="relative">
+                <div className="w-24 h-24 bg-[#FFC800] border-[2.5px] border-black rounded-2xl shadow-[4px_4px_0px_#000] flex items-center justify-center overflow-hidden">
+                  <div className="w-16 h-16 rounded-full bg-white border-2 border-black flex items-center justify-center">
+                    <User className="h-10 w-10 text-black" strokeWidth={2.5} />
+                  </div>
+                </div>
+                {/* Camera icon button attached */}
+                <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-black text-white rounded-lg border-2 border-black flex items-center justify-center shadow-[1.5px_1.5px_0px_#FFC800]">
+                  <Camera className="h-3.5 w-3.5" />
+                </div>
               </div>
-              <Link
-                href="/dashboard"
-                className="text-[11px] font-bold text-indigo-600 hover:underline flex items-center gap-1"
-              >
-                Go to Wallet →
-              </Link>
-            </div>
-          )}
-
-          <form onSubmit={handleSendOtp} className="space-y-4">
-            <div>
-              <label className="label-caps block mb-1">Your Full Name</label>
-              <input
-                type="text"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Aman"
-                className="w-full px-3.5 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-medium text-sm focus:outline-none focus:border-indigo-500"
-              />
             </div>
 
-            <div>
-              <label className="label-caps block mb-1">Email Address</label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="e.g. aman@example.com"
-                className="w-full px-3.5 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-medium text-sm focus:outline-none focus:border-indigo-500"
-              />
-            </div>
-
-            <div>
-              <label className="label-caps block mb-1">Mobile Number</label>
-              <div className="flex gap-2">
-                <select
-                  value={countryCode}
-                  onChange={(e) => setCountryCode(e.target.value)}
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-3 text-xs text-slate-900 font-mono focus:outline-none focus:border-indigo-500"
+            {hasExistingSession && (
+              <div className="p-2.5 rounded-xl bg-[#FFFBEB] border-2 border-black shadow-[2px_2px_0px_#000] flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 border border-black animate-pulse" />
+                  <span className="font-bold text-black">Active session: {name}</span>
+                </div>
+                <Link
+                  href="/dashboard"
+                  className="font-display font-black text-[11px] uppercase bg-black text-white px-2 py-0.5 rounded border border-black hover:bg-[#FFC800] hover:text-black transition-colors"
                 >
-                  <option value="+91">🇮🇳 +91</option>
-                  <option value="+1">🇺🇸 +1</option>
-                  <option value="+44">🇬🇧 +44</option>
-                  <option value="+971">🇦🇪 +971</option>
-                  <option value="+65">🇸🇬 +65</option>
-                </select>
-                <input
-                  type="tel"
-                  required
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                  placeholder="98765 43210"
-                  className="w-full px-3.5 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono font-medium text-sm focus:outline-none focus:border-indigo-500"
-                />
-              </div>
-            </div>
-
-            {errorMsg && (
-              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center gap-2">
-                <AlertCircle className="h-4 w-4 flex-shrink-0" />
-                <span>{errorMsg}</span>
+                  Enter →
+                </Link>
               </div>
             )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full btn-periwinkle py-3.5 rounded-2xl text-xs font-black flex items-center justify-center gap-2 disabled:opacity-50"
-            >
-              {loading ? (
-                <>
-                  <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Sending Code...</span>
-                </>
-              ) : (
-                <>
-                  <span>Get Security OTP</span>
-                  <ArrowRight className="h-4 w-4" />
-                </>
+            <form onSubmit={handleSendOtp} className="space-y-3">
+              {/* Full Name Input Box */}
+              <div className="border-2 border-black rounded-xl p-2.5 bg-white shadow-[2px_2px_0px_#000] focus-within:shadow-[3px_3px_0px_#FFC800] focus-within:bg-[#FFFBEB] transition-all">
+                <div className="flex items-center gap-2 mb-1">
+                  <User className="h-3.5 w-3.5 text-black" strokeWidth={2.5} />
+                  <span className="label-caps" style={{ fontSize: '10px' }}>FULL NAME</span>
+                </div>
+                <input
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. Aman"
+                  className="w-full bg-transparent text-sm font-bold text-black focus:outline-none"
+                />
+              </div>
+
+              {/* Email Address Input Box */}
+              <div className="border-2 border-black rounded-xl p-2.5 bg-white shadow-[2px_2px_0px_#000] focus-within:shadow-[3px_3px_0px_#FFC800] focus-within:bg-[#FFFBEB] transition-all">
+                <div className="flex items-center gap-2 mb-1">
+                  <Mail className="h-3.5 w-3.5 text-black" strokeWidth={2.5} />
+                  <span className="label-caps" style={{ fontSize: '10px' }}>EMAIL ADDRESS</span>
+                </div>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="e.g. aman@example.com"
+                  className="w-full bg-transparent text-sm font-bold text-black focus:outline-none font-mono"
+                />
+              </div>
+
+              {/* Phone Number Input Box */}
+              <div className="border-2 border-black rounded-xl p-2.5 bg-white shadow-[2px_2px_0px_#000] focus-within:shadow-[3px_3px_0px_#FFC800] focus-within:bg-[#FFFBEB] transition-all">
+                <div className="flex items-center gap-2 mb-1">
+                  <Phone className="h-3.5 w-3.5 text-black" strokeWidth={2.5} />
+                  <span className="label-caps" style={{ fontSize: '10px' }}>PHONE NUMBER</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <select
+                    value={countryCode}
+                    onChange={(e) => setCountryCode(e.target.value)}
+                    className="bg-[#FAF9F5] border-1.5 border-black rounded-md px-1.5 py-0.5 text-xs font-mono font-black text-black focus:outline-none"
+                  >
+                    <option value="+91">🇮🇳 +91</option>
+                    <option value="+1">🇺🇸 +1</option>
+                    <option value="+44">🇬🇧 +44</option>
+                    <option value="+971">🇦🇪 +971</option>
+                    <option value="+65">🇸🇬 +65</option>
+                  </select>
+                  <input
+                    type="tel"
+                    required
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                    placeholder="98765 43210"
+                    className="w-full bg-transparent text-sm font-mono font-bold text-black focus:outline-none tracking-wider"
+                  />
+                </div>
+              </div>
+
+              {errorMsg && (
+                <div className="p-2.5 rounded-xl bg-red-100 border-2 border-black shadow-[2px_2px_0px_#000] text-xs text-red-900 font-bold flex items-center gap-2">
+                  <AlertCircle className="h-4 w-4 flex-shrink-0 text-red-600" />
+                  <span>{errorMsg}</span>
+                </div>
               )}
-            </button>
-          </form>
 
-          <div className="text-[10px] text-slate-400 text-center flex items-center justify-center gap-1.5 pt-1 font-medium">
-            <Lock className="h-3 w-3 text-indigo-600" />
-            End-to-end encrypted • Zero password vulnerability
+              {/* Brutalist Split Button (Yellow body + Black Arrow Block on Right) */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex items-stretch rounded-xl border-2 border-black shadow-[3px_3px_0px_#000] overflow-hidden active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50 group"
+              >
+                <div className="flex-1 bg-[#FFC800] group-hover:bg-[#FFD21A] py-3.5 text-center font-display font-black text-sm uppercase tracking-wider text-black flex items-center justify-center gap-2 transition-colors">
+                  {loading ? (
+                    <>
+                      <span className="h-4 w-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                      <span>SENDING CODE...</span>
+                    </>
+                  ) : (
+                    <span>CONTINUE</span>
+                  )}
+                </div>
+                <div className="w-12 bg-black flex items-center justify-center text-white group-hover:bg-neutral-800 transition-colors">
+                  <ArrowRight className="h-5 w-5" strokeWidth={3} />
+                </div>
+              </button>
+            </form>
+
+            {/* Bottom Hazard Stripe Accent (Straight from reference image bottom banner) */}
+            <div className="pt-2">
+              <div className="hazard-bar h-3 rounded-md w-full" />
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* STEP 2: 6-Digit OTP Verification */}
-      {step === 2 && (
-        <div className="app-card-highlight p-6 space-y-5 animate-fade-in">
-          <div className="space-y-1">
-            <span className="label-caps text-indigo-600 font-bold">Verification</span>
-            <h2 className="text-xl font-extrabold text-slate-900">Enter 6-Digit OTP</h2>
-            <p className="text-xs text-slate-500">
-              Code sent to <span className="font-mono text-slate-900 font-semibold">{countryCode} {phone}</span>
-            </p>
-          </div>
+        {/* ========================================================
+            STEP 2: VERIFY YOUR PHONE NUMBER (Matching Reference Screen 2)
+           ======================================================== */}
+        {step === 2 && (
+          <div className="app-card-highlight p-5 space-y-4 animate-fade-in relative overflow-hidden">
+            {/* Decorative dot matrix corner */}
+            <div className="absolute top-3 right-3 w-8 h-8 dot-grid opacity-70 pointer-events-none" />
 
-          {/* SMS Notification Banner */}
-          <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-200 space-y-1 text-xs">
-            <div className="flex items-center justify-between text-indigo-700 font-semibold text-[11px]">
-              <span className="flex items-center gap-1.5">
-                <Sparkles className="h-3.5 w-3.5" />
-                SMS Code Delivered:
-              </span>
+            {/* Title Section */}
+            <div className="space-y-0.5">
+              <h1 className="font-display text-2xl font-black uppercase tracking-tight text-black leading-none">
+                VERIFY YOUR PHONE NUMBER
+              </h1>
+              <p className="text-xs text-black/70 font-medium leading-snug pt-1">
+                We have sent a 6-digit verification code to{' '}
+                <span className="font-mono text-black font-extrabold bg-[#FFC800] px-1 py-0.5 border border-black rounded">
+                  {countryCode} {phone}
+                </span>
+              </p>
+            </div>
+
+            {/* Center Phone Graphic with Asterisk Badge (Inspired directly by reference screen 2) */}
+            <div className="flex items-center justify-center py-2 relative">
+              {/* Radiating sparkle lines */}
+              <div className="absolute left-8 top-6 w-3 h-0.5 bg-black rotate-45" />
+              <div className="absolute left-7 top-10 w-3 h-0.5 bg-black -rotate-12" />
+              <div className="absolute right-8 top-6 w-3 h-0.5 bg-black -rotate-45" />
+              <div className="absolute right-7 top-10 w-3 h-0.5 bg-black rotate-12" />
+              {/* Floating yellow square */}
+              <div className="w-3 h-3 bg-[#FFC800] border-2 border-black absolute right-12 bottom-3" />
+
+              {/* Phone Silhouette Graphic */}
+              <div className="w-28 h-36 bg-white border-[2.5px] border-black rounded-2xl shadow-[4px_4px_0px_#000] p-2 flex flex-col items-center justify-between relative">
+                {/* Speaker slit */}
+                <div className="w-6 h-1 bg-black rounded-full" />
+
+                {/* Asterisk Badge inside phone */}
+                <div className="w-full bg-[#FFC800] border-2 border-black rounded-xl py-2 px-1 text-center shadow-[2px_2px_0px_#000]">
+                  <span className="font-display font-black text-xl tracking-widest text-black">
+                    ****
+                  </span>
+                </div>
+
+                {/* Home bar slit */}
+                <div className="w-10 h-1 bg-black rounded-full" />
+              </div>
+            </div>
+
+            {/* SMS Notification Quick Code Pill */}
+            <div className="p-2.5 rounded-xl bg-[#FAF9F5] border-2 border-black shadow-[2px_2px_0px_#000] flex items-center justify-between text-xs">
+              <div className="flex items-center gap-1.5 font-bold text-black">
+                <Sparkles className="h-3.5 w-3.5 text-[#FFC800]" fill="#FFC800" stroke="#000" />
+                <span>Delivered Code:</span>
+                <span className="font-mono font-black bg-white px-2 py-0.5 rounded border border-black tracking-widest text-black">
+                  {receivedOtp || '849201'}
+                </span>
+              </div>
               <button
                 type="button"
                 onClick={() => setOtp((receivedOtp || '849201').split(''))}
-                className="underline hover:text-indigo-900 font-bold"
+                className="font-display font-black text-[10px] uppercase bg-[#FFC800] hover:bg-[#FFD21A] text-black px-2 py-1 rounded border border-black transition-colors"
               >
                 Auto-fill
               </button>
             </div>
-            <div className="font-mono font-bold text-slate-900 text-sm tracking-wider">
-              {receivedOtp || '849201'}
+
+            {/* 6 Individual Square OTP Boxes */}
+            <div className="flex justify-between gap-1.5 py-1">
+              {otp.map((digit, idx) => (
+                <input
+                  key={idx}
+                  ref={(el) => {
+                    otpInputRefs.current[idx] = el;
+                  }}
+                  type="text"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, '');
+                    const newOtp = [...otp];
+                    newOtp[idx] = val;
+                    setOtp(newOtp);
+                    if (val && idx < 5) {
+                      otpInputRefs.current[idx + 1]?.focus();
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Backspace' && !otp[idx] && idx > 0) {
+                      otpInputRefs.current[idx - 1]?.focus();
+                    }
+                  }}
+                  className="w-11 h-13 text-center text-xl font-display font-black rounded-xl bg-white border-2 border-black text-black shadow-[2px_2px_0px_#000] focus:shadow-[3px_3px_0px_#FFC800] focus:bg-[#FFFBEB] focus:outline-none transition-all"
+                />
+              ))}
             </div>
-          </div>
 
-          {/* 6 Digit Input Boxes */}
-          <div className="flex justify-between gap-2">
-            {otp.map((digit, idx) => (
-              <input
-                key={idx}
-                ref={(el) => {
-                  otpInputRefs.current[idx] = el;
-                }}
-                type="text"
-                maxLength={1}
-                value={digit}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, '');
-                  const newOtp = [...otp];
-                  newOtp[idx] = val;
-                  setOtp(newOtp);
-                  if (val && idx < 5) {
-                    otpInputRefs.current[idx + 1]?.focus();
-                  }
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Backspace' && !otp[idx] && idx > 0) {
-                    otpInputRefs.current[idx - 1]?.focus();
-                  }
-                }}
-                className="w-11 h-13 text-center text-xl font-black rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-500 font-mono shadow-2xs"
-              />
-            ))}
-          </div>
+            {errorMsg && (
+              <div className="p-2.5 rounded-xl bg-red-100 border-2 border-black shadow-[2px_2px_0px_#000] text-xs text-red-900 font-bold flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 flex-shrink-0 text-red-600" />
+                <span>{errorMsg}</span>
+              </div>
+            )}
 
-          {errorMsg && (
-            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center gap-2">
-              <AlertCircle className="h-4 w-4 flex-shrink-0" />
-              <span>{errorMsg}</span>
-            </div>
-          )}
-
-          <div className="space-y-2">
-            <button
-              onClick={handleVerifyOtp}
-              disabled={loading || otp.join('').length !== 6}
-              className="w-full btn-periwinkle py-3.5 rounded-2xl text-xs font-black flex items-center justify-center gap-2 disabled:opacity-50"
-            >
-              {loading ? (
-                <>
-                  <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Verifying...</span>
-                </>
-              ) : (
-                <>
-                  <span>Verify & Set Up Payout Rail</span>
-                  <ArrowRight className="h-4 w-4" />
-                </>
-              )}
-            </button>
-
-            <div className="text-center text-[11px] text-slate-400">
+            {/* Resend Code Prompt */}
+            <div className="text-center text-xs font-bold text-black/70">
+              Didn&apos;t receive code?{' '}
               {otpTimer > 0 ? (
-                <span>Resend code in {otpTimer}s</span>
+                <span className="font-mono text-red-600 font-black">
+                  RESEND (00:{otpTimer.toString().padStart(2, '0')})
+                </span>
               ) : (
                 <button
                   type="button"
                   onClick={() => setOtpTimer(30)}
-                  className="text-indigo-600 hover:underline font-semibold"
+                  className="font-display font-black text-black underline underline-offset-4 hover:text-[#FFC800]"
                 >
-                  Resend OTP
+                  RESEND CODE NOW
                 </button>
               )}
             </div>
-          </div>
-        </div>
-      )}
 
-      {/* STEP 3: Connect Payout Rail */}
-      {step === 3 && (
-        <div className="app-card-highlight p-6 space-y-5 animate-fade-in">
-          <div className="space-y-1">
-            <span className="label-caps text-indigo-600 font-bold">Automatic Payout Rail</span>
-            <h2 className="text-xl font-extrabold text-slate-900">Where Should We Send Your 90%?</h2>
-            <p className="text-xs text-slate-500 leading-snug">
-              Every time a client pays, your 90% automatically deposits here while 10% repays your backers.
-            </p>
-          </div>
-
-          {/* Selector Tabs: UPI vs Card vs Bank */}
-          <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs">
+            {/* Brutalist Split Button (Yellow + Black Arrow) */}
             <button
               type="button"
-              onClick={() => setPayoutType('upi')}
-              className={`py-2 px-1 rounded-lg font-bold flex items-center justify-center gap-1 transition-all ${
-                payoutType === 'upi'
-                  ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
+              onClick={handleVerifyOtp}
+              disabled={loading || otp.join('').length !== 6}
+              className="w-full flex items-stretch rounded-xl border-2 border-black shadow-[3px_3px_0px_#000] overflow-hidden active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50 group"
             >
-              <QrCode className="h-3.5 w-3.5" />
-              UPI
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setPayoutType('card')}
-              className={`py-2 px-1 rounded-lg font-bold flex items-center justify-center gap-1 transition-all ${
-                payoutType === 'card'
-                  ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <CreditCard className="h-3.5 w-3.5" />
-              Debit Card
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setPayoutType('bank')}
-              className={`py-2 px-1 rounded-lg font-bold flex items-center justify-center gap-1 transition-all ${
-                payoutType === 'bank'
-                  ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <Building className="h-3.5 w-3.5" />
-              Bank A/C
-            </button>
-          </div>
-
-          {/* Payout Form: UPI */}
-          {payoutType === 'upi' && (
-            <div className="space-y-3 animate-fade-in">
-              <div>
-                <label className="label-caps block mb-1">Your UPI ID (VPA)</label>
-                <input
-                  type="text"
-                  value={upiId}
-                  onChange={(e) => setUpiId(e.target.value)}
-                  placeholder="e.g. aman@okhdfcbank"
-                  className="w-full px-3.5 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-sm focus:outline-none focus:border-indigo-500"
-                />
+              <div className="flex-1 bg-[#FFC800] group-hover:bg-[#FFD21A] py-3.5 text-center font-display font-black text-sm uppercase tracking-wider text-black flex items-center justify-center gap-2 transition-colors">
+                {loading ? (
+                  <>
+                    <span className="h-4 w-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                    <span>VERIFYING...</span>
+                  </>
+                ) : (
+                  <span>VERIFY &amp; CONTINUE</span>
+                )}
               </div>
-
-              {/* Fast handle suggestions */}
-              <div className="flex flex-wrap gap-1.5">
-                {['@upi', '@okhdfcbank', '@oksbi', '@paytm', '@ybl'].map((handle) => (
-                  <button
-                    key={handle}
-                    type="button"
-                    onClick={() => {
-                      const prefix = upiId.includes('@') ? upiId.split('@')[0] : upiId || 'aman';
-                      setUpiId(`${prefix}${handle}`);
-                    }}
-                    className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200"
-                  >
-                    {handle}
-                  </button>
-                ))}
+              <div className="w-12 bg-black flex items-center justify-center text-white group-hover:bg-neutral-800 transition-colors">
+                <ArrowRight className="h-5 w-5" strokeWidth={3} />
               </div>
+            </button>
+          </div>
+        )}
+
+        {/* ========================================================
+            STEP 3: AUTOMATIC PAYOUT RAIL (Matching Reference Screen 3)
+           ======================================================== */}
+        {step === 3 && (
+          <div className="app-card-highlight p-5 space-y-4 animate-fade-in relative overflow-hidden">
+            {/* Decorative dot matrix corner */}
+            <div className="absolute top-3 right-3 w-8 h-8 dot-grid opacity-70 pointer-events-none" />
+
+            {/* Title Section */}
+            <div className="space-y-0.5">
+              <h1 className="font-display text-2xl font-black uppercase tracking-tight text-black leading-none">
+                AUTOMATIC PAYOUT RAIL
+              </h1>
+              <p className="text-xs text-black/70 font-medium leading-snug pt-1">
+                Where should we deposit your 90% revenue share whenever a client pays?
+              </p>
             </div>
-          )}
 
-          {/* Payout Form: Debit / Credit Card */}
-          {payoutType === 'card' && (
-            <div className="space-y-3 animate-fade-in">
-              <div>
-                <label className="label-caps block mb-1">Debit / Credit Card Number (Visa / Mastercard)</label>
-                <input
-                  type="text"
-                  value={cardNumber}
-                  onChange={(e) => setCardNumber(e.target.value)}
-                  placeholder="4532 8912 3456 8821"
-                  className="w-full px-3.5 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-sm focus:outline-none focus:border-indigo-500"
-                />
+            {/* Feature Bullet Points (Styled after location permission screen) */}
+            <div className="space-y-2 py-1">
+              <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white border-2 border-black shadow-[2px_2px_0px_#000]">
+                <div className="w-7 h-7 rounded-lg bg-[#FFC800] border-1.5 border-black flex items-center justify-center flex-shrink-0">
+                  <Zap className="h-4 w-4 text-black" strokeWidth={2.5} />
+                </div>
+                <div className="text-[11px] font-bold text-black leading-tight">
+                  Instant 90% deposit on every payment settlement
+                </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="label-caps block mb-1">Cardholder Name</label>
-                  <input
-                    type="text"
-                    value={cardHolder}
-                    onChange={(e) => setCardHolder(e.target.value)}
-                    placeholder="Name on card"
-                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:border-indigo-500"
-                  />
+              <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white border-2 border-black shadow-[2px_2px_0px_#000]">
+                <div className="w-7 h-7 rounded-lg bg-[#FFC800] border-1.5 border-black flex items-center justify-center flex-shrink-0">
+                  <ShieldCheck className="h-4 w-4 text-black" strokeWidth={2.5} />
                 </div>
-                <div>
-                  <label className="label-caps block mb-1">Expiry Date</label>
-                  <input
-                    type="text"
-                    value={cardExpiry}
-                    onChange={(e) => setCardExpiry(e.target.value)}
-                    placeholder="MM/YY"
-                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-xs focus:outline-none focus:border-indigo-500"
-                  />
+                <div className="text-[11px] font-bold text-black leading-tight">
+                  10% automatically auto-repays your backers up to 2× cap
                 </div>
               </div>
             </div>
-          )}
 
-          {/* Payout Form: Bank Account */}
-          {payoutType === 'bank' && (
-            <div className="space-y-3 animate-fade-in">
-              <div>
-                <label className="label-caps block mb-1">Bank Account Number / IBAN</label>
-                <input
-                  type="text"
-                  value={bankAccount}
-                  onChange={(e) => setBankAccount(e.target.value)}
-                  placeholder="e.g. 50100234891023"
-                  className="w-full px-3.5 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-sm focus:outline-none focus:border-indigo-500"
-                />
+            {/* Selector Tabs: UPI vs Card vs Bank (Brutalist pill tabs) */}
+            <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-[#FAF9F5] border-2 border-black text-xs">
+              <button
+                type="button"
+                onClick={() => setPayoutType('upi')}
+                className={`py-2 px-1 rounded-lg font-display font-black text-[11px] uppercase flex items-center justify-center gap-1 transition-all ${
+                  payoutType === 'upi'
+                    ? 'bg-[#FFC800] text-black border-2 border-black shadow-[1.5px_1.5px_0px_#000]'
+                    : 'text-black/70 hover:text-black border-2 border-transparent'
+                }`}
+              >
+                <QrCode className="h-3.5 w-3.5" strokeWidth={2.5} />
+                UPI
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setPayoutType('card')}
+                className={`py-2 px-1 rounded-lg font-display font-black text-[11px] uppercase flex items-center justify-center gap-1 transition-all ${
+                  payoutType === 'card'
+                    ? 'bg-[#FFC800] text-black border-2 border-black shadow-[1.5px_1.5px_0px_#000]'
+                    : 'text-black/70 hover:text-black border-2 border-transparent'
+                }`}
+              >
+                <CreditCard className="h-3.5 w-3.5" strokeWidth={2.5} />
+                Debit
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setPayoutType('bank')}
+                className={`py-2 px-1 rounded-lg font-display font-black text-[11px] uppercase flex items-center justify-center gap-1 transition-all ${
+                  payoutType === 'bank'
+                    ? 'bg-[#FFC800] text-black border-2 border-black shadow-[1.5px_1.5px_0px_#000]'
+                    : 'text-black/70 hover:text-black border-2 border-transparent'
+                }`}
+              >
+                <Building className="h-3.5 w-3.5" strokeWidth={2.5} />
+                Bank
+              </button>
+            </div>
+
+            {/* Payout Form: UPI */}
+            {payoutType === 'upi' && (
+              <div className="space-y-2.5 animate-fade-in">
+                <div className="border-2 border-black rounded-xl p-2.5 bg-white shadow-[2px_2px_0px_#000] focus-within:shadow-[3px_3px_0px_#FFC800] focus-within:bg-[#FFFBEB] transition-all">
+                  <div className="flex items-center gap-2 mb-1">
+                    <QrCode className="h-3.5 w-3.5 text-black" strokeWidth={2.5} />
+                    <span className="label-caps" style={{ fontSize: '10px' }}>YOUR UPI ID (VPA)</span>
+                  </div>
+                  <input
+                    type="text"
+                    value={upiId}
+                    onChange={(e) => setUpiId(e.target.value)}
+                    placeholder="e.g. aman@okhdfcbank"
+                    className="w-full bg-transparent text-sm font-mono font-bold text-black focus:outline-none"
+                  />
+                </div>
+
+                {/* Fast handle suggestions */}
+                <div className="flex flex-wrap gap-1.5">
+                  {['@upi', '@okhdfcbank', '@oksbi', '@paytm', '@ybl'].map((handle) => (
+                    <button
+                      key={handle}
+                      type="button"
+                      onClick={() => {
+                        const prefix = upiId.includes('@') ? upiId.split('@')[0] : upiId || 'aman';
+                        setUpiId(`${prefix}${handle}`);
+                      }}
+                      className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-white text-black border-1.5 border-black shadow-[1px_1px_0px_#000] hover:bg-[#FFC800] transition-colors"
+                    >
+                      {handle}
+                    </button>
+                  ))}
+                </div>
               </div>
-
-              <div>
-                <label className="label-caps block mb-1">IFSC / Swift / Routing Code</label>
-                <input
-                  type="text"
-                  value={bankIfsc}
-                  onChange={(e) => setBankIfsc(e.target.value.toUpperCase())}
-                  placeholder="e.g. HDFC0001234"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-xs focus:outline-none focus:border-indigo-500"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Protocol Split Connection Ribbon */}
-          <div className="inset-card p-3.5 flex items-start gap-2.5 text-xs">
-            <Zap className="h-4 w-4 text-indigo-600 flex-shrink-0 mt-0.5" />
-            <div className="text-[11px] text-slate-600 leading-snug">
-              <strong className="text-slate-900 font-bold">BackFlow Protocol Connected:</strong> When any client pays, 90% will instantly deposit to this linked destination. 10% auto-repays your backers until the 2× cap is hit.
-            </div>
-          </div>
-
-          {errorMsg && (
-            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center gap-2">
-              <AlertCircle className="h-4 w-4 flex-shrink-0" />
-              <span>{errorMsg}</span>
-            </div>
-          )}
-
-          <button
-            onClick={handleConnectPayout}
-            disabled={loading || connectedSuccess}
-            className="w-full btn-periwinkle py-4 rounded-2xl text-xs font-black flex items-center justify-center gap-2 disabled:opacity-50"
-          >
-            {loading ? (
-              <>
-                <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Connecting Rail...</span>
-              </>
-            ) : connectedSuccess ? (
-              <>
-                <Check className="h-4 w-4" />
-                <span>Connected! Opening Wallet...</span>
-              </>
-            ) : (
-              <>
-                <ShieldCheck className="h-4 w-4" />
-                <span>Connect Payout Rail &amp; Enter Portal</span>
-              </>
             )}
-          </button>
-        </div>
-      )}
+
+            {/* Payout Form: Card */}
+            {payoutType === 'card' && (
+              <div className="space-y-2.5 animate-fade-in">
+                <div className="border-2 border-black rounded-xl p-2.5 bg-white shadow-[2px_2px_0px_#000] focus-within:shadow-[3px_3px_0px_#FFC800] focus-within:bg-[#FFFBEB] transition-all">
+                  <div className="flex items-center gap-2 mb-1">
+                    <CreditCard className="h-3.5 w-3.5 text-black" strokeWidth={2.5} />
+                    <span className="label-caps" style={{ fontSize: '10px' }}>CARD NUMBER</span>
+                  </div>
+                  <input
+                    type="text"
+                    value={cardNumber}
+                    onChange={(e) => setCardNumber(e.target.value)}
+                    placeholder="4532 8912 3456 8821"
+                    className="w-full bg-transparent text-sm font-mono font-bold text-black focus:outline-none"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="border-2 border-black rounded-xl p-2 bg-white shadow-[2px_2px_0px_#000]">
+                    <span className="label-caps block mb-0.5" style={{ fontSize: '9px' }}>HOLDER</span>
+                    <input
+                      type="text"
+                      value={cardHolder}
+                      onChange={(e) => setCardHolder(e.target.value)}
+                      placeholder="Aman"
+                      className="w-full bg-transparent text-xs font-bold text-black focus:outline-none"
+                    />
+                  </div>
+                  <div className="border-2 border-black rounded-xl p-2 bg-white shadow-[2px_2px_0px_#000]">
+                    <span className="label-caps block mb-0.5" style={{ fontSize: '9px' }}>EXPIRY</span>
+                    <input
+                      type="text"
+                      value={cardExpiry}
+                      onChange={(e) => setCardExpiry(e.target.value)}
+                      placeholder="MM/YY"
+                      className="w-full bg-transparent text-xs font-mono font-bold text-black focus:outline-none"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Payout Form: Bank */}
+            {payoutType === 'bank' && (
+              <div className="space-y-2.5 animate-fade-in">
+                <div className="border-2 border-black rounded-xl p-2.5 bg-white shadow-[2px_2px_0px_#000] focus-within:shadow-[3px_3px_0px_#FFC800] focus-within:bg-[#FFFBEB] transition-all">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Building className="h-3.5 w-3.5 text-black" strokeWidth={2.5} />
+                    <span className="label-caps" style={{ fontSize: '10px' }}>ACCOUNT NUMBER</span>
+                  </div>
+                  <input
+                    type="text"
+                    value={bankAccount}
+                    onChange={(e) => setBankAccount(e.target.value)}
+                    placeholder="50100234891023"
+                    className="w-full bg-transparent text-sm font-mono font-bold text-black focus:outline-none"
+                  />
+                </div>
+
+                <div className="border-2 border-black rounded-xl p-2.5 bg-white shadow-[2px_2px_0px_#000] focus-within:shadow-[3px_3px_0px_#FFC800] focus-within:bg-[#FFFBEB] transition-all">
+                  <span className="label-caps block mb-1" style={{ fontSize: '10px' }}>IFSC / ROUTING CODE</span>
+                  <input
+                    type="text"
+                    value={bankIfsc}
+                    onChange={(e) => setBankIfsc(e.target.value.toUpperCase())}
+                    placeholder="HDFC0001234"
+                    className="w-full bg-transparent text-xs font-mono font-bold text-black focus:outline-none uppercase"
+                  />
+                </div>
+              </div>
+            )}
+
+            {errorMsg && (
+              <div className="p-2.5 rounded-xl bg-red-100 border-2 border-black shadow-[2px_2px_0px_#000] text-xs text-red-900 font-bold flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 flex-shrink-0 text-red-600" />
+                <span>{errorMsg}</span>
+              </div>
+            )}
+
+            {/* Brutalist Split Button (Yellow + Black Arrow) */}
+            <button
+              type="button"
+              onClick={handleConnectPayout}
+              disabled={loading || connectedSuccess}
+              className="w-full flex items-stretch rounded-xl border-2 border-black shadow-[3px_3px_0px_#000] overflow-hidden active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50 group"
+            >
+              <div className="flex-1 bg-[#FFC800] group-hover:bg-[#FFD21A] py-3.5 text-center font-display font-black text-sm uppercase tracking-wider text-black flex items-center justify-center gap-2 transition-colors">
+                {loading ? (
+                  <>
+                    <span className="h-4 w-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                    <span>CONNECTING RAIL...</span>
+                  </>
+                ) : connectedSuccess ? (
+                  <>
+                    <Check className="h-4 w-4" strokeWidth={3} />
+                    <span>CONNECTED! ENTERING...</span>
+                  </>
+                ) : (
+                  <span>CONNECT &amp; ENTER PORTAL</span>
+                )}
+              </div>
+              <div className="w-12 bg-black flex items-center justify-center text-white group-hover:bg-neutral-800 transition-colors">
+                <ArrowRight className="h-5 w-5" strokeWidth={3} />
+              </div>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

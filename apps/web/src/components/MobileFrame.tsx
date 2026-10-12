@@ -24,105 +24,86 @@ export default function MobileFrame({ children }: { children: ReactNode }) {
   const earnerName = profile?.name || 'Aman';
 
   return (
-    <div className="min-h-screen bg-[#eef1f6] flex flex-col items-center justify-start sm:justify-center sm:py-6 sm:px-4">
-      <div className="w-full sm:max-w-[430px] sm:h-[900px] bg-[#fafafc] sm:border sm:border-slate-300/80 sm:rounded-[3.2rem] shadow-[0_25px_70px_-15px_rgba(100,116,139,0.22)] relative flex flex-col overflow-hidden sm:ring-1 sm:ring-black/5">
-
-        {/* Ambient glow on desktop */}
-        <div
-          className="hidden sm:block absolute -inset-8 rounded-[4rem] pointer-events-none z-0"
-          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(99,102,241,0.12) 0%, transparent 65%)' }}
-        />
+    <div className="min-h-screen bg-[#EBEBE5] flex flex-col items-center justify-start sm:justify-center sm:py-6 sm:px-4">
+      <div className="w-full sm:max-w-[430px] sm:h-[900px] bg-[#FAF9F5] sm:border-[2.5px] sm:border-black sm:rounded-[2.5rem] sm:shadow-[8px_8px_0px_#000000] relative flex flex-col overflow-hidden">
 
         {/* iOS Status Bar */}
-        <div
-          className="relative z-30 pt-3.5 px-7 flex items-center justify-between text-[12px] font-semibold select-none flex-shrink-0"
-          style={{ background: 'rgba(250,250,252,0.92)', backdropFilter: 'blur(20px)' }}
-        >
-          <span className="text-slate-900 tracking-tight font-bold">9:41</span>
+        <div className="relative z-30 pt-3 px-6 pb-2.5 flex items-center justify-between text-[12px] font-mono font-bold border-b-2 border-black bg-white select-none flex-shrink-0">
+          <span className="text-black font-black tracking-tight">9:41</span>
 
-          <div
-            className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full text-[11px] mono shadow-xs"
-            style={{ background: '#ffffff', border: '1px solid rgba(99,102,241,0.2)' }}
-          >
-            <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: '#10b981' }} />
-            <span style={{ color: '#6366f1', fontWeight: 700 }}>BackFlow • Monad</span>
+          <div className="hidden sm:flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-mono font-black uppercase bg-[#FFC800] border-1.5 border-black shadow-[1.5px_1.5px_0px_#000]">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse border border-black" />
+            <span className="text-black">BackFlow • Monad</span>
           </div>
 
-          <div className="flex items-center gap-1.5 text-slate-700">
-            <Signal className="h-3.5 w-3.5" />
-            <Wifi className="h-3.5 w-3.5" />
-            <BatteryMedium className="h-4 w-4" />
+          <div className="flex items-center gap-1.5 text-black">
+            <Signal className="h-3.5 w-3.5" strokeWidth={2.5} />
+            <Wifi className="h-3.5 w-3.5" strokeWidth={2.5} />
+            <BatteryMedium className="h-4 w-4" strokeWidth={2.5} />
           </div>
         </div>
 
         {/* Header: Distinct for Login vs Portal */}
         {isLoginPage ? (
-          <header
-            className="relative z-20 px-5 pt-3.5 pb-3 flex items-center justify-between border-b flex-shrink-0"
-            style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(24px)', borderColor: 'rgba(0,0,0,0.06)' }}
-          >
+          <header className="relative z-20 px-4 pt-3 pb-3 flex items-center justify-between border-b-2 border-black bg-white flex-shrink-0">
             <div className="flex items-center gap-2.5">
-              <div className="h-8 w-8 rounded-xl overflow-hidden shadow-xs border border-slate-200/80 bg-white flex items-center justify-center flex-shrink-0">
+              <div className="h-9 w-9 rounded-xl overflow-hidden border-2 border-black shadow-[2px_2px_0px_#000] bg-white flex items-center justify-center flex-shrink-0 p-0.5">
                 <img
                   src="/logo.jpeg"
                   alt="BackFlow"
-                  className="w-full h-full object-contain p-0.5"
+                  className="w-full h-full object-contain"
                 />
               </div>
               <div>
-                <div className="text-[14px] font-extrabold text-slate-900 tracking-tight leading-none flex items-center gap-1.5">
+                <div className="font-display text-[15px] font-black text-black uppercase tracking-tight leading-none flex items-center gap-1.5">
                   BackFlow
-                  <span className="badge-periwinkle" style={{ fontSize: '9px' }}>Login</span>
+                  <span className="badge-periwinkle" style={{ fontSize: '8.5px', padding: '1px 6px' }}>LOGIN</span>
                 </div>
-                <div className="text-[10px] text-slate-500 font-medium mt-0.5">
+                <div className="text-[9.5px] text-black/70 font-bold uppercase tracking-wider mt-1">
                   Earner Verification & Rail Setup
                 </div>
               </div>
             </div>
 
-            <div className="badge-periwinkle font-mono text-[10px] px-2.5 py-1 shadow-2xs">
+            <div className="badge-periwinkle font-mono text-[10px] px-2.5 py-1">
               Step {loginStep} of 3
             </div>
           </header>
         ) : (
-          <header
-            className="relative z-20 px-5 pt-2.5 pb-3 flex items-center justify-between border-b flex-shrink-0"
-            style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(24px)', borderColor: 'rgba(0,0,0,0.06)' }}
-          >
+          <header className="relative z-20 px-4 pt-3 pb-3 flex items-center justify-between border-b-2 border-black bg-white flex-shrink-0">
             <Link href="/dashboard" className="flex items-center gap-2.5">
-              <div className="h-8 w-8 rounded-xl overflow-hidden shadow-xs border border-slate-200/80 bg-white flex items-center justify-center flex-shrink-0">
+              <div className="h-9 w-9 rounded-xl overflow-hidden border-2 border-black shadow-[2px_2px_0px_#000] bg-white flex items-center justify-center flex-shrink-0 p-0.5">
                 <img
                   src="/logo.jpeg"
                   alt="BackFlow"
-                  className="w-full h-full object-contain p-0.5"
+                  className="w-full h-full object-contain"
                 />
               </div>
               <div>
-                <div className="text-[14px] font-extrabold text-slate-900 tracking-tight leading-none flex items-center gap-1.5">
+                <div className="font-display text-[15px] font-black text-black uppercase tracking-tight leading-none flex items-center gap-1.5">
                   BackFlow
-                  <span className="badge-periwinkle" style={{ fontSize: '9px' }}>Portal</span>
+                  <span className="badge-periwinkle" style={{ fontSize: '8.5px', padding: '1px 6px' }}>PORTAL</span>
                 </div>
-                <div className="text-[10px] text-slate-500 font-medium mt-0.5">Auto-Split Consumer Rail</div>
+                <div className="text-[9.5px] text-black/70 font-bold uppercase tracking-wider mt-1">Auto-Split Consumer Rail</div>
               </div>
             </Link>
 
             {/* Earner Status Badge (Links to Profile tab) */}
             <Link
               href="/profile"
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] shadow-xs hover:bg-slate-50 transition-colors"
-              style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.08)' }}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] border-1.5 border-black shadow-[1.5px_1.5px_0px_#000] bg-[#FFC800] text-black hover:bg-[#FFD21A] transition-all font-display font-black uppercase"
               title="User Profile & Payout Details"
             >
-              <span className="h-2 w-2 rounded-full" style={{ background: '#10b981' }} />
-              <span className="font-semibold text-slate-800">{earnerName}</span>
+              <span className="h-2 w-2 rounded-full bg-emerald-500 border border-black" />
+              <span>{earnerName}</span>
             </Link>
           </header>
         )}
 
         {/* Scrollable content */}
         <div
-          className={`flex-1 overflow-y-auto px-4 py-4 text-slate-900 ${
-            isLoginPage ? 'pb-8 flex flex-col' : 'pb-32'
+          className={`flex-1 overflow-y-auto px-4 py-4 text-black bg-[#FAF9F5] ${
+            isLoginPage ? 'pb-8 flex flex-col' : 'pb-28'
           }`}
         >
           {children}

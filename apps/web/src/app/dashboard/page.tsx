@@ -16,7 +16,8 @@ import {
   Sparkles,
   CreditCard,
   Building,
-  LogOut
+  LogOut,
+  ArrowRight
 } from 'lucide-react';
 import {
   getAgreement,
@@ -111,74 +112,87 @@ export default function EarnerDashboard() {
   const payoutRailId = profile?.payoutIdentifier || 'aman@upi';
 
   return (
-    <div className="space-y-3.5 animate-fade-in-up">
-
-      {/* Hero Balance Card */}
+    <div className="space-y-3.5">
+      {/* ========================================================
+          HERO BALANCE CARD (Neo-Brutalist Display)
+         ======================================================== */}
       <div className="app-card-highlight p-5 relative overflow-hidden">
-        <div
-          className="absolute -top-12 -right-12 w-44 h-44 rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.14) 0%, transparent 70%)' }}
-        />
+        {/* Decorative corner dot grid & yellow square */}
+        <div className="absolute top-3 right-12 w-8 h-8 dot-grid opacity-60 pointer-events-none" />
+        <div className="w-3 h-3 bg-[#FFC800] border-1.5 border-black absolute right-3 bottom-3" />
 
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex flex-col gap-0.5">
-            <span className="label-caps tracking-widest text-indigo-600 font-bold">
-              {earnerName} · Verified Earner
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-1.5">
+              <span className="badge-periwinkle text-[9.5px]">
+                {earnerName.toUpperCase()} · VERIFIED EARNER
+              </span>
+            </div>
+            <span className="text-[10px] text-black/70 font-mono font-bold">
+              BF-001 · MONAD TESTNET
             </span>
-            <span className="text-[10px] text-slate-500 mono font-medium">BF-001 · Monad Testnet</span>
           </div>
+
           <button
             onClick={() => loadData(true)}
-            className="h-7 w-7 rounded-xl flex items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 transition-all active:scale-90 shadow-2xs"
-            title="Refresh"
+            className="h-8 w-8 rounded-lg flex items-center justify-center bg-white border-2 border-black shadow-[2px_2px_0px_#000] hover:bg-[#FFC800] text-black transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+            title="Refresh balance"
           >
-            <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin text-indigo-600' : ''}`} />
+            <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`} strokeWidth={2.5} />
           </button>
         </div>
 
         <div className="space-y-0.5 mb-4">
-          <div className="text-[11px] text-slate-500 font-medium">Total Net Revenue Kept</div>
+          <div className="label-caps" style={{ fontSize: '10px' }}>TOTAL NET REVENUE KEPT</div>
           <div className="flex items-baseline gap-2">
-            <span className="amount-display text-[2.6rem] text-slate-900 tracking-tight">
+            <span className="amount-display text-[2.75rem] text-black tracking-tight leading-none">
               ${totalEarnedNet.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
-            <span className="text-sm font-bold mono text-indigo-600">USDC</span>
+            <span className="text-xs font-mono font-black text-black bg-[#FFC800] px-1.5 py-0.5 border border-black rounded">
+              USDC
+            </span>
           </div>
         </div>
 
-        <div className="divider mb-3" />
+        <div className="divider my-3" />
+
         <div className="space-y-2">
-          <div className="flex items-center justify-between text-[11px]">
-            <span className="text-slate-600 font-medium">
+          <div className="flex items-center justify-between text-[11px] font-bold">
+            <span className="text-black">
               Repaid to Backers:{' '}
-              <span className="font-bold mono text-coral">${totalRepaid.toFixed(2)}</span>
-              <span className="text-slate-400"> / ${maxCap.toLocaleString()} cap</span>
+              <span className="font-mono text-red-600 font-black">${totalRepaid.toFixed(2)}</span>
+              <span className="text-black/60 font-mono"> / ${maxCap.toLocaleString()} cap</span>
             </span>
-            <span className="badge-coral">{capProgress}% Cap</span>
+            <span className="badge-periwinkle" style={{ fontSize: '9px', padding: '1px 6px' }}>
+              {capProgress}% CAP
+            </span>
           </div>
-          <div className="progress-track h-1.5">
+
+          <div className="progress-track h-3">
             <div className="progress-fill-periwinkle h-full" style={{ width: `${capProgress}%` }} />
           </div>
         </div>
       </div>
 
-      {/* Connected Payout Rail Status Card (UPI / Card) */}
+      {/* ========================================================
+          AUTOMATIC PAYOUT RAIL STATUS CARD
+         ======================================================== */}
       <div className="app-card p-3.5 flex items-center justify-between text-xs">
         <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shadow-2xs">
+          <div className="h-9 w-9 rounded-xl bg-[#FFC800] border-2 border-black shadow-[1.5px_1.5px_0px_#000] flex items-center justify-center text-black flex-shrink-0">
             {profile?.payoutType === 'card' ? (
-              <CreditCard className="h-4 w-4" />
+              <CreditCard className="h-4 w-4" strokeWidth={2.5} />
             ) : profile?.payoutType === 'bank' ? (
-              <Building className="h-4 w-4" />
+              <Building className="h-4 w-4" strokeWidth={2.5} />
             ) : (
-              <QrCode className="h-4 w-4" />
+              <QrCode className="h-4 w-4" strokeWidth={2.5} />
             )}
           </div>
           <div>
-            <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">
-              Automatic Payout Rail (90% Auto-Deposit)
+            <div className="label-caps" style={{ fontSize: '9px' }}>
+              AUTOMATIC PAYOUT RAIL (90% AUTO-DEPOSIT)
             </div>
-            <div className="font-mono font-bold text-slate-900 text-xs">
+            <div className="font-mono font-black text-black text-xs">
               {payoutRailId}
             </div>
           </div>
@@ -187,75 +201,80 @@ export default function EarnerDashboard() {
         <div className="flex items-center gap-1.5">
           <Link
             href="/profile"
-            className="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 px-2.5 py-1 rounded-lg bg-indigo-50 border border-indigo-200 transition-colors"
+            className="text-[10.5px] font-display font-black uppercase px-2.5 py-1 rounded-md bg-white hover:bg-[#FFC800] border-1.5 border-black shadow-[1.5px_1.5px_0px_#000] transition-colors"
           >
             Change
           </Link>
           <button
             onClick={handleLogout}
-            className="text-[11px] font-semibold text-slate-500 hover:text-rose-600 px-2 py-1 rounded-lg bg-slate-100 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 flex items-center gap-1 transition-colors"
+            className="text-[10.5px] font-display font-black uppercase px-2 py-1 rounded-md bg-white hover:bg-red-50 text-red-600 border-1.5 border-black shadow-[1.5px_1.5px_0px_#000] flex items-center gap-1 transition-colors"
             title="Log out"
           >
-            <LogOut className="h-3 w-3" />
-            Logout
+            <LogOut className="h-3 w-3" strokeWidth={2.5} />
           </button>
         </div>
       </div>
 
-      {/* Action Buttons */}
+      {/* ========================================================
+          ACTION BUTTONS (Split Neo-Brutalist Layout)
+         ======================================================== */}
       <div className="grid grid-cols-2 gap-2.5">
         <button
           onClick={() => setModalOpen(true)}
-          className="btn-periwinkle py-3.5 px-4 rounded-2xl flex items-center justify-center gap-2 text-[13px]"
+          className="btn-periwinkle py-3.5 px-3 rounded-xl flex items-center justify-center gap-2 text-xs active:translate-x-[2px] active:translate-y-[2px]"
         >
-          <QrCode className="h-4 w-4 flex-shrink-0" />
-          <span className="font-black">Charge Client</span>
+          <QrCode className="h-4 w-4 flex-shrink-0" strokeWidth={2.5} />
+          <span>CHARGE CLIENT</span>
         </button>
 
         <button
           onClick={handleQuickTestPay}
           disabled={triggering}
-          className="btn-ghost py-3.5 px-3 rounded-2xl flex items-center justify-center gap-2 text-[13px] disabled:opacity-50"
+          className="btn-ghost py-3.5 px-3 rounded-xl flex items-center justify-center gap-2 text-xs disabled:opacity-50 active:translate-x-[2px] active:translate-y-[2px]"
         >
           {triggering ? (
             <>
-              <span className="h-3.5 w-3.5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin flex-shrink-0" />
-              <span className="font-bold text-slate-900">Splitting…</span>
+              <span className="h-3.5 w-3.5 border-2 border-black border-t-transparent rounded-full animate-spin flex-shrink-0" />
+              <span>SPLITTING…</span>
             </>
           ) : (
             <>
-              <Zap className="h-4 w-4 text-coral flex-shrink-0" />
-              <span className="font-bold">Test $1k Pay</span>
+              <Zap className="h-4 w-4 text-[#FFC800] fill-[#FFC800] stroke-black flex-shrink-0" strokeWidth={2} />
+              <span>TEST $1K PAY</span>
             </>
           )}
         </button>
       </div>
 
-      {/* Info Banner */}
-      <div className="inset-card px-4 py-3 flex items-center gap-3">
-        <div className="h-8 w-8 rounded-xl flex items-center justify-center flex-shrink-0 bg-indigo-50 border border-indigo-200/60 shadow-2xs">
-          <span className="text-[10px] font-black mono text-indigo-600">90/10</span>
+      {/* ========================================================
+          INFO CALLOUT: 90/10 RULE
+         ======================================================== */}
+      <div className="inset-card p-3 flex items-center gap-3">
+        <div className="h-8 w-8 rounded-lg bg-[#FFC800] border-2 border-black shadow-[1.5px_1.5px_0px_#000] flex items-center justify-center flex-shrink-0">
+          <span className="font-mono font-black text-[11px] text-black">90/10</span>
         </div>
-        <p className="text-[11px] text-slate-600 leading-snug">
-          You keep <strong className="text-slate-900 font-bold">90%</strong> of every payment.{' '}
-          <strong className="text-coral font-bold">10%</strong> auto-repays backers until the 2× cap is hit.
+        <p className="text-[11px] text-black/80 font-medium leading-snug">
+          You keep <strong className="text-black font-black">90%</strong> of every payment.{' '}
+          <strong className="text-red-600 font-black">10%</strong> auto-repays backers until the 2× cap is hit.
         </p>
       </div>
 
-      {/* Backers Card */}
-      <div className="app-card p-4">
-        <div className="flex items-center justify-between mb-3">
+      {/* ========================================================
+          YOUR BACKERS SECTION
+         ======================================================== */}
+      <div className="app-card p-4 space-y-3">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="h-6 w-6 rounded-lg flex items-center justify-center bg-indigo-50 border border-indigo-100">
-              <Users className="h-3.5 w-3.5 text-indigo-600" />
+            <div className="h-6 w-6 rounded-md bg-[#FFC800] border-1.5 border-black flex items-center justify-center text-black">
+              <Users className="h-3.5 w-3.5" strokeWidth={2.5} />
             </div>
-            <span className="text-[12px] font-black text-slate-900 tracking-tight">
-              Your Backers ({agreement?.backers?.length || 3})
+            <span className="font-display font-black text-xs uppercase tracking-tight text-black">
+              YOUR BACKERS ({agreement?.backers?.length || 3})
             </span>
           </div>
-          <div className="flex flex-col items-end">
-            <span className="mono text-[11px] font-bold text-slate-900">${totalFunded.toLocaleString()}</span>
-            <span className="label-caps">upfront raised</span>
+          <div className="text-right">
+            <span className="font-mono text-xs font-black text-black">${totalFunded.toLocaleString()}</span>
+            <div className="label-caps" style={{ fontSize: '8.5px' }}>UPFRONT RAISED</div>
           </div>
         </div>
 
@@ -267,24 +286,24 @@ export default function EarnerDashboard() {
             const percent = ((funded / totalFunded) * 100).toFixed(0);
             const repaidPct = Math.min(100, Math.round((received / cap) * 100));
             return (
-              <div key={b.id} className="inset-card px-3 py-2.5 animate-fade-in-up">
+              <div key={b.id} className="inset-card px-3 py-2.5">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <div className="h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-black bg-indigo-100 text-indigo-700">
+                    <div className="h-6 w-6 rounded-md bg-[#FFC800] border-1.5 border-black flex items-center justify-center text-[10px] font-display font-black text-black">
                       {b.backerName[0]}
                     </div>
                     <div>
-                      <div className="text-[12px] font-bold text-slate-900 leading-tight">{b.backerName.split(' ')[0]}</div>
-                      <div className="text-[10px] mono text-slate-500">{percent}% pool · Cap ${cap.toFixed(0)}</div>
+                      <div className="text-[12px] font-black text-black leading-tight">{b.backerName.split(' ')[0]}</div>
+                      <div className="text-[10px] font-mono text-black/60 font-bold">{percent}% pool · Cap ${cap.toFixed(0)}</div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="mono text-[12px] font-bold text-coral">${received.toFixed(2)}</div>
-                    <div className="text-[10px] text-slate-400">repaid</div>
+                    <div className="font-mono text-[12px] font-black text-red-600">${received.toFixed(2)}</div>
+                    <div className="text-[9px] font-bold uppercase text-black/50">repaid</div>
                   </div>
                 </div>
-                <div className="progress-track h-1">
-                  <div className="progress-fill-coral h-full" style={{ width: `${repaidPct}%` }} />
+                <div className="progress-track h-2">
+                  <div className="bg-red-500 border-r-2 border-black h-full" style={{ width: `${repaidPct}%` }} />
                 </div>
               </div>
             );
@@ -297,24 +316,24 @@ export default function EarnerDashboard() {
                 { name: 'Priya', share: 30, cap: 1200 },
                 { name: 'Karan', share: 50, cap: 2000 },
               ].map((b) => (
-                <div key={b.name} className="inset-card px-3 py-2.5 animate-fade-in-up">
+                <div key={b.name} className="inset-card px-3 py-2.5">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <div className="h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-black bg-indigo-100 text-indigo-700">
+                      <div className="h-6 w-6 rounded-md bg-[#FFC800] border-1.5 border-black flex items-center justify-center text-[10px] font-display font-black text-black">
                         {b.name[0]}
                       </div>
                       <div>
-                        <div className="text-[12px] font-bold text-slate-900 leading-tight">{b.name}</div>
-                        <div className="text-[10px] mono text-slate-500">{b.share}% pool · Cap ${b.cap}</div>
+                        <div className="text-[12px] font-black text-black leading-tight">{b.name}</div>
+                        <div className="text-[10px] font-mono text-black/60 font-bold">{b.share}% pool · Cap ${b.cap}</div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="mono text-[12px] font-bold text-coral">$0.00</div>
-                      <div className="text-[10px] text-slate-400">repaid</div>
+                      <div className="font-mono text-[12px] font-black text-red-600">$0.00</div>
+                      <div className="text-[9px] font-bold uppercase text-black/50">repaid</div>
                     </div>
                   </div>
-                  <div className="progress-track h-1">
-                    <div className="progress-fill-coral h-full" style={{ width: '0%' }} />
+                  <div className="progress-track h-2">
+                    <div className="bg-red-500 border-r-2 border-black h-full" style={{ width: '0%' }} />
                   </div>
                 </div>
               ))}
@@ -323,31 +342,32 @@ export default function EarnerDashboard() {
         </div>
       </div>
 
-      {/* Recent Inflows */}
-      <div className="app-card p-4">
-        <div className="flex items-center justify-between mb-3">
+      {/* ========================================================
+          RECENT INFLOWS (Auto-Split Settlements)
+         ======================================================== */}
+      <div className="app-card p-4 space-y-3">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="h-6 w-6 rounded-lg flex items-center justify-center bg-emerald-50 border border-emerald-100">
-              <ArrowDownLeft className="h-3.5 w-3.5 text-emerald-600" />
+            <div className="h-6 w-6 rounded-md bg-emerald-400 border-1.5 border-black flex items-center justify-center text-black">
+              <ArrowDownLeft className="h-3.5 w-3.5" strokeWidth={3} />
             </div>
-            <span className="text-[12px] font-black text-slate-900">
-              Recent Inflows ({settlements.length})
+            <span className="font-display font-black text-xs uppercase tracking-tight text-black">
+              RECENT INFLOWS ({settlements.length})
             </span>
           </div>
-          <span className="badge-periwinkle">Auto-Split</span>
+          <span className="badge-periwinkle text-[9px]">AUTO-SPLIT</span>
         </div>
 
         {settlements.length === 0 ? (
-          <div className="py-8 text-center space-y-3">
-            <div className="h-12 w-12 rounded-2xl flex items-center justify-center mx-auto bg-slate-50 border border-slate-200 shadow-2xs">
-              <Sparkles className="h-5 w-5 text-slate-400" />
-            </div>
-            <div className="space-y-1">
-              <div className="text-[12px] text-slate-700 font-semibold">No payments yet</div>
-              <div className="text-[11px] text-slate-500">Hit "Test $1k Pay" to see the instant split in action.</div>
-            </div>
-            <button onClick={handleQuickTestPay} className="text-[11px] font-bold text-indigo-600 hover:text-indigo-700 transition-colors">
-              ⚡ Trigger Test Payment →
+          <div className="py-6 text-center space-y-2 border-2 border-dashed border-black rounded-xl p-4 bg-[#FAF9F5]">
+            <Sparkles className="h-6 w-6 text-black mx-auto" />
+            <div className="text-xs font-bold text-black">No payments settled yet</div>
+            <div className="text-[11px] text-black/70">Tap "Test $1k Pay" to test the automatic split on Monad.</div>
+            <button
+              onClick={handleQuickTestPay}
+              className="font-display font-black text-xs uppercase bg-[#FFC800] hover:bg-[#FFD21A] text-black px-3 py-1.5 rounded-lg border-2 border-black shadow-[2px_2px_0px_#000] inline-flex items-center gap-1 transition-all"
+            >
+              ⚡ Trigger $1k Pay
             </button>
           </div>
         ) : (
@@ -358,23 +378,23 @@ export default function EarnerDashboard() {
               const backer = microToDollars(s.totalBackerAmount);
               const time = new Date(s.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
               return (
-                <div key={s.id} className="inset-card px-3 py-3 flex items-center justify-between animate-fade-in-up">
+                <div key={s.id} className="inset-card px-3 py-2.5 flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <div className="h-8 w-8 rounded-xl flex items-center justify-center flex-shrink-0 bg-emerald-50 border border-emerald-100">
-                      <TrendingUp className="h-4 w-4 text-emerald-600" />
+                    <div className="h-8 w-8 rounded-lg bg-emerald-400 border-1.5 border-black flex items-center justify-center flex-shrink-0 text-black">
+                      <TrendingUp className="h-4 w-4" strokeWidth={2.5} />
                     </div>
                     <div>
-                      <div className="text-[12px] font-semibold text-slate-900">
-                        Client paid <span className="mono font-bold">${gross.toFixed(0)}</span> USDC
+                      <div className="text-[12px] font-bold text-black">
+                        Client paid <span className="font-mono font-black">${gross.toFixed(0)}</span>
                       </div>
-                      <div className="text-[10px] mono text-slate-400">
+                      <div className="text-[10px] font-mono text-black/60 font-medium">
                         {time} · {(s as any).paymentMethod || s.transactionHash?.slice(0, 10) + '…'}
                       </div>
                     </div>
                   </div>
-                  <div className="text-right space-y-0.5">
-                    <div className="mono text-[12px] font-bold text-indigo-600">+${earner.toFixed(2)}</div>
-                    <div className="mono text-[10px] text-coral">−${backer.toFixed(2)}</div>
+                  <div className="text-right">
+                    <div className="font-mono text-[12px] font-black text-emerald-700">+${earner.toFixed(2)}</div>
+                    <div className="font-mono text-[10px] font-bold text-red-600">−${backer.toFixed(2)}</div>
                   </div>
                 </div>
               );
@@ -383,50 +403,58 @@ export default function EarnerDashboard() {
         )}
       </div>
 
-      {/* Charge Client Modal */}
+      {/* ========================================================
+          CHARGE CLIENT MODAL (Neo-Brutalist Sheet)
+         ======================================================== */}
       {modalOpen && (
         <div
           className="fixed inset-0 z-50 flex items-end sm:items-center justify-center animate-fade-in"
-          style={{ background: 'rgba(15,23,42,0.45)', backdropFilter: 'blur(16px)' }}
+          style={{ background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(4px)' }}
           onClick={(e) => { if (e.target === e.currentTarget) setModalOpen(false); }}
         >
-          <div className="w-full sm:max-w-sm bg-white border border-slate-200/80 shadow-2xl rounded-t-[2.5rem] sm:rounded-3xl p-6 space-y-5 animate-fade-in-up">
-            <div className="w-10 h-1 rounded-full mx-auto bg-slate-300" />
+          <div className="w-full sm:max-w-sm bg-white border-t-[3px] sm:border-[3px] border-black shadow-[6px_6px_0px_#000] rounded-t-3xl sm:rounded-3xl p-5 space-y-4 animate-fade-in-up">
+            <div className="w-12 h-1.5 rounded-full mx-auto bg-black" />
 
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-[16px] font-black text-slate-900 tracking-tight">Charge Client</h3>
-                <p className="text-[11px] text-slate-500 mt-0.5">Generate your 90/10 auto-split payment link</p>
+                <h3 className="font-display text-lg font-black uppercase text-black tracking-tight">
+                  CHARGE CLIENT
+                </h3>
+                <p className="text-[11px] text-black/70 font-medium">
+                  Generate your 90/10 automated payment link
+                </p>
               </div>
               <button
                 onClick={() => setModalOpen(false)}
-                className="h-7 w-7 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-900 transition-colors text-xs bg-slate-100 hover:bg-slate-200"
+                className="h-7 w-7 rounded-lg flex items-center justify-center text-black font-black bg-white border-2 border-black shadow-[1.5px_1.5px_0px_#000] hover:bg-red-50 hover:text-red-600"
               >
                 ✕
               </button>
             </div>
 
             <div>
-              <label className="label-caps mb-1.5 block">Invoice Amount (USDC)</label>
+              <label className="label-caps mb-1 block" style={{ fontSize: '10px' }}>
+                INVOICE AMOUNT (USDC)
+              </label>
               <div className="relative">
-                <span className="absolute left-3.5 top-3 text-slate-400 font-bold text-sm">$</span>
+                <span className="absolute left-3.5 top-3 text-black font-mono font-black text-base">$</span>
                 <input
                   type="number"
                   value={chargeAmount}
                   onChange={(e) => setChargeAmount(Math.max(1, Number(e.target.value)))}
-                  className="w-full pl-8 pr-16 py-3 rounded-xl text-slate-900 font-black text-lg mono focus:outline-none transition-colors bg-slate-50 border border-slate-200 focus:border-indigo-400"
+                  className="w-full pl-8 pr-16 py-2.5 rounded-xl text-black font-mono font-black text-lg bg-[#FAF9F5] border-2 border-black shadow-[2px_2px_0px_#000] focus:shadow-[3px_3px_0px_#FFC800] focus:outline-none"
                 />
-                <span className="absolute right-3.5 top-3.5 text-[11px] text-slate-400 mono font-semibold">USDC</span>
+                <span className="absolute right-3.5 top-3 text-xs font-mono font-black text-black">USDC</span>
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[500, 1000, 2000, 5000].map((p) => (
                   <button
                     key={p}
                     onClick={() => setChargeAmount(p)}
-                    className={`flex-1 py-1.5 rounded-lg text-[11px] mono font-semibold transition-all ${
+                    className={`flex-1 py-1 rounded-lg text-xs font-mono font-black border-2 border-black transition-all ${
                       chargeAmount === p
-                        ? 'font-bold bg-indigo-600 text-white shadow-xs'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        ? 'bg-[#FFC800] text-black shadow-[2px_2px_0px_#000]'
+                        : 'bg-white text-black hover:bg-[#FAF9F5]'
                     }`}
                   >
                     ${p}
@@ -436,45 +464,46 @@ export default function EarnerDashboard() {
             </div>
 
             <div>
-              <label className="label-caps mb-1.5 block">Description</label>
+              <label className="label-caps mb-1 block" style={{ fontSize: '10px' }}>
+                DESCRIPTION
+              </label>
               <input
                 type="text"
                 value={chargeDesc}
                 onChange={(e) => setChargeDesc(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl text-slate-900 text-[12px] focus:outline-none transition-colors bg-slate-50 border border-slate-200 focus:border-indigo-400"
+                className="w-full px-3 py-2 rounded-xl text-black font-bold text-xs bg-[#FAF9F5] border-2 border-black shadow-[2px_2px_0px_#000] focus:outline-none"
               />
             </div>
 
-            <div className="inset-card px-4 py-3 space-y-2">
-              <div className="label-caps mb-1">Automatic split preview</div>
-              <div className="flex justify-between items-center text-[12px]">
-                <span className="text-slate-600 font-medium">Direct to {payoutRailId} (90%)</span>
-                <span className="mono font-bold text-indigo-600">${(chargeAmount * 0.9).toFixed(2)} USDC</span>
+            <div className="inset-card p-3 space-y-1.5">
+              <div className="label-caps" style={{ fontSize: '9px' }}>AUTOMATIC SPLIT PREVIEW</div>
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-bold text-black">Direct to {payoutRailId} (90%)</span>
+                <span className="font-mono font-black text-black">${(chargeAmount * 0.9).toFixed(2)} USDC</span>
               </div>
-              <div className="flex justify-between items-center text-[12px]">
-                <span className="text-slate-600 font-medium">Backers (10%)</span>
-                <span className="mono font-bold text-coral">${(chargeAmount * 0.1).toFixed(2)} USDC</span>
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-bold text-black/70">Backers (10%)</span>
+                <span className="font-mono font-black text-red-600">${(chargeAmount * 0.1).toFixed(2)} USDC</span>
               </div>
-              <div className="flex h-1.5 rounded-full overflow-hidden mt-1">
-                <div style={{ width: '90%', background: '#6366f1' }} />
-                <div style={{ width: '10%', background: '#f43f5e' }} />
+              <div className="progress-track h-2.5 mt-1">
+                <div className="progress-fill-periwinkle h-full" style={{ width: '90%' }} />
               </div>
             </div>
 
             <div className="space-y-2 pt-1">
               <button
                 onClick={handleCopyLink}
-                className="w-full btn-periwinkle py-3.5 rounded-xl text-[13px] font-black flex items-center justify-center gap-2"
+                className="w-full btn-periwinkle py-3.5 rounded-xl text-xs font-black flex items-center justify-center gap-2"
               >
-                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                {copied ? 'Link Copied! ✓' : 'Copy Payment Link'}
+                {copied ? <Check className="h-4 w-4" strokeWidth={3} /> : <Copy className="h-4 w-4" strokeWidth={2.5} />}
+                {copied ? 'LINK COPIED! ✓' : 'COPY PAYMENT LINK'}
               </button>
 
               <Link
                 href={`/pay/BF-001?amount=${chargeAmount}&desc=${encodeURIComponent(chargeDesc)}`}
-                className="w-full py-2.5 rounded-xl btn-ghost text-[12px] flex items-center justify-center gap-1.5"
+                className="w-full py-2.5 rounded-xl btn-ghost text-xs flex items-center justify-center gap-1.5"
               >
-                Open Pay Screen <ArrowUpRight className="h-3.5 w-3.5" />
+                OPEN PAY SCREEN <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={2.5} />
               </Link>
             </div>
           </div>
