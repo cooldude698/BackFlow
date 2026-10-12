@@ -41,14 +41,15 @@ export default function MobileFrame({ children }: { children: ReactNode }) {
 
             {/* Dark Mode Toggle Pill */}
             <button
+              type="button"
               onClick={toggleTheme}
-              className="h-6 w-6 rounded-md bg-white dark:bg-[#27272A] border-1.5 border-black dark:border-[#FFC800] shadow-[1.5px_1.5px_0px_#000] dark:shadow-[1.5px_1.5px_0px_#FFC800] flex items-center justify-center text-black dark:text-[#FFC800] hover:scale-105 active:scale-95 transition-all"
+              className="h-6 w-6 rounded-md bg-white dark:bg-[#27272A] border-1.5 border-black dark:border-[#FFC800] shadow-[1.5px_1.5px_0px_#000] dark:shadow-[1.5px_1.5px_0px_#FFC800] flex items-center justify-center text-black dark:text-[#FFC800] hover:scale-105 active:scale-95 transition-all cursor-pointer select-none"
               title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
             >
               {theme === 'light' ? (
-                <Moon className="h-3.5 w-3.5 fill-black stroke-black" />
+                <Moon className="h-3.5 w-3.5 fill-black stroke-black pointer-events-none" />
               ) : (
-                <Sun className="h-3.5 w-3.5 fill-[#FFC800] stroke-[#FFC800]" />
+                <Sun className="h-3.5 w-3.5 fill-[#FFC800] stroke-[#FFC800] pointer-events-none" />
               )}
             </button>
           </div>

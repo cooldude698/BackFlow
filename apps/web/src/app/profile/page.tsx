@@ -206,12 +206,13 @@ export default function UserProfilePage() {
           </div>
 
           <button
+            type="button"
             onClick={toggleTheme}
-            className={`w-14 h-8 rounded-full border-2 border-black dark:border-[#FFC800] shadow-[2px_2px_0px_#000] flex items-center p-0.5 transition-colors ${
+            className={`w-14 h-8 rounded-full border-2 border-black dark:border-[#FFC800] shadow-[2px_2px_0px_#000] flex items-center p-0.5 transition-colors cursor-pointer ${
               theme === 'dark' ? 'bg-[#FFC800] justify-end' : 'bg-white justify-start'
             }`}
           >
-            <div className="w-6 h-6 rounded-full bg-black dark:bg-[#18181B] border border-black flex items-center justify-center text-white">
+            <div className="w-6 h-6 rounded-full bg-black dark:bg-[#18181B] border border-black flex items-center justify-center text-white pointer-events-none">
               {theme === 'dark' ? <Moon className="h-3 w-3 text-[#FFC800]" /> : <Sun className="h-3 w-3 text-white" />}
             </div>
           </button>
@@ -272,11 +273,12 @@ export default function UserProfilePage() {
 
           {!editingRail && (
             <button
+              type="button"
               onClick={() => setEditingRail(true)}
-              className="text-[10px] font-display font-black uppercase text-black dark:text-white bg-white dark:bg-[#27272A] hover:bg-[#FFC800] dark:hover:bg-[#FFC800] dark:hover:text-black border-1.5 border-black dark:border-white/30 shadow-[1.5px_1.5px_0px_#000] px-2 py-0.5 rounded flex items-center gap-1 transition-colors"
+              className="text-[10px] font-display font-black uppercase text-black dark:text-white bg-white dark:bg-[#27272A] hover:bg-[#FFC800] dark:hover:bg-[#FFC800] dark:hover:text-black border-1.5 border-black dark:border-white/30 shadow-[1.5px_1.5px_0px_#000] px-2 py-0.5 rounded flex items-center gap-1 transition-colors cursor-pointer"
             >
-              <Edit3 className="h-3 w-3" strokeWidth={2.5} />
-              Edit Rail
+              <Edit3 className="h-3 w-3 pointer-events-none" strokeWidth={2.5} />
+              <span>Edit Rail</span>
             </button>
           )}
         </div>
@@ -460,11 +462,12 @@ export default function UserProfilePage() {
       {/* 6. Sign Out Action Button */}
       <div className="pt-2">
         <button
+          type="button"
           onClick={handleLogout}
-          className="w-full py-3.5 rounded-xl bg-white dark:bg-[#18181B] hover:bg-red-50 dark:hover:bg-red-950/40 border-2 border-black dark:border-white/30 shadow-[3px_3px_0px_#000] text-red-600 font-display font-black uppercase text-xs flex items-center justify-center gap-2 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+          className="w-full py-3.5 rounded-xl bg-white dark:bg-[#18181B] hover:bg-red-50 dark:hover:bg-red-950/40 border-2 border-black dark:border-white/30 shadow-[3px_3px_0px_#000] text-red-600 font-display font-black uppercase text-xs flex items-center justify-center gap-2 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer"
         >
-          <LogOut className="h-4 w-4" strokeWidth={2.5} />
-          <span>SIGN OUT OF PORTAL</span>
+          <LogOut className="h-4 w-4 pointer-events-none" strokeWidth={2.5} />
+          <span className="pointer-events-none">SIGN OUT OF PORTAL</span>
         </button>
       </div>
     </div>

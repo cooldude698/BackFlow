@@ -98,8 +98,12 @@ export default function EarnerDashboard() {
   };
 
   const handleCopyLink = () => {
-    const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/pay/BF-001?amount=${chargeAmount}&desc=${encodeURIComponent(chargeDesc)}`;
-    navigator.clipboard.writeText(url);
+    try {
+      const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/pay/BF-001?amount=${chargeAmount}&desc=${encodeURIComponent(chargeDesc)}`;
+      if (typeof navigator !== 'undefined' && navigator?.clipboard?.writeText) {
+        navigator.clipboard.writeText(url).catch(() => {});
+      }
+    } catch {}
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -236,17 +240,19 @@ export default function EarnerDashboard() {
          ======================================================== */}
       <div className="grid grid-cols-2 gap-2.5">
         <button
+          type="button"
           onClick={() => setModalOpen(true)}
-          className="btn-periwinkle py-3.5 px-3 rounded-xl flex items-center justify-center gap-2 text-xs active:translate-x-[2px] active:translate-y-[2px]"
+          className="btn-periwinkle py-3.5 px-3 rounded-xl flex items-center justify-center gap-2 text-xs active:translate-x-[2px] active:translate-y-[2px] cursor-pointer"
         >
-          <QrCode className="h-4 w-4 flex-shrink-0" strokeWidth={2.5} />
-          <span>CHARGE CLIENT</span>
+          <QrCode className="h-4 w-4 flex-shrink-0 pointer-events-none" strokeWidth={2.5} />
+          <span className="pointer-events-none">CHARGE CLIENT</span>
         </button>
 
         <button
+          type="button"
           onClick={handleQuickTestPay}
           disabled={triggering}
-          className="btn-ghost py-3.5 px-3 rounded-xl flex items-center justify-center gap-2 text-xs disabled:opacity-50 active:translate-x-[2px] active:translate-y-[2px]"
+          className="btn-ghost py-3.5 px-3 rounded-xl flex items-center justify-center gap-2 text-xs disabled:opacity-50 active:translate-x-[2px] active:translate-y-[2px] cursor-pointer"
         >
           {triggering ? (
             <>
@@ -255,8 +261,8 @@ export default function EarnerDashboard() {
             </>
           ) : (
             <>
-              <Zap className="h-4 w-4 text-[#FFC800] fill-[#FFC800] stroke-black flex-shrink-0" strokeWidth={2} />
-              <span>TEST $1K PAY</span>
+              <Zap className="h-4 w-4 text-[#FFC800] fill-[#FFC800] stroke-black flex-shrink-0 pointer-events-none" strokeWidth={2} />
+              <span className="pointer-events-none">TEST $1K PAY</span>
             </>
           )}
         </button>
@@ -349,9 +355,10 @@ export default function EarnerDashboard() {
             <div className="text-xs font-bold text-black dark:text-white">No payments settled yet</div>
             <div className="text-[11px] text-black/70 dark:text-white/70">Tap "Test $1k Pay" to test the automatic split on Monad.</div>
             <button
+              type="button"
               onClick={handleQuickTestPay}
               disabled={triggering}
-              className="font-display font-black text-xs uppercase bg-[#FFC800] hover:bg-[#FFD21A] text-black px-3 py-1.5 rounded-lg border-2 border-black shadow-[2px_2px_0px_#000] inline-flex items-center gap-1 transition-all"
+              className="font-display font-black text-xs uppercase bg-[#FFC800] hover:bg-[#FFD21A] text-black px-3 py-1.5 rounded-lg border-2 border-black shadow-[2px_2px_0px_#000] inline-flex items-center gap-1 transition-all cursor-pointer"
             >
               ⚡ Trigger $1k Pay
             </button>

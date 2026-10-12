@@ -421,9 +421,10 @@ function MobilePaymentContent() {
           <div className="space-y-2">
             {/* Split Neo-Brutalist Action Button */}
             <button
+              type="button"
               onClick={handlePay}
               disabled={paying || amount <= 0}
-              className="w-full flex items-stretch rounded-xl border-2 border-black dark:border-white/40 shadow-[3px_3px_0px_#000] dark:shadow-[3px_3px_0px_#FFC800] overflow-hidden active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50 group"
+              className="w-full flex items-stretch rounded-xl border-2 border-black dark:border-white/40 shadow-[3px_3px_0px_#000] dark:shadow-[3px_3px_0px_#FFC800] overflow-hidden active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50 cursor-pointer group"
             >
               <div className="flex-1 bg-[#FFC800] group-hover:bg-[#FFD21A] py-3.5 text-center font-display font-black text-sm uppercase tracking-wider text-black flex items-center justify-center gap-2 transition-colors">
                 {paying ? (

@@ -48,14 +48,14 @@ export default function MobileBottomNav() {
             <Link
               key={item.label}
               href={item.href}
-              className={`flex flex-col items-center gap-1 transition-all py-1.5 px-3 rounded-xl ${
+              className={`flex flex-col items-center gap-1 transition-all py-1.5 px-3 rounded-xl cursor-pointer ${
                 item.active
                   ? 'bg-[#FFC800] text-black border-2 border-black shadow-[2px_2px_0px_#000]'
                   : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white hover:bg-[#FAF9F5] dark:hover:bg-[#27272A]'
               }`}
             >
-              <Icon className="h-4 w-4" strokeWidth={2.5} />
-              <span className="font-display font-black text-[10px] uppercase tracking-wider">
+              <Icon className="h-4 w-4 pointer-events-none" strokeWidth={2.5} />
+              <span className="font-display font-black text-[10px] uppercase tracking-wider pointer-events-none">
                 {item.label}
               </span>
             </Link>
