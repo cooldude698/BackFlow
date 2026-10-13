@@ -525,7 +525,7 @@ export default function LoginPage() {
 
             {/* Resend Code Prompt */}
             <div className="text-center text-xs font-bold text-black/70 dark:text-white/70">
-              Didn&apos;t receive code?{' '}
+              Did not receive code?{' '}
               {otpTimer > 0 ? (
                 <span className="font-mono text-red-600 dark:text-red-400 font-black">
                   RESEND (00:{otpTimer.toString().padStart(2, '0')})

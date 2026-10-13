@@ -12,7 +12,7 @@ broadcast/
 # Docs
 docs/
 
-# Dotenv file
+# Environment files
 .env
 .env.*
 !.env.example

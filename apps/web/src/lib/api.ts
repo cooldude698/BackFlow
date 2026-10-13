@@ -380,7 +380,7 @@ export async function relayPayment(
   const backerTotal = (gross * 1000n) / 10000n; // 10%
   const earnerTotal = gross - backerTotal; // 90%
   const randomHex = Math.random().toString(16).substring(2, 10);
-  const txHash = `0xmonad${randomHex}${Date.now().toString(16)}0000000000000000000000000000`;
+  const txHash = `0x${randomHex}${Date.now().toString(16).padStart(16, '0')}${'0'.repeat(40)}`.slice(0, 66);
 
   const newSettlement: SettlementRecordDTO = {
     id: `stl_${Date.now()}`,
